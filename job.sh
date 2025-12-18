@@ -13,5 +13,5 @@ source /home/ka/ka_iai/ka_bj2362/dsr/venv/bin/activate
 # Change to the project root directory
 cd /home/ka/ka_iai/ka_bj2362/dsr
 
-# Run the python script (converted from notebook)
-python ai_feynman/regression.py
+# Run the python script
+python -u  ai_feynman/regression.py

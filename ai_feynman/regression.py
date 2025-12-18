@@ -81,10 +81,10 @@ def prepare_chunk_for_aifeynman(chunk_df, dt=1.0, sigma=60):
     # Usually grid frequency is centered around 60Hz (Korea).
     
     freq_values = chunk_df['freq'].values
-    if np.mean(freq_values) > 55: # It's likely raw frequency (60Hz)
-        omega_raw = freq_values - 60.0
+    if np.mean(freq_values) > 55:
+        omega_raw = freq_values - 60.0 # Subtract 60Hz for the SK grid if needed
     else:
-        omega_raw = freq_values # It's likely already deviation
+        omega_raw = freq_values
     
     # 2. Gaussian Filter
     # Apply filtering to get the smooth drift component
@@ -109,10 +109,9 @@ def prepare_chunk_for_aifeynman(chunk_df, dt=1.0, sigma=60):
     # Features: t, theta, omega
     # AI Feynman expects format: x1, x2, ..., xn, y
     # We want to find: y = f(x1, x2, ...)
-    # y = d_omega_dt
+    # with y = d_omega_dt
     # args: t, theta, omega
     
-    # Let's order them: theta, omega, t, d_omega_dt (Target last)
     data_matrix = np.column_stack([theta, omega, t_numeric, d_omega_dt])
     
     return data_matrix
@@ -142,7 +141,7 @@ def run_analysis():
     
     # Prepare data
     # Assuming 1Hz data -> dt=1.0s
-    # Applying sigma=60 as suggested by user
+    # Applying sigma=60
     data_matrix = prepare_chunk_for_aifeynman(chunk_df, dt=1.0, sigma=60)
     
     filename = "chunk_data.txt"
