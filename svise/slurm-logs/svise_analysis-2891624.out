@@ -1,0 +1,55 @@
+Configuration:
+{
+  "model": "integrator",
+  "sigma": 5,
+  "degree": 2,
+  "lr": 0.001
+}
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/Frequency_data_SK.pkl...
+Filtering for valid 15-minute chunks...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/run_analysis.py:42: FutureWarning: 'T' is deprecated and will be removed in a future version, please use 'min' instead.
+  chunk_groups = data_filtered.groupby(data_filtered.index.floor('15T'))
+Found 10543 valid chunks. Using the first one.
+Data Scaled. Means: tensor([-1.1127,  0.0016]), Stds: tensor([1.0855, 0.0122])
+Initializing integrator...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+Starting training for 1000 epochs...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:178: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+Epoch 0: Loss = 14855.28125
+Epoch 100: Loss = 5840.28515625
+Epoch 200: Loss = 2870.984375
+Epoch 300: Loss = 2199.924072265625
+Epoch 400: Loss = 1770.23681640625
+Epoch 500: Loss = 1375.093017578125
+Epoch 600: Loss = 1028.7467041015625
+Epoch 700: Loss = 745.3768310546875
+Epoch 800: Loss = 602.5587768554688
+Epoch 900: Loss = 491.6623840332031
+
+Training Complete.
+Learned Drift Parameters (Equation terms):
+dx_0/dt = 1.00000omega
+dx_1/dt = -0.001861 + -0.15341theta + -0.00003omega + -0.02904theta^2 + 0.00597theta omega + -0.00215omega^2
+Detailed results saved to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/results/20260111_155428/model.json
+Summary appended to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/experiments_log.csv
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n001
+Job ID: 2891624
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 4
+CPU Utilized: 00:00:35
+CPU Efficiency: 15.35% of 00:03:48 core-walltime
+Job Wall-clock time: 00:00:57
+Memory Utilized: 529.81 MB
+Memory Efficiency: 6.62% of 7.81 GB (1.95 GB/core)

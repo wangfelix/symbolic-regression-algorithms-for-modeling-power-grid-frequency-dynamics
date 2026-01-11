@@ -1,0 +1,100 @@
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/Frequency_data_SK.pkl...
+Filtering for valid 15-minute chunks...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/run_analysis.py:37: FutureWarning: 'T' is deprecated and will be removed in a future version, please use 'min' instead.
+  chunk_groups = data_filtered.groupby(data_filtered.index.floor('15T'))
+Found 10543 valid chunks. Using the first one.
+Data Scaled. Means: tensor([-1.1127,  0.0016]), Stds: tensor([1.0855, 0.0122])
+Initializing SparsePolynomialSDE...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+Starting training for 1000 epochs...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:178: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+Epoch 0: Loss = 1189.7962646484375
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:180: UserWarning: Interp degree reduction failed (array would be empty). Stopping reduction.
+  warnings.warn("Interp degree reduction failed (array would be empty). Stopping reduction.")
+Epoch 100: Loss = nan
+Epoch 200: Loss = nan
+Epoch 300: Loss = nan
+Epoch 400: Loss = nan
+Epoch 500: Loss = nan
+Epoch 600: Loss = nan
+Epoch 700: Loss = nan
+Epoch 800: Loss = nan
+Epoch 900: Loss = nan
+
+Training Complete.
+Learned Drift Parameters (Sparse Coefficients):
+SparsePolynomialSDE(
+  (marginal_sde): SpectralMarginalSDE(
+    (diffusion_prior): SparseDiagonalDiffusionPrior(
+      (prior): SVIHalfCauchyPrior(
+        (s_a): LogNormalMeanFieldVariational()
+        (s_b): LogNormalMeanFieldVariational()
+        (gamma_a): LogNormalMeanFieldVariational()
+        (gamma_b): LogNormalMeanFieldVariational()
+        (w_tilde): NormalMeanFieldVariational()
+      )
+    )
+    (m): MeanGLM(
+      (K): Matern52(
+        (input_warping): KumaraswamyWarping()
+      )
+    )
+    (orthogonal): OrthogonalGLM(
+      (K): Matern52(
+        (input_warping): KumaraswamyWarping()
+      )
+      (orthogonal_mexp): SkewSymMatrixExp()
+    )
+    (eigenvals): StrictlyPositiveGLM(
+      (K): Matern52(
+        (input_warping): KumaraswamyWarping()
+      )
+      (output_transform): Positive(
+        (output_transform): Softplus(beta=1.0, threshold=20)
+      )
+    )
+  )
+  (likelihood): IndepGaussLikelihood()
+  (quad_scheme): UnbiasedGaussLegendreQuad()
+  (sde_prior): SparseMultioutputGLM(
+    (transform): IdentityScaleTransform()
+    (features): SparsePolynomialFeatures()
+    (prior): SVIHalfCauchyPrior(
+      (s_a): LogNormalMeanFieldVariational()
+      (s_b): LogNormalMeanFieldVariational()
+      (gamma_a): LogNormalMeanFieldVariational()
+      (gamma_b): LogNormalMeanFieldVariational()
+      (w_tilde): NormalMeanFieldVariational()
+    )
+  )
+  (diffusion_prior): SparseDiagonalDiffusionPrior(
+    (prior): SVIHalfCauchyPrior(
+      (s_a): LogNormalMeanFieldVariational()
+      (s_b): LogNormalMeanFieldVariational()
+      (gamma_a): LogNormalMeanFieldVariational()
+      (gamma_b): LogNormalMeanFieldVariational()
+      (w_tilde): NormalMeanFieldVariational()
+    )
+  )
+)
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n001
+Job ID: 2876140
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 4
+CPU Utilized: 00:00:38
+CPU Efficiency: 17.59% of 00:03:36 core-walltime
+Job Wall-clock time: 00:00:54
+Memory Utilized: 363.95 MB
+Memory Efficiency: 4.55% of 7.81 GB (1.95 GB/core)

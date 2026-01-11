@@ -14,4 +14,4 @@ source /home/ka/ka_iai/ka_bj2362/dsr/venv/bin/activate
 cd /home/ka/ka_iai/ka_bj2362/dsr
 
 # Run the python script
-python -u  ai_feynman/regression.py
+python -u  ai_feynman_regression.py

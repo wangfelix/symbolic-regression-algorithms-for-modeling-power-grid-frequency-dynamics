@@ -1,0 +1,46 @@
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/Frequency_data_SK.pkl...
+Filtering for valid 15-minute chunks...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/run_analysis.py:37: FutureWarning: 'T' is deprecated and will be removed in a future version, please use 'min' instead.
+  chunk_groups = data_filtered.groupby(data_filtered.index.floor('15T'))
+Found 10543 valid chunks. Using the first one.
+Data Scaled. Means: tensor([-1.1127,  0.0016]), Stds: tensor([1.0855, 0.0122])
+Initializing SparsePolynomialSDE...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+Starting training for 1000 epochs...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:178: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+Epoch 0: Loss = 1490.565673828125
+Epoch 100: Loss = 998.3648071289062
+Epoch 200: Loss = 619.1832885742188
+Epoch 300: Loss = 405.6566162109375
+Epoch 400: Loss = 308.0628662109375
+Epoch 500: Loss = 266.360595703125
+Epoch 600: Loss = 247.3041229248047
+Epoch 700: Loss = 237.046142578125
+Epoch 800: Loss = 230.43740844726562
+Epoch 900: Loss = 226.08843994140625
+
+Training Complete.
+Learned Drift Parameters (Equation terms):
+dx_0/dt = 0.199551 + 0.04490theta + 0.94196omega + -0.03631theta^2 + 0.06994theta omega + -0.03647omega^2
+dx_1/dt = -0.859041 + -2.05636theta + 0.97048omega + 0.01214theta^2 + 0.52139theta omega + 0.57600omega^2
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n001
+Job ID: 2876163
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 4
+CPU Utilized: 00:00:31
+CPU Efficiency: 16.15% of 00:03:12 core-walltime
+Job Wall-clock time: 00:00:48
+Memory Utilized: 365.63 MB
+Memory Efficiency: 4.57% of 7.81 GB (1.95 GB/core)

@@ -1,93 +1,126 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
-def model_function(theta, omega, t):
-    """
-    The discovered AI Feynman model:
-    sqrt(-666 * [ (t^2/theta + omega) - ((t^2/theta + omega) + sqrt(pi)) + sqrt(pi) ])
-    note: x0=theta, x1=omega, x2=t
-    """
-    pi = np.pi
+def model_7(theta, omega, t):
+    # Model 7: 15.632... 
+    # d_omega/dt = 6.136491e-05 + (omega / ((theta/omega) + 1))
     
-    # Calculate the inner term A
-    # Avoid division by zero if theta is 0
-    if abs(theta) < 1e-9:
-        term_A = 0 + omega
+    denom = (theta/omega) + 1 if abs(omega) > 1e-9 else 1.0
+    if abs(denom) < 1e-9:
+        term = 0.0
     else:
-        term_A = (t**2 / theta) + omega
+        term = omega / denom
         
-    # The full expression inside the bracket
-    # bracket = term_A - (term_A + sqrt(pi)) + sqrt(pi)
-    bracket = term_A - (term_A + np.sqrt(pi)) + np.sqrt(pi)
-    
-    # This should be 0 (or incredibly close to it due to float precision)
-    # The outer term is sqrt(-666 * bracket)
-    # If bracket is slightly negative due to float error, sqrt will be nan.
-    # We'll take abs to be safe for visualization, but mathematically it's 0.
-    
-    val_inside = -666.0 * bracket
-    
-    # Handle float precision noise near 0
-    if abs(val_inside) < 1e-9:
-        return 0.0
-        
-    if val_inside < 0:
-        return 0.0 # Can't take sqrt of negative
-        
-    return np.sqrt(val_inside)
+    return 6.136491e-05 + term
 
-def simulate_and_plot():
-    # Load empirical data
-    # Columns: theta, omega, t, d_omega_dt
-    data = np.loadtxt("chunk_data.txt")
-    theta_empirical = data[:, 0]
-    omega_empirical = data[:, 1]
-    t = data[:, 2]
-    
-    # Initial conditions
-    omega_sim = [omega_empirical[0]]
-    theta_sim = [theta_empirical[0]]
-    dt = t[1] - t[0] # Assuming 1.0s
-    
-    print(f"Starting simulation. dt={dt}, N={len(t)}")
-    
-    # Euler Integration
-    for i in range(len(t) - 1):
-        curr_t = t[i]
-        curr_omega = omega_sim[-1]
-        curr_theta = theta_sim[-1]
+def model_9(theta, omega, t):
+    # Model 9: 15.31...
+    try:
+        if theta > 10: 
+            term_A = theta / np.pi
+        else:
+            e_theta = np.exp(theta)
+            if e_theta < 0: return 0
+            sqrt_val = np.sqrt(e_theta)
+            if sqrt_val > 700: denom_part = float('inf')
+            else: denom_part = np.exp(sqrt_val)
+                
+            if denom_part == 0: term_A = 0 
+            else:
+                sub = t / denom_part
+                denom_A = np.pi - sub
+                if abs(denom_A) < 1e-9: term_A = 0
+                else: term_A = theta / denom_A
+                        
+        val = -0.000110812521 + term_A**2
+        return val
+    except Exception:
+        return 0.0
+
+def model_10(theta, omega, t):
+    # Model 10: 15.20...
+    try:
+        const_C = 45.172 # Precalculated
         
-        # Calculate d_omega/dt from model
-        d_omega_dt = model_function(curr_theta, curr_omega, curr_t)
+        if theta > 10: 
+            term_A = theta / np.pi
+        else:
+            e_theta = np.exp(theta)
+            sqrt_val = np.sqrt(e_theta)
+            if sqrt_val > 700: denom_part = float('inf')
+            else: denom_part = np.exp(sqrt_val)
+            
+            sub = t / denom_part
+            denom_A = np.pi - sub
+            if abs(denom_A) < 1e-9: term_A = 0
+            else: term_A = theta / denom_A
         
-        # Update Omega
-        new_omega = curr_omega + d_omega_dt * dt
-        
-        # Update Theta (integral of omega deviation)
-        # Omega is Absolute (around 60), so deviation is (Omega - 60)
-        # But wait, did we define Theta as integral of deviation in previous step?
-        # Yes, in regression.py: theta = cumsum(omega_dev) * dt
-        new_theta = curr_theta + (curr_omega - 60.0) * dt
-        
-        omega_sim.append(new_omega)
-        theta_sim.append(new_theta)
-        
-    omega_sim = np.array(omega_sim)
+        val = -0.000219292314 + (term_A / const_C)
+        return val
+    except Exception:
+        return 0.0
+
+def simulate_model(model_func, t_eval, theta0, omega0):
+    omega_sim = np.zeros_like(t_eval)
+    theta_sim = np.zeros_like(t_eval)
     
-    # Plotting
-    plt.figure(figsize=(10, 6))
-    plt.plot(t, omega_empirical, label='Empirical Data (Absolute)', color='blue', alpha=0.6)
-    plt.plot(t, omega_sim, label='Simulated Model', color='red', linestyle='--', linewidth=2)
+    omega_sim[0] = omega0
+    theta_sim[0] = theta0
     
-    plt.title("Model Verification: Empirical vs Simulated Frequency")
+    for i in range(len(t_eval) - 1):
+        curr_t = t_eval[i]
+        curr_w = omega_sim[i]
+        curr_th = theta_sim[i]
+        dt = t_eval[i+1] - curr_t
+        
+        d_omega = model_func(curr_th, curr_w, curr_t)
+        
+        omega_sim[i+1] = curr_w + d_omega * dt
+        theta_sim[i+1] = curr_th + curr_w * dt
+        
+    return theta_sim, omega_sim
+
+def plot_comparison():
+    file_path = "chunk_data.txt"
+    if not os.path.exists(file_path):
+        print("Data file not found.")
+        return
+
+    data = np.loadtxt(file_path)
+    theta_emp = data[:, 0]
+    omega_emp = data[:, 1]
+    t_emp = data[:, 2]
+    
+    # Run Models
+    th7, w7 = simulate_model(model_7, t_emp, theta_emp[0], omega_emp[0])
+    th9, w9 = simulate_model(model_9, t_emp, theta_emp[0], omega_emp[0])
+    th10, w10 = simulate_model(model_10, t_emp, theta_emp[0], omega_emp[0])
+    
+    # Convert to Absolute Frequency (Assuming 60Hz base)
+    base_freq = 60.0
+    omega_emp_abs = omega_emp + base_freq
+    w7_abs = w7 + base_freq
+    w9_abs = w9 + base_freq
+    w10_abs = w10 + base_freq
+    
+    plt.figure(figsize=(12, 8))
+    
+    plt.plot(t_emp, omega_emp_abs, 'k-', label='Empirical', alpha=0.3, linewidth=2)
+    plt.plot(t_emp, w7_abs, label='Model 7', color='blue', alpha=0.8)
+    plt.plot(t_emp, w9_abs, label='Model 9', color='green', alpha=0.8)
+    plt.plot(t_emp, w10_abs, label='Model 10', color='red', linestyle='--', alpha=0.8)
+    
+    plt.title("Symbolic Regression Models vs Empirical Data")
     plt.xlabel("Time [s]")
     plt.ylabel("Frequency [Hz]")
+    plt.ylim(59.97, 60.02)
     plt.legend()
     plt.grid(True)
     
-    output_file = "model_simulation_plot.png"
-    plt.savefig(output_file)
-    print(f"Comparison plot saved to {output_file}")
+    out_file = "all_models_plot.png"
+    plt.savefig(out_file)
+    print(f"Saved plot to {out_file}")
 
 if __name__ == "__main__":
-    simulate_and_plot()
+    plot_comparison()
