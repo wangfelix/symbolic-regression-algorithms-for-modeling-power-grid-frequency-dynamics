@@ -1,0 +1,56 @@
+Configuration:
+{
+  "model": "sparse",
+  "sigma": 5.0,
+  "degree": 2,
+  "lr": 0.001,
+  "epochs": 1000
+}
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/Frequency_data_SK.pkl...
+Filtering for valid 15-minute chunks...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/run_analysis.py:42: FutureWarning: 'T' is deprecated and will be removed in a future version, please use 'min' instead.
+  chunk_groups = data_filtered.groupby(data_filtered.index.floor('15T'))
+Found 10543 valid chunks. Using the first one.
+Data Scaled. Means: tensor([-6.9911,  0.0101]), Stds: tensor([6.8204, 0.0763])
+Initializing sparse...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+Starting training for 1000 epochs...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:178: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+Epoch 0: Loss = 1490.557373046875
+Epoch 100: Loss = 998.3646240234375
+Epoch 200: Loss = 619.1779174804688
+Epoch 300: Loss = 405.6391906738281
+Epoch 400: Loss = 308.0630187988281
+Epoch 500: Loss = 266.3105773925781
+Epoch 600: Loss = 247.27780151367188
+Epoch 700: Loss = 236.8532257080078
+Epoch 800: Loss = 230.2494659423828
+Epoch 900: Loss = 225.63168334960938
+
+Training Complete.
+Learned Drift Parameters (Equation terms):
+dx_0/dt = 0.196591 + 0.05302theta + 0.94459omega + -0.04021theta^2 + 0.07657theta omega + -0.03622omega^2
+dx_1/dt = -0.878561 + -2.08905theta + 0.90564omega + -0.00102theta^2 + 0.52776theta omega + 0.54995omega^2
+Detailed results saved to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/results/20260118_015411/model.json
+Summary appended to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/experiments_log.csv
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n001
+Job ID: 2945133
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 4
+CPU Utilized: 00:00:31
+CPU Efficiency: 14.35% of 00:03:36 core-walltime
+Job Wall-clock time: 00:00:54
+Memory Utilized: 646.76 MB
+Memory Efficiency: 8.08% of 7.81 GB (1.95 GB/core)

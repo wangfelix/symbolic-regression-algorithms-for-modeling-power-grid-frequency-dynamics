@@ -341,6 +341,8 @@ class SparsePolynomialIntegratorSDE(SDELearner):
         train_x: Tensor = None,
         input_labels: List[str] = None,
         n_tau: int = 200,
+        n_quad: int = 128,
+        quad_percent: float = 0.8,
     ) -> None:
         Q_diag = torch.ones(d) * 1e-0
         diffusion_prior = SparseDiagonalDiffusionPrior(
@@ -380,13 +382,13 @@ class SparsePolynomialIntegratorSDE(SDELearner):
             t_span,
             diffusion_prior=diffusion_prior,
             model_form="GLM",
-            n_tau=200,
+            n_tau=n_tau,
             learn_inducing_locations=False,
             train_x=train_t,
             train_y=z,
         )
         quad_scheme = UnbiasedGaussLegendreQuad(
-            t_span[0], t_span[1], 128, quad_percent=0.8
+            t_span[0], t_span[1], n_quad, quad_percent=quad_percent
         )
         likelihood = IndepGaussLikelihood(G, num_meas, measurement_noise)
         features = SparsePolynomialFeatures(d, degree=degree, input_labels=input_labels)

@@ -55,12 +55,15 @@ def prepare_data(chunk_df, dt=1.0, sigma=60):
     
     # Calculate Frequency Deviation
     if np.mean(freq_values) > 55:
-        omega_raw = freq_values - 60.0
+        omega_raw = (freq_values - 60.0) * 2 * np.pi
     else:
-        omega_raw = freq_values
+        omega_raw = freq_values * 2 * np.pi
         
     # Gaussian Filter
-    omega = gaussian_filter1d(omega_raw, sigma=sigma)
+    if sigma > 0:
+        omega = gaussian_filter1d(omega_raw, sigma=sigma)
+    else:
+        omega = omega_raw
     
     # Theta (Integral of omega)
     theta = np.cumsum(omega) * dt
@@ -124,11 +127,10 @@ def save_experiment_results(args, loss, equations, start_time):
 def run_experiment(args):
     start_time = datetime.datetime.now()
     
-    # 1. Config
     DATA_PATH = os.path.join(os.path.dirname(__file__), "../dataset/Frequency_data_SK.pkl")
     DT = 1.0
     
-    # 2. Load Data
+    # Load Data
     if not os.path.exists(DATA_PATH):
         print(f"Error: Data file not found at {DATA_PATH}")
         return
@@ -136,31 +138,49 @@ def run_experiment(args):
     data = load_data(DATA_PATH)
     chunk_df = get_valid_chunk(data)
     
-    # 3. Prepare Data
     t_np, X_np, freq_raw = prepare_data(chunk_df, dt=DT, sigma=args.sigma)
     
     # Convert to Torch Tensors
     train_t = torch.tensor(t_np, dtype=torch.float32)
     train_x = torch.tensor(X_np, dtype=torch.float32) # Observations: [theta, omega]
     
-    # 4. Global Scaling
+    # Global Scaling
     mean_x = train_x.mean(dim=0)
     std_x = train_x.std(dim=0)
     std_x[std_x < 1e-6] = 1.0 # Avoid division by zero
     
+    t_scale = 90.0
+    
+    # For Integrator models, we must enforce scaling to preserve d(theta)/dt = omega
+    # In scaled vars: dX0/dT = X1
+    # This requires: s0 = s1 * t_scale  AND  mu_omega = 0
+    if args.model == "integrator":
+        print("Enforcing scaling constraints for Integrator model...")
+        # Force mean omega to 0
+        mean_x[1] = 0.0
+        # Force std theta to depend on std omega and t_scale
+        std_x[0] = std_x[1] * t_scale
+        print(f"Adjusted Means: {mean_x}, Stds: {std_x}")
+    
     train_x_scaled = (train_x - mean_x) / std_x
     print(f"Data Scaled. Means: {mean_x}, Stds: {std_x}")
 
-    # 5. Model Setup
+    # Model Setup
     d = 2 
     num_meas = 2 
     G = torch.eye(d) 
     measurement_noise = torch.tensor([1e-4, 1e-4]) 
     
     # Scale time
-    t_scale = 90.0
     train_t_scaled = train_t / t_scale
     t_span = (train_t_scaled[0], train_t_scaled[-1])
+
+    # Save scaling params for later simulation
+    scaling_params = {
+        "mean_x": mean_x.tolist(),
+        "std_x": std_x.tolist(),
+        "t_scale": t_scale
+    }
 
     print(f"Initializing {args.model}...")
     
@@ -182,19 +202,21 @@ def run_experiment(args):
         model = SparsePolynomialSDE(
             **common_params,
             n_tau=50,
-            n_quad=256,
-            quad_percent=0.5
+            #n_quad=256,
+            #quad_percent=0.5
         )
     elif args.model == "integrator":
          model = SparsePolynomialIntegratorSDE(
              **common_params,
              n_tau=50,
+             #n_quad=256,
+             #quad_percent=0.5
          )
          pass
     else:
         raise ValueError(f"Unknown model type: {args.model}")
         
-    # 6. Training Loop
+    # Training Loop
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     epochs = args.epochs
     
@@ -205,11 +227,9 @@ def run_experiment(args):
     for epoch in range(epochs):
         optimizer.zero_grad()
         
-        # ELBO computation
         loss = -model.elbo(train_t_scaled, train_x_scaled, beta=1.0, N=len(train_t))
         
         loss.backward()
-        # Gradient clipping
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
         
@@ -219,7 +239,7 @@ def run_experiment(args):
         
         final_loss = loss.item()
             
-    # 7. Results
+    # Results
     print("\nTraining Complete.")
     print("Learned Drift Parameters (Equation terms):")
     
@@ -233,20 +253,13 @@ def run_experiment(args):
         print(model)
         equation_strings = ["Error extracting"] * d
 
-    # update json structure in save_experiment_results to include loss_history, I need to pass it
-    # modifying save_experiment_results signature required or updating it inside the function
-    # Let me redefine save_experiment_results above or inside run_experiment?
-    # Actually I should have edited save_experiment_results first or included it here.
-    # Since I'm replacing a huge chunk, I'll include save_experiment_results update here.
-    
-    save_experiment_results(args, final_loss, equation_strings, start_time, loss_history)
+    save_experiment_results(args, final_loss, equation_strings, start_time, loss_history, scaling_params)
 
-def save_experiment_results(args, loss, equations, start_time, loss_history=None):
+def save_experiment_results(args, loss, equations, start_time, loss_history=None, scaling_params=None):
     timestamp = start_time.strftime("%Y%m%d_%H%M%S")
     log_dir = os.path.join(os.path.dirname(__file__), "results")
     os.makedirs(log_dir, exist_ok=True)
     
-    # 1. Save detailed JSON
     result_folder = os.path.join(log_dir, timestamp)
     os.makedirs(result_folder, exist_ok=True)
     
@@ -255,7 +268,9 @@ def save_experiment_results(args, loss, equations, start_time, loss_history=None
         "timestamp": timestamp,
         "final_loss": loss,
         "equations": equations,
-        "loss_history": loss_history
+        "equations": equations,
+        "loss_history": loss_history,
+        "scaling_params": scaling_params
     }
     
     json_path = os.path.join(result_folder, "model.json")
@@ -264,7 +279,7 @@ def save_experiment_results(args, loss, equations, start_time, loss_history=None
         
     print(f"Detailed results saved to {json_path}")
     
-    # 2. Append to CSV (Already handled in previous block of this function)
+    # Append to CSV (Already handled in previous block of this function)
     # Re-pasting the CSV part to ensure consistency
     csv_path = os.path.join(os.path.dirname(__file__), "experiments_log.csv")
     file_exists = os.path.isfile(csv_path)
