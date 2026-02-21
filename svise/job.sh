@@ -15,4 +15,4 @@ cd /home/ka/ka_iai/ka_bj2362/dsr/svise
 
 # Run the python script
 #python -u run_analysis.py
-python -u run_analysis.py --model integrator --sigma 5 --epochs 3000 --lr 0.01
+python -u run_analysis.py --model integrator --sigma 5 --epochs 5000 --degree 4

@@ -253,9 +253,42 @@ def run_experiment(args):
         print(model)
         equation_strings = ["Error extracting"] * d
 
-    save_experiment_results(args, final_loss, equation_strings, start_time, loss_history, scaling_params)
+    # Calculate RMSE using posterior mean predictions
+    rmse_theta = float('nan')
+    rmse_omega = float('nan')
+    rmse_total = float('nan')
+    try:
+        with torch.no_grad():
+            # Get posterior mean predictions (scaled)
+            x_pred_scaled = model.marginal_sde.mean(train_t_scaled)  # [T, d]
+            
+            # Unscale predictions back to original units
+            x_pred = x_pred_scaled * std_x + mean_x
+            
+            # Calculate RMSE in original units
+            mse_theta = ((x_pred[:, 0] - train_x[:, 0]) ** 2).mean()
+            mse_omega = ((x_pred[:, 1] - train_x[:, 1]) ** 2).mean()
+            
+            rmse_theta = torch.sqrt(mse_theta).item()
+            rmse_omega = torch.sqrt(mse_omega).item()
+            rmse_total = torch.sqrt((mse_theta + mse_omega) / 2).item()
+            
+            print(f"\nRMSE (original units):")
+            print(f"  Theta (phase): {rmse_theta:.6f} rad")
+            print(f"  Omega (freq deviation): {rmse_omega:.6f} rad/s")
+            print(f"  Combined: {rmse_total:.6f}")
+    except Exception as e:
+        print(f"Could not calculate RMSE: {e}")
+    
+    rmse_results = {
+        "rmse_theta": rmse_theta,
+        "rmse_omega": rmse_omega,
+        "rmse_total": rmse_total
+    }
 
-def save_experiment_results(args, loss, equations, start_time, loss_history=None, scaling_params=None):
+    save_experiment_results(args, final_loss, equation_strings, start_time, loss_history, scaling_params, rmse_results)
+
+def save_experiment_results(args, loss, equations, start_time, loss_history=None, scaling_params=None, rmse_results=None):
     timestamp = start_time.strftime("%Y%m%d_%H%M%S")
     log_dir = os.path.join(os.path.dirname(__file__), "results")
     os.makedirs(log_dir, exist_ok=True)
@@ -268,9 +301,9 @@ def save_experiment_results(args, loss, equations, start_time, loss_history=None
         "timestamp": timestamp,
         "final_loss": loss,
         "equations": equations,
-        "equations": equations,
         "loss_history": loss_history,
-        "scaling_params": scaling_params
+        "scaling_params": scaling_params,
+        "rmse": rmse_results
     }
     
     json_path = os.path.join(result_folder, "model.json")
@@ -291,7 +324,12 @@ def save_experiment_results(args, loss, equations, start_time, loss_history=None
     with open(csv_path, 'a', newline='') as f:
         writer = csv.writer(f)
         if not file_exists:
-            writer.writerow(["Timestamp", "Model", "Sigma", "Degree", "LR", "Epochs", "FinalLoss", "Equation_Theta", "Equation_Omega"])
+            writer.writerow(["Timestamp", "Model", "Sigma", "Degree", "LR", "Epochs", "FinalLoss", "RMSE_Theta", "RMSE_Omega", "RMSE_Total", "Equation_Theta", "Equation_Omega"])
+        
+        # Extract RMSE values
+        rmse_theta = rmse_results.get("rmse_theta", float('nan')) if rmse_results else float('nan')
+        rmse_omega = rmse_results.get("rmse_omega", float('nan')) if rmse_results else float('nan')
+        rmse_total = rmse_results.get("rmse_total", float('nan')) if rmse_results else float('nan')
         
         writer.writerow([
             timestamp,
@@ -301,6 +339,9 @@ def save_experiment_results(args, loss, equations, start_time, loss_history=None
             args.lr,
             args.epochs,
             f"{loss:.4f}" if isinstance(loss, float) else str(loss),
+            f"{rmse_theta:.6f}" if isinstance(rmse_theta, float) and not np.isnan(rmse_theta) else "nan",
+            f"{rmse_omega:.6f}" if isinstance(rmse_omega, float) and not np.isnan(rmse_omega) else "nan",
+            f"{rmse_total:.6f}" if isinstance(rmse_total, float) and not np.isnan(rmse_total) else "nan",
             eq_theta,
             eq_omega
         ])

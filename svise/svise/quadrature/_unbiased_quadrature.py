@@ -177,11 +177,15 @@ class UnbiasedGaussLegendreQuad(QuadRule1D):
         while torch.isnan(fip).any():
             warnings.warn("Interp is nan, reducing interp degree.")
             if len(self.xq[::divisor * 2]) == 0:
-                warnings.warn("Interp degree reduction failed (array would be empty). Stopping reduction.")
+                warnings.warn("Interp degree reduction failed (array would be empty). Falling back to Iq.")
+                # Fallback: set Iip = Iq so correction term is zero (Iip - Iq = 0)
+                Iip = Iq
                 break
             divisor *= 2
             interp = BarycentricInterpolate(self.xq[::divisor], fxq[::divisor])
             fip = interp(xmc).to(dtype)
-        Iip = fip.mean() * (self.b - self.a)
+        else:
+            # Only compute Iip from fip if the while loop completed normally (no break)
+            Iip = fip.mean() * (self.b - self.a)
         # estimating integral
         return Imc - self.gamma * (Iip - Iq)

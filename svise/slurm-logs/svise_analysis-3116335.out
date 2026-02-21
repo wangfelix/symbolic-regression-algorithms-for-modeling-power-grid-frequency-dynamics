@@ -1,0 +1,100 @@
+Configuration:
+{
+  "model": "integrator",
+  "sigma": 5.0,
+  "degree": 3,
+  "lr": 0.001,
+  "epochs": 5000
+}
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/Frequency_data_SK.pkl...
+Filtering for valid 15-minute chunks...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/run_analysis.py:42: FutureWarning: 'T' is deprecated and will be removed in a future version, please use 'min' instead.
+  chunk_groups = data_filtered.groupby(data_filtered.index.floor('15T'))
+Found 10543 valid chunks. Using the first one.
+Enforcing scaling constraints for Integrator model...
+Adjusted Means: tensor([-6.9911,  0.0000]), Stds: tensor([6.8712, 0.0763])
+Data Scaled. Means: tensor([-6.9911,  0.0000]), Stds: tensor([6.8712, 0.0763])
+Initializing integrator...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+Starting training for 5000 epochs...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:178: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+Epoch 0: Loss = 19530.8984375
+Epoch 100: Loss = 11411.19140625
+Epoch 200: Loss = 6612.3134765625
+Epoch 300: Loss = 4472.779296875
+Epoch 400: Loss = 3463.87646484375
+Epoch 500: Loss = 2861.2158203125
+Epoch 600: Loss = 2433.781494140625
+Epoch 700: Loss = 2151.763671875
+Epoch 800: Loss = 1951.893310546875
+Epoch 900: Loss = 1733.1712646484375
+Epoch 1000: Loss = 1517.3701171875
+Epoch 1100: Loss = 1324.578369140625
+Epoch 1200: Loss = 1178.7093505859375
+Epoch 1300: Loss = 1069.848388671875
+Epoch 1400: Loss = 978.5619506835938
+Epoch 1500: Loss = 899.9196166992188
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:180: UserWarning: Interp degree reduction failed (array would be empty). Stopping reduction.
+  warnings.warn("Interp degree reduction failed (array would be empty). Stopping reduction.")
+Epoch 1600: Loss = nan
+Epoch 1700: Loss = nan
+Epoch 1800: Loss = nan
+Epoch 1900: Loss = nan
+Epoch 2000: Loss = nan
+Epoch 2100: Loss = nan
+Epoch 2200: Loss = nan
+Epoch 2300: Loss = nan
+Epoch 2400: Loss = nan
+Epoch 2500: Loss = nan
+Epoch 2600: Loss = nan
+Epoch 2700: Loss = nan
+Epoch 2800: Loss = nan
+Epoch 2900: Loss = nan
+Epoch 3000: Loss = nan
+Epoch 3100: Loss = nan
+Epoch 3200: Loss = nan
+Epoch 3300: Loss = nan
+Epoch 3400: Loss = nan
+Epoch 3500: Loss = nan
+Epoch 3600: Loss = nan
+Epoch 3700: Loss = nan
+Epoch 3800: Loss = nan
+Epoch 3900: Loss = nan
+Epoch 4000: Loss = nan
+Epoch 4100: Loss = nan
+Epoch 4200: Loss = nan
+Epoch 4300: Loss = nan
+Epoch 4400: Loss = nan
+Epoch 4500: Loss = nan
+Epoch 4600: Loss = nan
+Epoch 4700: Loss = nan
+Epoch 4800: Loss = nan
+Epoch 4900: Loss = nan
+
+Training Complete.
+Learned Drift Parameters (Equation terms):
+dx_0/dt = 1.00000omega
+dx_1/dt = nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+Detailed results saved to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/results/20260205_234025/model.json
+Summary appended to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/experiments_log.csv
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n001
+Job ID: 3116335
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 4
+CPU Utilized: 00:02:42
+CPU Efficiency: 20.98% of 00:12:52 core-walltime
+Job Wall-clock time: 00:03:13
+Memory Utilized: 679.68 MB
+Memory Efficiency: 8.50% of 7.81 GB (1.95 GB/core)

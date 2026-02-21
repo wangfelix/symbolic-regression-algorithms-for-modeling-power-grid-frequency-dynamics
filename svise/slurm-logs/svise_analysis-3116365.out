@@ -1,0 +1,89 @@
+Configuration:
+{
+  "model": "integrator",
+  "sigma": 5.0,
+  "degree": 4,
+  "lr": 0.001,
+  "epochs": 4000
+}
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/Frequency_data_SK.pkl...
+Filtering for valid 15-minute chunks...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/run_analysis.py:42: FutureWarning: 'T' is deprecated and will be removed in a future version, please use 'min' instead.
+  chunk_groups = data_filtered.groupby(data_filtered.index.floor('15T'))
+Found 10543 valid chunks. Using the first one.
+Enforcing scaling constraints for Integrator model...
+Adjusted Means: tensor([-6.9911,  0.0000]), Stds: tensor([6.8712, 0.0763])
+Data Scaled. Means: tensor([-6.9911,  0.0000]), Stds: tensor([6.8712, 0.0763])
+Initializing integrator...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+Starting training for 4000 epochs...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:178: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+Epoch 0: Loss = 30422.587890625
+Epoch 100: Loss = 19554.763671875
+Epoch 200: Loss = 11683.5888671875
+Epoch 300: Loss = 6386.251953125
+Epoch 400: Loss = 4033.177978515625
+Epoch 500: Loss = 2936.364501953125
+Epoch 600: Loss = 2334.642333984375
+Epoch 700: Loss = 2078.171630859375
+Epoch 800: Loss = 1950.2476806640625
+Epoch 900: Loss = 1785.258544921875
+Epoch 1000: Loss = 1593.4000244140625
+Epoch 1100: Loss = 1376.2449951171875
+Epoch 1200: Loss = 1151.48681640625
+Epoch 1300: Loss = 984.3946533203125
+Epoch 1400: Loss = 870.3021850585938
+Epoch 1500: Loss = 786.81982421875
+Epoch 1600: Loss = 727.36572265625
+Epoch 1700: Loss = 682.796630859375
+Epoch 1800: Loss = 645.3877563476562
+Epoch 1900: Loss = 610.3621826171875
+Epoch 2000: Loss = 574.9196166992188
+Epoch 2100: Loss = 537.9298706054688
+Epoch 2200: Loss = 499.1510314941406
+Epoch 2300: Loss = 459.1492004394531
+Epoch 2400: Loss = 417.9612731933594
+Epoch 2500: Loss = 377.45892333984375
+Epoch 2600: Loss = 338.5310363769531
+Epoch 2700: Loss = 300.74188232421875
+Epoch 2800: Loss = 266.33807373046875
+Epoch 2900: Loss = 236.42593383789062
+Epoch 3000: Loss = 215.714599609375
+Epoch 3100: Loss = 205.3654327392578
+Epoch 3200: Loss = 201.00721740722656
+Epoch 3300: Loss = 198.4698486328125
+Epoch 3400: Loss = 194.90997314453125
+Epoch 3500: Loss = 191.79916381835938
+Epoch 3600: Loss = 189.46107482910156
+Epoch 3700: Loss = 188.83218383789062
+Epoch 3800: Loss = 188.13650512695312
+Epoch 3900: Loss = 187.9063720703125
+
+Training Complete.
+Learned Drift Parameters (Equation terms):
+dx_0/dt = 1.00000omega
+dx_1/dt = -0.000501 + -0.20147theta + -0.00294omega + -0.06774theta^2 + 0.06942theta omega + 0.02143omega^2 + -0.02865theta^3 + 0.00113theta^2 omega + -0.03047theta omega^2 + -0.00124omega^3 + -0.01748theta^4 + 0.00088theta^3 omega + -0.00027theta^2 omega^2 + 0.01237theta omega^3 + 0.00026omega^4
+Could not calculate RMSE: 'SparseIntegratorGLM' object has no attribute 'marginal_sde'
+Detailed results saved to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/results/20260206_000009/model.json
+Summary appended to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/experiments_log.csv
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n001
+Job ID: 3116365
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 4
+CPU Utilized: 00:01:57
+CPU Efficiency: 20.03% of 00:09:44 core-walltime
+Job Wall-clock time: 00:02:26
+Memory Utilized: 694.77 MB
+Memory Efficiency: 8.68% of 7.81 GB (1.95 GB/core)

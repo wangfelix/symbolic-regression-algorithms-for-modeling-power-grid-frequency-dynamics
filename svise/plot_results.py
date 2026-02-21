@@ -109,9 +109,21 @@ def parse_equation(eq_str):
     """
     Parse a polynomial equation string into coefficients.
     Returns a dictionary mapping term names to coefficients.
-    Example: "-0.15341theta + -0.00003omega" -> {"theta": -0.15341, "omega": -0.00003}
+    Supports polynomials up to degree 4 in two variables (theta, omega).
     """
-    coeffs = {"1": 0.0, "theta": 0.0, "omega": 0.0, "theta^2": 0.0, "theta omega": 0.0, "omega^2": 0.0}
+    # Initialize all possible terms up to degree 4
+    coeffs = {
+        # Degree 0
+        "1": 0.0,
+        # Degree 1
+        "theta": 0.0, "omega": 0.0,
+        # Degree 2
+        "theta^2": 0.0, "theta omega": 0.0, "omega^2": 0.0,
+        # Degree 3
+        "theta^3": 0.0, "theta^2 omega": 0.0, "theta omega^2": 0.0, "omega^3": 0.0,
+        # Degree 4
+        "theta^4": 0.0, "theta^3 omega": 0.0, "theta^2 omega^2": 0.0, "theta omega^3": 0.0, "omega^4": 0.0,
+    }
     
     # Normalize the string: remove extra spaces, fix "+ -" patterns
     eq_str = eq_str.replace(" + -", " + -").replace("+ -", "+-").replace("- ", "-")
@@ -129,28 +141,43 @@ def parse_equation(eq_str):
     if current_term.strip():
         terms.append(current_term.strip())
     
+    # Define term patterns in order from highest to lowest degree (to avoid partial matches)
+    term_patterns = [
+        # Degree 4
+        ("theta^4", "theta^4"),
+        ("theta^3 omega", "theta^3 omega"),
+        ("theta^2 omega^2", "theta^2 omega^2"),
+        ("theta omega^3", "theta omega^3"),
+        ("omega^4", "omega^4"),
+        # Degree 3
+        ("theta^3", "theta^3"),
+        ("theta^2 omega", "theta^2 omega"),
+        ("theta omega^2", "theta omega^2"),
+        ("omega^3", "omega^3"),
+        # Degree 2
+        ("theta^2", "theta^2"),
+        ("theta omega", "theta omega"),
+        ("omega theta", "theta omega"),  # Handle alternate ordering
+        ("omega^2", "omega^2"),
+        # Degree 1
+        ("theta", "theta"),
+        ("omega", "omega"),
+    ]
+    
     for term in terms:
         term = term.strip()
         if not term:
             continue
         
-        # Determine which variable this term contains
-        if "theta^2" in term:
-            coeff_str = term.replace("theta^2", "").replace("*", "").strip()
-            coeffs["theta^2"] = float(coeff_str) if coeff_str else 1.0
-        elif "omega^2" in term:
-            coeff_str = term.replace("omega^2", "").replace("*", "").strip()
-            coeffs["omega^2"] = float(coeff_str) if coeff_str else 1.0
-        elif "theta omega" in term or "omega theta" in term:
-            coeff_str = term.replace("theta omega", "").replace("omega theta", "").replace("*", "").strip()
-            coeffs["theta omega"] = float(coeff_str) if coeff_str else 1.0
-        elif "theta" in term:
-            coeff_str = term.replace("theta", "").replace("*", "").strip()
-            coeffs["theta"] = float(coeff_str) if coeff_str else 1.0
-        elif "omega" in term:
-            coeff_str = term.replace("omega", "").replace("*", "").strip()
-            coeffs["omega"] = float(coeff_str) if coeff_str else 1.0
-        else:
+        matched = False
+        for pattern, coeff_key in term_patterns:
+            if pattern in term:
+                coeff_str = term.replace(pattern, "").replace("*", "").strip()
+                coeffs[coeff_key] = float(coeff_str) if coeff_str else 1.0
+                matched = True
+                break
+        
+        if not matched:
             # Constant term
             try:
                 coeffs["1"] = float(term)
@@ -161,19 +188,32 @@ def parse_equation(eq_str):
 
 
 def create_drift_function(coeffs_omega, coeffs_theta=None):
-    """Create a drift function from parsed coefficients."""
+    """Create a drift function from parsed coefficients. Supports up to degree 4."""
     def drift(state, t):
         theta, omega = state
         
+        # Helper to safely get coefficient (defaults to 0.0 if missing)
+        def get_coeff(coeffs, key):
+            return coeffs.get(key, 0.0)
+        
         # d(theta)/dt
         if coeffs_theta:
-             dtheta_dt = (
-                coeffs_theta["1"] +
-                coeffs_theta["theta"] * theta +
-                coeffs_theta["omega"] * omega +
-                coeffs_theta["theta^2"] * theta**2 +
-                coeffs_theta["theta omega"] * theta * omega +
-                coeffs_theta["omega^2"] * omega**2
+            dtheta_dt = (
+                get_coeff(coeffs_theta, "1") +
+                get_coeff(coeffs_theta, "theta") * theta +
+                get_coeff(coeffs_theta, "omega") * omega +
+                get_coeff(coeffs_theta, "theta^2") * theta**2 +
+                get_coeff(coeffs_theta, "theta omega") * theta * omega +
+                get_coeff(coeffs_theta, "omega^2") * omega**2 +
+                get_coeff(coeffs_theta, "theta^3") * theta**3 +
+                get_coeff(coeffs_theta, "theta^2 omega") * theta**2 * omega +
+                get_coeff(coeffs_theta, "theta omega^2") * theta * omega**2 +
+                get_coeff(coeffs_theta, "omega^3") * omega**3 +
+                get_coeff(coeffs_theta, "theta^4") * theta**4 +
+                get_coeff(coeffs_theta, "theta^3 omega") * theta**3 * omega +
+                get_coeff(coeffs_theta, "theta^2 omega^2") * theta**2 * omega**2 +
+                get_coeff(coeffs_theta, "theta omega^3") * theta * omega**3 +
+                get_coeff(coeffs_theta, "omega^4") * omega**4
             )
         else:
             # d(theta)/dt = omega (always enforced in IntegratorSDE or fallback)
@@ -181,12 +221,21 @@ def create_drift_function(coeffs_omega, coeffs_theta=None):
         
         # d(omega)/dt from learned polynomial
         domega_dt = (
-            coeffs_omega["1"] +
-            coeffs_omega["theta"] * theta +
-            coeffs_omega["omega"] * omega +
-            coeffs_omega["theta^2"] * theta**2 +
-            coeffs_omega["theta omega"] * theta * omega +
-            coeffs_omega["omega^2"] * omega**2
+            get_coeff(coeffs_omega, "1") +
+            get_coeff(coeffs_omega, "theta") * theta +
+            get_coeff(coeffs_omega, "omega") * omega +
+            get_coeff(coeffs_omega, "theta^2") * theta**2 +
+            get_coeff(coeffs_omega, "theta omega") * theta * omega +
+            get_coeff(coeffs_omega, "omega^2") * omega**2 +
+            get_coeff(coeffs_omega, "theta^3") * theta**3 +
+            get_coeff(coeffs_omega, "theta^2 omega") * theta**2 * omega +
+            get_coeff(coeffs_omega, "theta omega^2") * theta * omega**2 +
+            get_coeff(coeffs_omega, "omega^3") * omega**3 +
+            get_coeff(coeffs_omega, "theta^4") * theta**4 +
+            get_coeff(coeffs_omega, "theta^3 omega") * theta**3 * omega +
+            get_coeff(coeffs_omega, "theta^2 omega^2") * theta**2 * omega**2 +
+            get_coeff(coeffs_omega, "theta omega^3") * theta * omega**3 +
+            get_coeff(coeffs_omega, "omega^4") * omega**4
         )
         
         return [dtheta_dt, domega_dt]
