@@ -1,0 +1,104 @@
+Configuration:
+{
+  "model": "integrator",
+  "sigma": 5.0,
+  "degree": 4,
+  "lr": 0.001,
+  "tau": 1e-20,
+  "epochs": 5000
+}
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/Frequency_data_SK.pkl...
+Filtering for valid 15-minute chunks...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/run_analysis.py:42: FutureWarning: 'T' is deprecated and will be removed in a future version, please use 'min' instead.
+  chunk_groups = data_filtered.groupby(data_filtered.index.floor('15T'))
+Found 10543 valid chunks. Using the first one.
+Enforcing scaling constraints for Integrator model...
+Adjusted Means: tensor([-6.9911,  0.0000]), Stds: tensor([6.8712, 0.0763])
+Data Scaled. Means: tensor([-6.9911,  0.0000]), Stds: tensor([6.8712, 0.0763])
+Initializing integrator...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+Starting training for 5000 epochs...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:178: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+Epoch 0: Loss = 2.0439175983529984e+16
+Epoch 100: Loss = 1.849397026278605e+16
+Epoch 200: Loss = 1.6733908771012608e+16
+Epoch 300: Loss = 1.5141360667459584e+16
+Epoch 400: Loss = 1.3700533357379584e+16
+Epoch 500: Loss = 1.2396826099449856e+16
+Epoch 600: Loss = 1.1217181119348736e+16
+Epoch 700: Loss = 1.01497861832704e+16
+Epoch 800: Loss = 9183967223742464.0
+Epoch 900: Loss = 8310050900672512.0
+Epoch 1000: Loss = 7519294271258624.0
+Epoch 1100: Loss = 6803784931999744.0
+Epoch 1200: Loss = 6156360488058880.0
+Epoch 1300: Loss = 5570543055011840.0
+Epoch 1400: Loss = 5040471076241408.0
+Epoch 1500: Loss = 4560838656524288.0
+Epoch 1600: Loss = 4126845633036288.0
+Epoch 1700: Loss = 3734150599147520.0
+Epoch 1800: Loss = 3378822854475776.0
+Epoch 1900: Loss = 3057307239841792.0
+Epoch 2000: Loss = 2766385750999040.0
+Epoch 2100: Loss = 2503146936991744.0
+Epoch 2200: Loss = 2264957445996544.0
+Epoch 2300: Loss = 2049432631640064.0
+Epoch 2400: Loss = 1854416017686528.0
+Epoch 2500: Loss = 1677956481024000.0
+Epoch 2600: Loss = 1518288790093824.0
+Epoch 2700: Loss = 1373814411755520.0
+Epoch 2800: Loss = 1243087686860800.0
+Epoch 2900: Loss = 1124800395214848.0
+Epoch 3000: Loss = 1017768937783296.0
+Epoch 3100: Loss = 920921720225792.0
+Epoch 3200: Loss = 833290428743680.0
+Epoch 3300: Loss = 753997816266752.0
+Epoch 3400: Loss = 682250320478208.0
+Epoch 3500: Loss = 617330144968704.0
+Epoch 3600: Loss = 558587508162560.0
+Epoch 3700: Loss = 505434502856704.0
+Epoch 3800: Loss = 457339358412800.0
+Epoch 3900: Loss = 413820568731648.0
+Epoch 4000: Loss = 374443033493504.0
+Epoch 4100: Loss = 338812521676800.0
+Epoch 4200: Loss = 306572517441536.0
+Epoch 4300: Loss = 277400260706304.0
+Epoch 4400: Loss = 251003962130432.0
+Epoch 4500: Loss = 227119414116352.0
+Epoch 4600: Loss = 205507641999360.0
+Epoch 4700: Loss = 185952353910784.0
+Epoch 4800: Loss = 168257860403200.0
+Epoch 4900: Loss = 152247111516160.0
+
+Training Complete.
+Learned Drift Parameters (Equation terms):
+dx_0/dt = 1.00000omega
+dx_1/dt = -0.000001 + 0.00000theta + -0.00000omega + -0.00000theta^2 + 0.00000theta omega + 0.00000omega^2 + -0.00000theta^3 + -0.00000theta^2 omega + -0.00000theta omega^2 + -0.00000omega^3 + 0.00000theta^4 + 0.00000theta^3 omega + 0.00000theta^2 omega^2 + 0.00000theta omega^3 + 0.00000omega^4
+
+RMSE (original units):
+  Theta (phase): 5.917424 rad
+  Omega (freq deviation): 0.103718 rad/s
+  Combined: 4.184893
+Detailed results saved to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/results/20260221_171311/model.json
+Summary appended to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/experiments_log.csv
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n001
+Job ID: 3190596
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 4
+CPU Utilized: 00:02:07
+CPU Efficiency: 19.48% of 00:10:52 core-walltime
+Job Wall-clock time: 00:02:43
+Memory Utilized: 681.73 MB
+Memory Efficiency: 8.52% of 7.81 GB (1.95 GB/core)

@@ -1,0 +1,133 @@
+Configuration:
+{
+  "model": "integrator",
+  "sigma": 60.0,
+  "degree": 2,
+  "lr": 0.001,
+  "tau": 0.1,
+  "epochs": 5000,
+  "chunk": 50
+}
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/Frequency_data_SK.pkl...
+Filtering for valid 5-minute chunks...
+Found 31760 valid 5-minute chunks. Using chunk 50.
+Enforcing scaling constraints for Integrator model...
+Adjusted Means: tensor([18.0620,  0.0000]), Stds: tensor([1.1481, 0.0383])
+Data Scaled. Means: tensor([18.0620,  0.0000]), Stds: tensor([1.1481, 0.0383])
+Initializing integrator...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+Starting training for 5000 epochs...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:196: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+Epoch 0: Loss = 349200.9375
+Epoch 100: Loss = 304105.21875
+Epoch 200: Loss = 253091.0
+Epoch 300: Loss = 196472.890625
+Epoch 400: Loss = 139242.890625
+Epoch 500: Loss = 91082.2734375
+Epoch 600: Loss = 58219.5546875
+Epoch 700: Loss = 34759.28515625
+Epoch 800: Loss = 19312.671875
+Epoch 900: Loss = 9982.9736328125
+Epoch 1000: Loss = 4554.67529296875
+Epoch 1100: Loss = 1822.2021484375
+Epoch 1200: Loss = 628.1836547851562
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:174: UserWarning: NaN detected in fxq (quadrature node evaluations). Clamping to 0.
+  warnings.warn("NaN detected in fxq (quadrature node evaluations). Clamping to 0.")
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:177: UserWarning: NaN detected in fmc (Monte-Carlo node evaluations). Clamping to 0.
+  warnings.warn("NaN detected in fmc (Monte-Carlo node evaluations). Clamping to 0.")
+Epoch 1267: NaN/Inf detected! Restoring checkpoint from epoch 1200. Reducing LR: 1.0e-03 -> 5.0e-04 (recovery 1/5)
+Epoch 1300: Loss = 551.3896484375
+Epoch 1367: 100 stable epochs since last NaN. Resetting recovery counter.
+Epoch 1400: Loss = 373.2679748535156
+Epoch 1426: NaN/Inf detected! Restoring checkpoint from epoch 1400. Reducing LR: 5.0e-04 -> 2.5e-04 (recovery 1/5)
+Epoch 1475: NaN/Inf detected! Restoring checkpoint from epoch 1400. Reducing LR: 2.5e-04 -> 1.3e-04 (recovery 2/5)
+Epoch 1500: Loss = 362.3841552734375
+Epoch 1570: NaN/Inf detected! Restoring checkpoint from epoch 1500. Reducing LR: 1.3e-04 -> 6.3e-05 (recovery 3/5)
+Epoch 1600: Loss = 356.51019287109375
+Epoch 1670: 100 stable epochs since last NaN. Resetting recovery counter.
+Epoch 1700: Loss = 338.1372375488281
+Epoch 1727: NaN/Inf detected! Restoring checkpoint from epoch 1700. Reducing LR: 6.3e-05 -> 3.1e-05 (recovery 1/5)
+Epoch 1775: NaN/Inf detected! Restoring checkpoint from epoch 1700. Reducing LR: 3.1e-05 -> 1.6e-05 (recovery 2/5)
+Epoch 1800: Loss = 336.9324951171875
+Epoch 1866: NaN/Inf detected! Restoring checkpoint from epoch 1800. Reducing LR: 1.6e-05 -> 7.8e-06 (recovery 3/5)
+Epoch 1900: Loss = 335.8539733886719
+Epoch 1966: 100 stable epochs since last NaN. Resetting recovery counter.
+Epoch 1994: NaN/Inf detected! Restoring checkpoint from epoch 1900. Reducing LR: 7.8e-06 -> 3.9e-06 (recovery 1/5)
+Epoch 2000: Loss = 336.107666015625
+Epoch 2094: 100 stable epochs since last NaN. Resetting recovery counter.
+Epoch 2100: Loss = 334.75628662109375
+Epoch 2200: Loss = 333.7504577636719
+Epoch 2229: NaN/Inf detected! Restoring checkpoint from epoch 2200. Reducing LR: 3.9e-06 -> 2.0e-06 (recovery 1/5)
+Epoch 2287: NaN/Inf detected! Restoring checkpoint from epoch 2200. Reducing LR: 2.0e-06 -> 9.8e-07 (recovery 2/5)
+Epoch 2300: Loss = 333.50128173828125
+Epoch 2378: NaN/Inf detected! Restoring checkpoint from epoch 2300. Reducing LR: 9.8e-07 -> 4.9e-07 (recovery 3/5)
+Epoch 2400: Loss = 333.7164001464844
+Epoch 2478: 100 stable epochs since last NaN. Resetting recovery counter.
+Epoch 2500: Loss = 333.5165710449219
+Epoch 2517: NaN/Inf detected! Restoring checkpoint from epoch 2500. Reducing LR: 4.9e-07 -> 2.4e-07 (recovery 1/5)
+Epoch 2561: NaN/Inf detected! Restoring checkpoint from epoch 2500. Reducing LR: 2.4e-07 -> 1.2e-07 (recovery 2/5)
+Epoch 2600: Loss = 333.65887451171875
+Epoch 2661: 100 stable epochs since last NaN. Resetting recovery counter.
+Epoch 2680: NaN/Inf detected! Restoring checkpoint from epoch 2600. Reducing LR: 1.2e-07 -> 6.1e-08 (recovery 1/5)
+Epoch 2700: Loss = 333.3883056640625
+Epoch 2780: 100 stable epochs since last NaN. Resetting recovery counter.
+Epoch 2800: Loss = 333.4620361328125
+Epoch 2817: NaN/Inf detected! Restoring checkpoint from epoch 2800. Reducing LR: 6.1e-08 -> 3.1e-08 (recovery 1/5)
+Epoch 2824: NaN/Inf detected! Restoring checkpoint from epoch 2800. Reducing LR: 3.1e-08 -> 1.5e-08 (recovery 2/5)
+Epoch 2900: Loss = 333.46856689453125
+Epoch 2924: 100 stable epochs since last NaN. Resetting recovery counter.
+Epoch 3000: Loss = 333.5105285644531
+Epoch 3100: Loss = 333.52032470703125
+Epoch 3200: Loss = 333.40362548828125
+Epoch 3300: Loss = 333.4662780761719
+Epoch 3400: Loss = 333.45513916015625
+Epoch 3500: Loss = 333.5190124511719
+Epoch 3600: Loss = 333.5227966308594
+Epoch 3700: Loss = 333.4629821777344
+Epoch 3800: Loss = 333.5254211425781
+Epoch 3900: Loss = 333.4708251953125
+Epoch 3932: NaN/Inf detected! Restoring checkpoint from epoch 3900. Reducing LR: 1.5e-08 -> 7.6e-09 (recovery 1/5)
+Epoch 4000: Loss = 333.3357849121094
+Epoch 4032: 100 stable epochs since last NaN. Resetting recovery counter.
+Epoch 4100: Loss = 333.3038330078125
+Epoch 4200: Loss = 333.31695556640625
+Epoch 4300: Loss = 333.4062194824219
+Epoch 4400: Loss = 333.26739501953125
+Epoch 4500: Loss = 333.4001770019531
+Epoch 4600: Loss = 333.5669860839844
+Epoch 4700: Loss = 333.5632629394531
+Epoch 4800: Loss = 333.65301513671875
+Epoch 4900: Loss = 333.56927490234375
+
+Training Complete.
+Learned Drift Parameters (Equation terms):
+dx_0/dt = 1.00000omega
+dx_1/dt = -0.034611 + -0.00912theta + -0.01961omega + -0.00097theta^2 + -0.00260theta omega + -0.00337omega^2
+
+RMSE (original units):
+  Theta (phase): 0.292472 rad
+  Omega (freq deviation): 0.001897 rad/s
+  Combined: 0.206813
+Detailed results saved to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/results_5min/20260225_100248/model.json
+Summary appended to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/experiments_log_5min.csv
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n002
+Job ID: 3286585
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 4
+CPU Utilized: 00:01:46
+CPU Efficiency: 21.54% of 00:08:12 core-walltime
+Job Wall-clock time: 00:02:03
+Memory Utilized: 409.46 MB
+Memory Efficiency: 5.12% of 7.81 GB (1.95 GB/core)

@@ -192,7 +192,7 @@ def run_experiment(args):
         "G": G,
         "num_meas": num_meas,
         "measurement_noise": measurement_noise,
-        "tau": 1e-5,
+        "tau": args.tau,
         "train_t": train_t_scaled,
         "train_x": train_x_scaled,
         "input_labels": ["theta", "omega"],
@@ -223,21 +223,73 @@ def run_experiment(args):
     print(f"Starting training for {epochs} epochs...")
     final_loss = float('nan')
     loss_history = {}
+    nan_recoveries = 0
+    max_nan_recoveries = 5  # Max times we restore from checkpoint before giving up
+    current_lr = args.lr
+    epochs_since_recovery = 0
+    
+    import copy
+    
+    # Save initial checkpoint
+    best_checkpoint = {
+        'model': copy.deepcopy(model.state_dict()),
+        'epoch': -1,
+        'loss': float('inf'),
+        'lr': current_lr
+    }
     
     for epoch in range(epochs):
         optimizer.zero_grad()
         
         loss = -model.elbo(train_t_scaled, train_x_scaled, beta=1.0, N=len(train_t))
         
+        if torch.isnan(loss) or torch.isinf(loss):
+            nan_recoveries += 1
+            epochs_since_recovery = 0
+            old_lr = current_lr
+            current_lr *= 0.5  # Halve learning rate on recovery
+            
+            print(f"Epoch {epoch}: NaN/Inf detected! Restoring checkpoint from epoch {best_checkpoint['epoch']}. "
+                  f"Reducing LR: {old_lr:.1e} -> {current_lr:.1e} (recovery {nan_recoveries}/{max_nan_recoveries})")
+            
+            # ALWAYS restore model first, even if we're about to abort
+            model.load_state_dict(copy.deepcopy(best_checkpoint['model']))
+            # Rebuild internal __W from restored parameters
+            model.sde_prior.resample_weights()
+            optimizer = torch.optim.Adam(model.parameters(), lr=current_lr)
+            
+            if nan_recoveries >= max_nan_recoveries:
+                print(f"Aborting training: exhausted {max_nan_recoveries} NaN recovery attempts. "
+                      f"Model restored to last stable checkpoint (epoch {best_checkpoint['epoch']}).")
+                break
+            
+            continue
+        
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
+        
+        epochs_since_recovery += 1
+        
+        # Reset recovery counter after sustained valid training
+        if epochs_since_recovery >= 100 and nan_recoveries > 0:
+            print(f"Epoch {epoch}: {epochs_since_recovery} stable epochs since last NaN. Resetting recovery counter.")
+            nan_recoveries = 0
         
         if epoch % 100 == 0:
             print(f"Epoch {epoch}: Loss = {loss.item()}")
             loss_history[epoch] = loss.item()
         
         final_loss = loss.item()
+        
+        # Save checkpoint every 100 epochs (rolling back 1 epoch isn't enough)
+        if epoch % 100 == 0:
+            best_checkpoint = {
+                'model': copy.deepcopy(model.state_dict()),
+                'epoch': epoch,
+                'loss': final_loss,
+                'lr': current_lr
+            }
             
     # Results
     print("\nTraining Complete.")
@@ -245,6 +297,8 @@ def run_experiment(args):
     
     equation_strings = []
     try:
+        # Resample weights to ensure __W is consistent with current parameters
+        model.sde_prior.resample_weights()
         equation_strings = model.sde_prior.get_feature_names()
         for i, eq in enumerate(equation_strings):
             print(f"dx_{i}/dt = {eq}")
@@ -324,7 +378,7 @@ def save_experiment_results(args, loss, equations, start_time, loss_history=None
     with open(csv_path, 'a', newline='') as f:
         writer = csv.writer(f)
         if not file_exists:
-            writer.writerow(["Timestamp", "Model", "Sigma", "Degree", "LR", "Epochs", "FinalLoss", "RMSE_Theta", "RMSE_Omega", "RMSE_Total", "Equation_Theta", "Equation_Omega"])
+            writer.writerow(["Timestamp", "Model", "Sigma", "Degree", "Tau", "LR", "Epochs", "FinalLoss", "RMSE_Theta", "RMSE_Omega", "RMSE_Total", "Equation_Theta", "Equation_Omega"])
         
         # Extract RMSE values
         rmse_theta = rmse_results.get("rmse_theta", float('nan')) if rmse_results else float('nan')
@@ -336,6 +390,7 @@ def save_experiment_results(args, loss, equations, start_time, loss_history=None
             args.model,
             args.sigma,
             args.degree,
+            f"{args.tau:.1e}",
             args.lr,
             args.epochs,
             f"{loss:.4f}" if isinstance(loss, float) else str(loss),
@@ -359,6 +414,8 @@ def main():
                         help="Maximum degree of polynomial drift function")
     parser.add_argument("--lr", type=float, default=1e-3,
                         help="Learning rate for optimizer")
+    parser.add_argument("--tau", type=float, default=1e-5,
+                        help="Sparsity-inducing prior scale (tau). Smaller values = sparser solutions.")
     parser.add_argument("--epochs", type=int, default=1000,
                         help="Number of training epochs")
                         

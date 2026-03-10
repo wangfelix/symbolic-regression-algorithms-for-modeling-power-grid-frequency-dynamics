@@ -1,0 +1,93 @@
+Configuration:
+{
+  "model": "integrator",
+  "sigma": 5.0,
+  "degree": 2,
+  "lr": 0.001,
+  "tau": 1e-10,
+  "epochs": 30000
+}
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/Frequency_data_SK.pkl...
+Filtering for valid 15-minute chunks...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/run_analysis.py:42: FutureWarning: 'T' is deprecated and will be removed in a future version, please use 'min' instead.
+  chunk_groups = data_filtered.groupby(data_filtered.index.floor('15T'))
+Found 10543 valid chunks. Using the first one.
+Enforcing scaling constraints for Integrator model...
+Adjusted Means: tensor([-6.9911,  0.0000]), Stds: tensor([6.8712, 0.0763])
+Data Scaled. Means: tensor([-6.9911,  0.0000]), Stds: tensor([6.8712, 0.0763])
+Initializing integrator...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+Starting training for 30000 epochs...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:196: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+Epoch 0: Loss = 2066275.25
+Epoch 100: Loss = 1863586.5
+Epoch 200: Loss = 1683256.0
+Epoch 300: Loss = 1521260.5
+Epoch 400: Loss = 1375415.125
+Epoch 500: Loss = 1243963.875
+Epoch 600: Loss = 1125359.5
+Epoch 700: Loss = 1018235.3125
+Epoch 800: Loss = 921399.0
+Epoch 900: Loss = 833802.5625
+Epoch 1000: Loss = 754516.8125
+Epoch 1100: Loss = 682717.375
+Epoch 1200: Loss = 617708.0625
+Epoch 1300: Loss = 558906.25
+Epoch 1400: Loss = 505750.25
+Epoch 1500: Loss = 457672.90625
+Epoch 1600: Loss = 414157.3125
+Epoch 1700: Loss = 374760.625
+Epoch 1800: Loss = 339107.5
+Epoch 1900: Loss = 306846.0625
+Epoch 2000: Loss = 277645.28125
+Epoch 2100: Loss = 251220.640625
+Epoch 2200: Loss = 227324.84375
+Epoch 2300: Loss = 205717.75
+Epoch 2400: Loss = 186174.390625
+Epoch 2500: Loss = 168493.15625
+Epoch 2600: Loss = 152493.703125
+Epoch 2700: Loss = 138014.375
+Epoch 2800: Loss = 124908.3515625
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:174: UserWarning: NaN detected in fxq (quadrature node evaluations). Clamping to 0.
+  warnings.warn("NaN detected in fxq (quadrature node evaluations). Clamping to 0.")
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:177: UserWarning: NaN detected in fmc (Monte-Carlo node evaluations). Clamping to 0.
+  warnings.warn("NaN detected in fmc (Monte-Carlo node evaluations). Clamping to 0.")
+Epoch 2888: NaN/Inf detected! Restoring checkpoint from epoch 2887. Reducing LR: 1.0e-03 -> 5.0e-04 (recovery 1/5)
+Epoch 2889: NaN/Inf detected! Restoring checkpoint from epoch 2887. Reducing LR: 5.0e-04 -> 2.5e-04 (recovery 2/5)
+Epoch 2890: NaN/Inf detected! Restoring checkpoint from epoch 2887. Reducing LR: 2.5e-04 -> 1.3e-04 (recovery 3/5)
+Epoch 2891: NaN/Inf detected! Restoring checkpoint from epoch 2887. Reducing LR: 1.3e-04 -> 6.3e-05 (recovery 4/5)
+Epoch 2892: NaN/Inf detected! Restoring checkpoint from epoch 2887. Reducing LR: 6.3e-05 -> 3.1e-05 (recovery 5/5)
+Aborting training: exhausted 5 NaN recovery attempts.
+
+Training Complete.
+Learned Drift Parameters (Equation terms):
+dx_0/dt = 1.00000omega
+dx_1/dt = nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2
+
+RMSE (original units):
+  Theta (phase): nan rad
+  Omega (freq deviation): nan rad/s
+  Combined: nan
+Detailed results saved to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/results/20260223_210749/model.json
+Summary appended to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/experiments_log.csv
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n001
+Job ID: 3244904
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 4
+CPU Utilized: 00:01:16
+CPU Efficiency: 19.19% of 00:06:36 core-walltime
+Job Wall-clock time: 00:01:39
+Memory Utilized: 758.83 MB
+Memory Efficiency: 9.49% of 7.81 GB (1.95 GB/core)

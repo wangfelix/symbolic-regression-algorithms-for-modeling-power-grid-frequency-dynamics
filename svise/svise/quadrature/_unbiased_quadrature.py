@@ -168,8 +168,26 @@ class UnbiasedGaussLegendreQuad(QuadRule1D):
         # evaluating function at quadrature nodes + monte-carlo
         fxq = f(self.xq)
         fmc = f(xmc)
+
+        # --- NaN protection: clamp NaN values to 0 so they don't poison the integral ---
+        if torch.isnan(fxq).any():
+            warnings.warn("NaN detected in fxq (quadrature node evaluations). Clamping to 0.")
+            fxq = torch.nan_to_num(fxq, nan=0.0)
+        if torch.isnan(fmc).any():
+            warnings.warn("NaN detected in fmc (Monte-Carlo node evaluations). Clamping to 0.")
+            fmc = torch.nan_to_num(fmc, nan=0.0)
+
         Iq = (fxq @ self.wq).mean()
         Imc = fmc.mean() * (self.b - self.a)
+
+        # Guard Iq and Imc individually
+        if torch.isnan(Iq):
+            warnings.warn("Iq is NaN after computation. Setting to 0.")
+            Iq = torch.zeros_like(Iq)
+        if torch.isnan(Imc):
+            warnings.warn("Imc is NaN after computation. Setting to 0.")
+            Imc = torch.zeros_like(Imc)
+
         # interpolating
         interp = BarycentricInterpolate(self.xq, fxq)
         fip = interp(xmc)  # .to(dtype)
@@ -187,5 +205,17 @@ class UnbiasedGaussLegendreQuad(QuadRule1D):
         else:
             # Only compute Iip from fip if the while loop completed normally (no break)
             Iip = fip.mean() * (self.b - self.a)
-        # estimating integral
-        return Imc - self.gamma * (Iip - Iq)
+
+        # Final NaN guard on Iip
+        if torch.isnan(Iip):
+            warnings.warn("Iip is NaN. Setting correction to zero.")
+            Iip = Iq
+
+        result = Imc - self.gamma * (Iip - Iq)
+
+        # Ultimate fallback: if result is still NaN, return 0
+        if torch.isnan(result):
+            warnings.warn("Quadrature result is NaN. Returning 0.")
+            return torch.zeros_like(result)
+
+        return result

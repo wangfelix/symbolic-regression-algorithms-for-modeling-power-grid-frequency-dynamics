@@ -1,0 +1,103 @@
+Configuration:
+{
+  "model": "integrator",
+  "sigma": 5.0,
+  "degree": 3,
+  "lr": 0.01,
+  "tau": 0.01,
+  "epochs": 5000,
+  "chunk": 0
+}
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/Frequency_data_SK.pkl...
+Filtering for valid 5-minute chunks...
+Found 31760 valid 5-minute chunks. Using chunk 0.
+Enforcing scaling constraints for Integrator model...
+Adjusted Means: tensor([3.0060, 0.0000]), Stds: tensor([3.9342, 0.1311])
+Data Scaled. Means: tensor([3.0060, 0.0000]), Stds: tensor([3.9342, 0.1311])
+Initializing integrator...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+Starting training for 5000 epochs...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:196: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+Epoch 0: Loss = 43193.2578125
+Epoch 100: Loss = 273.4859313964844
+Epoch 200: Loss = 28.78168296813965
+Epoch 300: Loss = 17.628055572509766
+Epoch 400: Loss = 13.161906242370605
+Epoch 500: Loss = 11.919645309448242
+Epoch 600: Loss = 9.778553009033203
+Epoch 700: Loss = 8.15340518951416
+Epoch 800: Loss = 7.636773109436035
+Epoch 900: Loss = 7.3018693923950195
+Epoch 1000: Loss = 7.288646697998047
+Epoch 1100: Loss = 7.272432804107666
+Epoch 1200: Loss = 7.278814315795898
+Epoch 1300: Loss = 7.3041839599609375
+Epoch 1400: Loss = 7.373264789581299
+Epoch 1500: Loss = 7.082961559295654
+Epoch 1600: Loss = 7.225896835327148
+Epoch 1700: Loss = 7.2152533531188965
+Epoch 1800: Loss = 7.222544193267822
+Epoch 1900: Loss = 7.154501914978027
+Epoch 2000: Loss = 7.255009174346924
+Epoch 2100: Loss = 7.2924981117248535
+Epoch 2200: Loss = 7.226930141448975
+Epoch 2300: Loss = 7.208557605743408
+Epoch 2400: Loss = 7.065810680389404
+Epoch 2500: Loss = 7.221587181091309
+Epoch 2600: Loss = 38.4172477722168
+Epoch 2700: Loss = 8.865692138671875
+Epoch 2800: Loss = 8.106941223144531
+Epoch 2900: Loss = 7.548984050750732
+Epoch 3000: Loss = 7.492608070373535
+Epoch 3100: Loss = 7.553945064544678
+Epoch 3200: Loss = 7.467836380004883
+Epoch 3300: Loss = 7.333951473236084
+Epoch 3400: Loss = 7.311974048614502
+Epoch 3500: Loss = 7.324611663818359
+Epoch 3600: Loss = 7.354723930358887
+Epoch 3700: Loss = 7.372865200042725
+Epoch 3800: Loss = 7.399422645568848
+Epoch 3900: Loss = 7.334691524505615
+Epoch 4000: Loss = 7.211540222167969
+Epoch 4100: Loss = 7.429137229919434
+Epoch 4200: Loss = 7.060371398925781
+Epoch 4300: Loss = 7.2707085609436035
+Epoch 4400: Loss = 7.240129470825195
+Epoch 4500: Loss = 7.196870803833008
+Epoch 4600: Loss = 7.229109764099121
+Epoch 4700: Loss = 7.20197057723999
+Epoch 4800: Loss = 7.219217777252197
+Epoch 4900: Loss = 7.196165561676025
+
+Training Complete.
+Learned Drift Parameters (Equation terms):
+dx_0/dt = 1.00000omega
+dx_1/dt = -0.038811 + -0.02269theta + -0.00069omega + -0.10379theta^2 + 0.01938theta omega + -0.00144omega^2 + -0.02440theta^3 + 0.00545theta^2 omega + 0.00619theta omega^2 + -0.06595omega^3
+
+RMSE (original units):
+  Theta (phase): 0.058145 rad
+  Omega (freq deviation): 0.006197 rad/s
+  Combined: 0.041347
+Detailed results saved to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/results_5min/20260223_224555/model.json
+Summary appended to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/experiments_log_5min.csv
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n001
+Job ID: 3249995
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 4
+CPU Utilized: 00:01:52
+CPU Efficiency: 21.71% of 00:08:36 core-walltime
+Job Wall-clock time: 00:02:09
+Memory Utilized: 408.17 MB
+Memory Efficiency: 5.10% of 7.81 GB (1.95 GB/core)

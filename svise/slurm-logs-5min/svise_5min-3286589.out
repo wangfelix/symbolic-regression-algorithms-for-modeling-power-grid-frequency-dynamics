@@ -1,0 +1,84 @@
+Configuration:
+{
+  "model": "integrator",
+  "sigma": 60.0,
+  "degree": 2,
+  "lr": 0.001,
+  "tau": 0.1,
+  "epochs": 5000,
+  "chunk": 50
+}
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/Frequency_data_SK.pkl...
+Filtering for valid 5-minute chunks...
+Found 31760 valid 5-minute chunks. Using chunk 50.
+Enforcing scaling constraints for Integrator model...
+Adjusted Means: tensor([18.0620,  0.0000]), Stds: tensor([1.1481, 0.0383])
+Data Scaled. Means: tensor([18.0620,  0.0000]), Stds: tensor([1.1481, 0.0383])
+Initializing integrator...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+Starting training for 5000 epochs...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:196: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+Epoch 0: Loss = 425521.21875
+Epoch 100: Loss = 387051.53125
+Epoch 200: Loss = 352513.0625
+Epoch 300: Loss = 311881.28125
+Epoch 400: Loss = 264228.6875
+Epoch 500: Loss = 213130.84375
+Epoch 600: Loss = 163237.171875
+Epoch 700: Loss = 118112.4296875
+Epoch 800: Loss = 80489.0234375
+Epoch 900: Loss = 49587.77734375
+Epoch 1000: Loss = 26160.30859375
+Epoch 1100: Loss = 11027.5869140625
+Epoch 1200: Loss = 4415.7080078125
+Epoch 1300: Loss = 1909.3389892578125
+Epoch 1400: Loss = 710.4189453125
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:174: UserWarning: NaN detected in fxq (quadrature node evaluations). Clamping to 0.
+  warnings.warn("NaN detected in fxq (quadrature node evaluations). Clamping to 0.")
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:177: UserWarning: NaN detected in fmc (Monte-Carlo node evaluations). Clamping to 0.
+  warnings.warn("NaN detected in fmc (Monte-Carlo node evaluations). Clamping to 0.")
+Epoch 1433: NaN/Inf detected! Restoring checkpoint from epoch 1400. Reducing LR: 1.0e-03 -> 5.0e-04 (recovery 1/5)
+Epoch 1500: Loss = 513.5546875
+Epoch 1533: 100 stable epochs since last NaN. Resetting recovery counter.
+Epoch 1549: NaN/Inf detected! Restoring checkpoint from epoch 1500. Reducing LR: 5.0e-04 -> 2.5e-04 (recovery 1/5)
+Epoch 1600: Loss = 451.8428649902344
+Epoch 1648: NaN/Inf detected! Restoring checkpoint from epoch 1600. Reducing LR: 2.5e-04 -> 1.3e-04 (recovery 2/5)
+Epoch 1700: Loss = 423.2031555175781
+Epoch 1743: NaN/Inf detected! Restoring checkpoint from epoch 1700. Reducing LR: 1.3e-04 -> 6.3e-05 (recovery 3/5)
+Epoch 1800: Loss = 408.11444091796875
+Epoch 1828: NaN/Inf detected! Restoring checkpoint from epoch 1800. Reducing LR: 6.3e-05 -> 3.1e-05 (recovery 4/5)
+Epoch 1881: NaN/Inf detected! Restoring checkpoint from epoch 1800. Reducing LR: 3.1e-05 -> 1.6e-05 (recovery 5/5)
+Aborting training: exhausted 5 NaN recovery attempts. Model restored to last stable checkpoint (epoch 1800).
+
+Training Complete.
+Learned Drift Parameters (Equation terms):
+dx_0/dt = 1.00000omega
+dx_1/dt = -0.038331 + -0.01447theta + -0.00851omega + -0.00036theta^2 + -0.00166theta omega + -0.00070omega^2
+
+RMSE (original units):
+  Theta (phase): 0.327755 rad
+  Omega (freq deviation): 0.001114 rad/s
+  Combined: 0.231759
+Detailed results saved to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/results_5min/20260225_100601/model.json
+Summary appended to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/experiments_log_5min.csv
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n002
+Job ID: 3286589
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 4
+CPU Utilized: 00:00:44
+CPU Efficiency: 18.33% of 00:04:00 core-walltime
+Job Wall-clock time: 00:01:00
+Memory Utilized: 409.39 MB
+Memory Efficiency: 5.12% of 7.81 GB (1.95 GB/core)

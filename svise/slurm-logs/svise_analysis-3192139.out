@@ -1,0 +1,100 @@
+Configuration:
+{
+  "model": "integrator",
+  "sigma": 5.0,
+  "degree": 2,
+  "lr": 0.001,
+  "tau": 1e-10,
+  "epochs": 30000
+}
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/Frequency_data_SK.pkl...
+Filtering for valid 15-minute chunks...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/run_analysis.py:42: FutureWarning: 'T' is deprecated and will be removed in a future version, please use 'min' instead.
+  chunk_groups = data_filtered.groupby(data_filtered.index.floor('15T'))
+Found 10543 valid chunks. Using the first one.
+Enforcing scaling constraints for Integrator model...
+Adjusted Means: tensor([-6.9911,  0.0000]), Stds: tensor([6.8712, 0.0763])
+Data Scaled. Means: tensor([-6.9911,  0.0000]), Stds: tensor([6.8712, 0.0763])
+Initializing integrator...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+Starting training for 30000 epochs...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:196: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+Epoch 0: Loss = 2061079.875
+Epoch 100: Loss = 1860680.125
+Epoch 200: Loss = 1681521.375
+Epoch 300: Loss = 1520386.25
+Epoch 400: Loss = 1375120.5
+Epoch 500: Loss = 1243947.25
+Epoch 600: Loss = 1125414.5
+Epoch 700: Loss = 1018265.0
+Epoch 800: Loss = 921386.9375
+Epoch 900: Loss = 833777.25
+Epoch 1000: Loss = 754521.125
+Epoch 1100: Loss = 682788.4375
+Epoch 1200: Loss = 617851.3125
+Epoch 1300: Loss = 559099.5625
+Epoch 1400: Loss = 505948.96875
+Epoch 1500: Loss = 457842.46875
+Epoch 1600: Loss = 414293.1875
+Epoch 1700: Loss = 374878.9375
+Epoch 1800: Loss = 339225.8125
+Epoch 1900: Loss = 306985.3125
+Epoch 2000: Loss = 277826.65625
+Epoch 2100: Loss = 251447.078125
+Epoch 2200: Loss = 227573.53125
+Epoch 2300: Loss = 205959.875
+Epoch 2400: Loss = 186384.65625
+Epoch 2500: Loss = 168655.375
+Epoch 2600: Loss = 152609.921875
+Epoch 2700: Loss = 138097.515625
+Epoch 2800: Loss = 124969.5859375
+Epoch 2900: Loss = 113092.4453125
+Epoch 3000: Loss = 102345.6015625
+Epoch 3100: Loss = 92618.3359375
+Epoch 3200: Loss = 83811.6953125
+Epoch 3300: Loss = 75838.828125
+Epoch 3400: Loss = 68618.890625
+Epoch 3500: Loss = 62074.28125
+Epoch 3600: Loss = 56141.44140625
+Epoch 3700: Loss = 50780.7734375
+Epoch 3800: Loss = 45948.9453125
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:174: UserWarning: NaN detected in fxq (quadrature node evaluations). Clamping to 0.
+  warnings.warn("NaN detected in fxq (quadrature node evaluations). Clamping to 0.")
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:177: UserWarning: NaN detected in fmc (Monte-Carlo node evaluations). Clamping to 0.
+  warnings.warn("NaN detected in fmc (Monte-Carlo node evaluations). Clamping to 0.")
+Epoch 3900: Loss = nan (NaN/Inf detected, skipping update. Consecutive: 72)
+Epoch 4000: Loss = nan (NaN/Inf detected, skipping update. Consecutive: 172)
+Aborting training: 200 consecutive NaN/Inf losses.
+
+Training Complete.
+Learned Drift Parameters (Equation terms):
+dx_0/dt = 1.00000omega
+dx_1/dt = nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2
+
+RMSE (original units):
+  Theta (phase): nan rad
+  Omega (freq deviation): nan rad/s
+  Combined: nan
+Detailed results saved to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/results/20260221_173958/model.json
+Summary appended to /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/experiments_log.csv
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n001
+Job ID: 3192139
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 4
+CPU Utilized: 00:01:34
+CPU Efficiency: 20.61% of 00:07:36 core-walltime
+Job Wall-clock time: 00:01:54
+Memory Utilized: 306.68 MB
+Memory Efficiency: 3.83% of 7.81 GB (1.95 GB/core)

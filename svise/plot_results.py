@@ -349,7 +349,10 @@ def plot_results(timestamp, results_dir, data_path):
     
     eq_text = f"Model: {config.get('model', 'unknown')}\n"
     eq_text += f"Sigma: {config.get('sigma', 5)}, Degree: {config.get('degree', 2)}\n"
-    eq_text += f"Final Loss: {model_data.get('final_loss', 'N/A'):.2f}\n\n"
+    eq_text += f"LR: {config.get('lr', 'N/A')}, Tau: {config.get('tau', 'N/A')}, Epochs: {config.get('epochs', 'N/A')}\n"
+    rmse_data = model_data.get("rmse", {})
+    rmse_omega = rmse_data.get("rmse_omega", "N/A")
+    eq_text += f"Final Loss: {model_data.get('final_loss', 'N/A'):.2f}, RMSE ω: {rmse_omega}\n\n"
     eq_text += "Learned Equations:\n"
     eq_text += f"  dθ/dt = {equations[0]}\n" if len(equations) > 0 else ""
     eq_text += f"  dω/dt = {equations[1]}\n" if len(equations) > 1 else ""
