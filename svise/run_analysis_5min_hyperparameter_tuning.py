@@ -254,11 +254,11 @@ def train_single_chunk(chunk_df, hyperparams):
             mse_omega = ((x_pred[:, 1] - train_x[:, 1]) ** 2).mean()
             rmse_omega = torch.sqrt(mse_omega).item()
 
-        return rmse_omega
+        return rmse_omega, best_checkpoint['loss']
 
     except Exception as e:
         print(f"    Chunk training failed: {e}")
-        return float('nan')
+        return float('nan'), float('nan')
 
 
 # =============================================================================
@@ -266,24 +266,30 @@ def train_single_chunk(chunk_df, hyperparams):
 # =============================================================================
 
 def evaluate_hyperparams(chunks, hyperparams, verbose=True):
-    """Train on all chunks with the given hyperparams. Returns (mean_rmse, n_success, all_rmses)."""
+    """Train on all chunks with the given hyperparams. Returns (mean_rmse, mean_loss, n_success, all_rmses, all_losses)."""
     rmse_values = []
+    loss_values = []
     n_total = len(chunks)
 
     for i, chunk_df in enumerate(chunks):
-        rmse = train_single_chunk(chunk_df, hyperparams)
+        rmse, loss = train_single_chunk(chunk_df, hyperparams)
         rmse_values.append(rmse)
+        loss_values.append(loss)
 
         if verbose and (i + 1) % max(1, n_total // 10) == 0:
-            valid = [r for r in rmse_values if not np.isnan(r)]
-            running_mean = np.mean(valid) if valid else float('nan')
-            print(f"    Chunk {i+1}/{n_total}: running mean RMSE = {running_mean:.6f} ({len(valid)} valid)")
+            valid_rmse = [r for r in rmse_values if not np.isnan(r)]
+            valid_loss = [l for l in loss_values if not np.isnan(l)]
+            running_mean_rmse = np.mean(valid_rmse) if valid_rmse else float('nan')
+            running_mean_loss = np.mean(valid_loss) if valid_loss else float('nan')
+            print(f"    Chunk {i+1}/{n_total}: running mean RMSE = {running_mean_rmse:.6f}, mean Loss = {running_mean_loss:.6f} ({len(valid_rmse)} valid)")
 
     valid_rmses = [r for r in rmse_values if not np.isnan(r)]
+    valid_losses = [l for l in loss_values if not np.isnan(l)]
     mean_rmse = np.mean(valid_rmses) if valid_rmses else float('nan')
+    mean_loss = np.mean(valid_losses) if valid_losses else float('nan')
     n_success = len(valid_rmses)
 
-    return mean_rmse, n_success, rmse_values
+    return mean_rmse, mean_loss, n_success, rmse_values, loss_values
 
 
 # =============================================================================
@@ -395,9 +401,10 @@ def main():
     print(f"{'=' * 60}\n")
 
     # Results CSV
-    results_dir = os.path.join(os.path.dirname(__file__), "results_hp_tuning")
-    os.makedirs(results_dir, exist_ok=True)
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    results_base = os.path.join(os.path.dirname(__file__), "results_hp_tuning")
+    results_dir = os.path.join(results_base, f"run_{timestamp}")
+    os.makedirs(results_dir, exist_ok=True)
     csv_path = os.path.join(results_dir, f"hp_tuning_{timestamp}.csv")
 
     # Write CSV header
@@ -406,10 +413,11 @@ def main():
         writer = csv.writer(f)
         writer.writerow(
             ["Combo_Index"] + [k.title() for k in hp_keys] +
-            ["Mean_RMSE_Omega", "Num_Success", "Num_Total"]
+            ["Mean_RMSE_Omega", "Mean_Loss", "Num_Success", "Num_Total"]
         )
 
-    best_rmse = float('inf')
+    best_avg_loss = float('inf')
+    best_rmse_for_best_combo = float('nan')
     best_combo = None
     best_combo_idx = -1
 
@@ -418,9 +426,9 @@ def main():
         print(f"Combo {combo_idx + 1}/{n_combos}: {hyperparams}")
         print(f"{'=' * 60}")
 
-        mean_rmse, n_success, _ = evaluate_hyperparams(chunks, hyperparams)
+        mean_rmse, mean_loss, n_success, _, _ = evaluate_hyperparams(chunks, hyperparams)
 
-        print(f"  => Mean RMSE (omega): {mean_rmse:.6f} ({n_success}/{n_chunks} chunks succeeded)")
+        print(f"  => Mean RMSE: {mean_rmse:.6f}, Mean Loss (-ELBO): {mean_loss:.6f} ({n_success}/{n_chunks} chunks succeeded)")
 
         # Append to CSV
         with open(csv_path, 'a', newline='') as f:
@@ -434,14 +442,16 @@ def main():
                     row.append(v)
             row += [
                 f"{mean_rmse:.6f}" if not np.isnan(mean_rmse) else "nan",
+                f"{mean_loss:.6f}" if not np.isnan(mean_loss) else "nan",
                 n_success,
                 n_chunks,
             ]
             writer.writerow(row)
 
-        # Track best
-        if not np.isnan(mean_rmse) and mean_rmse < best_rmse:
-            best_rmse = mean_rmse
+        # Track best (now optimizing for ELBO, which means minimizing Mean Loss)
+        if not np.isnan(mean_loss) and mean_loss < best_avg_loss:
+            best_avg_loss = mean_loss
+            best_rmse_for_best_combo = mean_rmse
             best_combo = hyperparams.copy()
             best_combo_idx = combo_idx + 1
 
@@ -455,7 +465,8 @@ def main():
         print(f"\nBest combination (combo #{best_combo_idx}):")
         for k, v in best_combo.items():
             print(f"  {k}: {v}")
-        print(f"  Mean RMSE (omega): {best_rmse:.6f}")
+        print(f"  Mean Loss (-ELBO): {best_avg_loss:.6f}")
+        print(f"  Mean RMSE (omega): {best_rmse_for_best_combo:.6f}")
 
         # Save best result as JSON
         best_json_path = os.path.join(results_dir, f"best_hyperparams_{timestamp}.json")
@@ -463,7 +474,8 @@ def main():
             json.dump({
                 "best_hyperparams": {k: str(v) if isinstance(v, float) else v for k, v in best_combo.items()},
                 "best_hyperparams_raw": best_combo,
-                "mean_rmse_omega": best_rmse,
+                "mean_loss_negELBO": best_avg_loss,
+                "mean_rmse_omega": best_rmse_for_best_combo,
                 "combo_index": best_combo_idx,
                 "n_combos_evaluated": n_combos,
                 "total_search_space": total_grid_size,
