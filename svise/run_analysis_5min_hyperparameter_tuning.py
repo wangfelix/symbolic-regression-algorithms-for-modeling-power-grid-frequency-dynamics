@@ -59,7 +59,7 @@ def load_data(data_path, limit_interpolation=10):
     return data
 
 
-def get_valid_chunks_9_to_10(data, max_chunks=5000):
+def get_valid_chunks_9_to_10(data, max_chunks=5000, seed=42):
     """Get valid 5-minute chunks whose start time falls in the 9:00-10:00 window.
 
     A valid chunk has exactly 300 samples (1 Hz for 5 minutes) with no missing data.
@@ -83,14 +83,19 @@ def get_valid_chunks_9_to_10(data, max_chunks=5000):
         if chunk_start.hour != 9:
             continue
         valid_chunks.append(group)
-        if len(valid_chunks) >= max_chunks:
-            break
 
     if not valid_chunks:
         raise ValueError("No valid 5-minute chunks found in the 9:00-10:00 window.")
 
-    print(f"Found {len(valid_chunks)} valid 9:00-10:00 chunks (max requested: {max_chunks}).")
-    return valid_chunks
+    if len(valid_chunks) > max_chunks:
+        rng = random.Random(seed)
+        sampled_chunks = rng.sample(valid_chunks, max_chunks)
+        print(f"Found {len(valid_chunks)} total valid 9:00-10:00 chunks.")
+        print(f"Randomly sampled {max_chunks} chunks using seed {seed}.")
+        return sampled_chunks
+    else:
+        print(f"Found {len(valid_chunks)} valid 9:00-10:00 chunks (max requested: {max_chunks}).")
+        return valid_chunks
 
 
 def prepare_data(chunk_df, dt=1.0, sigma=5):
@@ -360,7 +365,7 @@ def main():
         return
 
     data = load_data(DATA_PATH)
-    chunks = get_valid_chunks_9_to_10(data, max_chunks=args.max_chunks)
+    chunks = get_valid_chunks_9_to_10(data, max_chunks=args.max_chunks, seed=args.seed)
 
     # Generate combos
     total_grid_size = 1
