@@ -29,12 +29,26 @@ def main():
     for f in csv_files:
         print(f"  {os.path.basename(f)}")
 
+    # Expected column names
+    expected_columns = [
+        "Chunk_Index", "Chunk_Start_Time", "RMSE_Omega", "RMSE_Theta",
+        "RMSE_Total", "Final_Loss", "Stopped_Epoch", "NaN_Recoveries",
+        "Eq_Theta", "Eq_Omega"
+    ]
+
     # Combine all CSVs
     dfs = []
     for f in csv_files:
-        df = pd.read_csv(f)
+        # Peek at first line to check if file has a header row
+        with open(f, 'r') as fh:
+            first_line = fh.readline().strip()
+        has_header = first_line.startswith("Chunk_Index")
+        if has_header:
+            df = pd.read_csv(f)
+        else:
+            df = pd.read_csv(f, header=None, names=expected_columns)
         dfs.append(df)
-        print(f"  {os.path.basename(f)}: {len(df)} rows")
+        print(f"  {os.path.basename(f)}: {len(df)} rows (header={'yes' if has_header else 'no'})")
 
     combined = pd.concat(dfs, ignore_index=True)
 

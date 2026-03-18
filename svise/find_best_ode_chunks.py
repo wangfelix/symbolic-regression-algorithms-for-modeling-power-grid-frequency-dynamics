@@ -274,6 +274,18 @@ def main():
     print(f"\nBest chunk for ODE simulation: Chunk {results[0]['Chunk_Index']} "
           f"({results[0]['Chunk_Start_Time']}) with Sim RMSE Total = {results[0]['Sim_RMSE_Total']:.6f}")
 
+    # Calculate and print statistics for Sim_RMSE_Omega
+    rmse_omega_all = [r["Sim_RMSE_Omega"] for r in results]
+    print(f"\n{'='*90}")
+    print("  STATISTICS FOR ODE SIMULATION RMSE OF OMEGA (across all valid non-divergent chunks)")
+    print(f"{'='*90}")
+    print(f"Mean   : {np.mean(rmse_omega_all):.6f} ({np.mean(rmse_omega_all):.2e})")
+    print(f"Std Dev: {np.std(rmse_omega_all):.6f} ({np.std(rmse_omega_all):.2e})")
+    print(f"Median : {np.median(rmse_omega_all):.6f} ({np.median(rmse_omega_all):.2e})")
+    print(f"Min    : {np.min(rmse_omega_all):.6f} ({np.min(rmse_omega_all):.2e})")
+    print(f"Max    : {np.max(rmse_omega_all):.6f} ({np.max(rmse_omega_all):.2e})")
+    print(f"{'-'*90}")
+
     # Save full results if requested
     if args.output_csv:
         results_df = pd.DataFrame(results)
