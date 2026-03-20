@@ -12,9 +12,12 @@ import numpy as np
 import re
 import os
 
+import sys
+RUN_NAME = sys.argv[1] if len(sys.argv) > 1 else "run_SLURM_3708675"
+
 # --- Paths ---
-INPUT_CSV = os.path.join(os.path.dirname(__file__), "results_5min_all_chunks", "all_chunks_combined.csv")
-OUTPUT_CSV = os.path.join(os.path.dirname(__file__), "results_5min_all_chunks", "omega_coefficient_stats.csv")
+INPUT_CSV = os.path.join(os.path.dirname(__file__), "results_5min_all_chunks", RUN_NAME, "all_chunks_combined_physical.csv")
+OUTPUT_CSV = os.path.join(os.path.dirname(__file__), "results_5min_all_chunks", RUN_NAME, "omega_coefficient_stats.csv")
 
 # --- Term order (matches the equation string order) ---
 TERM_NAMES = [
@@ -31,43 +34,56 @@ TERM_NAMES = [
 ]
 
 
+import functools
+
+try:
+    import sympy
+    from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application, convert_xor
+    _SYMPY_AVAILABLE = True
+    _SYMPY_TRANSFORMS = (standard_transformations + (implicit_multiplication_application, convert_xor))
+    _THETA, _OMEGA = sympy.symbols('theta omega')
+    _X0, _X1 = sympy.symbols('x0 x1')
+    _GLOBAL_DICT = {
+        'theta': _THETA, 'omega': _OMEGA, 'x0': _X0, 'x1': _X1,
+        'Symbol': sympy.Symbol, 'Float': sympy.Float, 'Integer': sympy.Integer,
+        'Add': sympy.Add, 'Mul': sympy.Mul, 'Pow': sympy.Pow,
+    }
+except ImportError:
+    _SYMPY_AVAILABLE = False
+
+@functools.lru_cache(maxsize=100000)
 def parse_omega_equation(eq_str):
-    """
-    Parse an Eq_Omega string and return a list of 10 coefficients
-    in the order: const, theta, omega, theta^2, theta*omega, omega^2,
-                  theta^3, theta^2*omega, theta*omega^2, omega^3.
-
-    Returns None if the equation contains NaN coefficients.
-    """
-    if not isinstance(eq_str, str):
+    if not _SYMPY_AVAILABLE:
+        print("Please install sympy: pip install sympy")
         return None
 
-    # Check for NaN equations
-    if "nan" in eq_str.lower():
+    if not isinstance(eq_str, str) or "nan" in eq_str.lower() or "bounds" in eq_str.lower() or "error" in eq_str.lower() or eq_str == "N/A":
         return None
 
-    # The equation format is:
-    #   coeff1 + coeff2*theta + coeff3*omega + coeff4*theta^2 + ...
-    # Split by " + " to get individual terms
-    # Note: coefficients can be negative, appearing as "+ -0.05687theta"
-    parts = eq_str.split(" + ")
-
-    if len(parts) != 10:
+    try:
+        expr = parse_expr(eq_str, transformations=_SYMPY_TRANSFORMS, global_dict=_GLOBAL_DICT)
+        expr = sympy.expand(expr)
+    except Exception:
         return None
-
-    coefficients = []
-    for part in parts:
-        part = part.strip()
-        # Extract the numeric coefficient from the term
-        # The coefficient is at the beginning of each term, before any variable name
-        # Use regex to extract the leading number (including sign and decimal)
-        match = re.match(r'^([+-]?\d+\.?\d*)', part)
-        if match:
-            coefficients.append(float(match.group(1)))
-        else:
-            return None
-
-    return coefficients
+    
+    # Safely evaluate both syntax versions (physics 'theta' vs abstract 'x0') natively
+    try:
+        # Standardize strictly to theta and omega internally before extracting coefficients
+        expr = expr.subs({_X0: _THETA, _X1: _OMEGA})
+        
+        c0 = float(expr.subs({_THETA: 0, _OMEGA: 0}))
+        c1 = float(expr.coeff(_THETA, 1).subs({_OMEGA: 0}))
+        c2 = float(expr.coeff(_OMEGA, 1).subs({_THETA: 0}))
+        c3 = float(expr.coeff(_THETA, 2).subs({_OMEGA: 0}))
+        c4 = float(expr.coeff(_THETA*_OMEGA))
+        c5 = float(expr.coeff(_OMEGA, 2).subs({_THETA: 0}))
+        c6 = float(expr.coeff(_THETA, 3).subs({_OMEGA: 0}))
+        c7 = float(expr.coeff(_THETA**2 * _OMEGA))
+        c8 = float(expr.coeff(_THETA * _OMEGA**2))
+        c9 = float(expr.coeff(_OMEGA, 3).subs({_THETA: 0}))
+        return [c0, c1, c2, c3, c4, c5, c6, c7, c8, c9]
+    except Exception:
+        return None
 
 
 def main():
@@ -79,7 +95,8 @@ def main():
     all_coeffs = []
     skipped = 0
     for idx, row in df.iterrows():
-        coeffs = parse_omega_equation(row["Eq_Omega"])
+        # Point parser at the final mathematically transformed physical equations
+        coeffs = parse_omega_equation(row.get("Eq_Omega_Physical", row.get("Eq_Omega", "")))
         if coeffs is not None:
             all_coeffs.append(coeffs)
         else:

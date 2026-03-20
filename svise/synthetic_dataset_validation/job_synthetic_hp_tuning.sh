@@ -27,4 +27,4 @@ else
 fi
 
 # Run the hyperparameter tuning script with array
-python -u run_svise_synthetic_hp_tuning.py --n-chunks 300 --n-samples 60 --seed 42 --run-name ${RUN_NAME} --combo-index $SLURM_ARRAY_TASK_ID
+python -u run_svise_synthetic_hp_tuning.py --n-chunks 100 --n-samples 60 --seed 42 --run-name ${RUN_NAME} --combo-index $SLURM_ARRAY_TASK_ID

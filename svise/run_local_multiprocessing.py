@@ -65,15 +65,35 @@ def main():
         writer = csv.writer(f)
         writer.writerow([
             "Chunk_Index", "Chunk_Start_Time",
-            "RMSE_Omega", "RMSE_Theta", "RMSE_Total",
+            "Orig_RMSE_Omega", "Orig_RMSE_Theta", "Orig_RMSE_Total",
+            "Sim_RMSE_Omega", "Sim_RMSE_Theta", "Sim_RMSE_Total",
             "Final_Loss", "Stopped_Epoch", "NaN_Recoveries",
-            "Eq_Theta", "Eq_Omega"
+            "Eq_Theta", "Eq_Omega", "Eq_Omega_Physical"
         ])
         
         for i, (chunk_start_time, _) in enumerate(all_chunks):
             res_dict = results[i]
             eq_theta = res_dict["equations"][0] if len(res_dict["equations"]) > 0 else "N/A"
             eq_omega = res_dict["equations"][1] if len(res_dict["equations"]) > 1 else "N/A"
+
+            import numpy as np
+            eq_omega_phys = "N/A"
+            sim_om, sim_th, sim_tot = "nan", "nan", "nan"
+
+            if res_dict.get("scaling_params") is not None and "train_x" in res_dict:
+                m_x = tuple(res_dict["scaling_params"]["mean_x"])
+                s_x = tuple(res_dict["scaling_params"]["std_x"])
+                ts = res_dict["scaling_params"]["t_scale"]
+                
+                eq_omega_phys = main_script.unscale_equation(eq_omega, m_x, s_x, ts, feature_idx=1)
+                som, sth, stot = main_script.simulate_ode_rmse(
+                    eq_omega, res_dict["train_x"], 
+                    np.array(m_x), np.array(s_x), ts
+                )
+                
+                if not np.isnan(som): sim_om = f"{som:.6f}"
+                if not np.isnan(sth): sim_th = f"{sth:.6f}"
+                if not np.isnan(stot): sim_tot = f"{stot:.6f}"
 
             try:
                 rmse_om = f"{float(res_dict['rmse_omega']):.6f}"
@@ -85,8 +105,9 @@ def main():
             writer.writerow([
                 i, str(chunk_start_time),
                 rmse_om, rmse_th, rmse_tot,
+                sim_om, sim_th, sim_tot,
                 res_dict.get('final_loss', 'nan'), res_dict.get('stopped_epoch', -1), res_dict.get('nan_recoveries', 0),
-                eq_theta, eq_omega
+                eq_theta, eq_omega, eq_omega_phys
             ])
             
     print("\nCompletely finished! You are good to close the terminal.")

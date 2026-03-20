@@ -20,6 +20,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 from scipy.ndimage import gaussian_filter1d
+from scipy.integrate import odeint
 import argparse
 import csv
 import json
@@ -27,6 +28,7 @@ import datetime
 import copy
 import itertools
 import random
+import functools
 
 # Ensure svise is in path
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
@@ -50,6 +52,10 @@ HYPERPARAMETER_SPACE = {
 
 N_RANDOM_SAMPLES = 60   # 60 combos total
 N_CHUNKS_PER_COMBO = 300  # Evaluate each combo on 300 chunks
+
+# Filter threshold: skip chunks where omega has near-zero dynamics
+# (noiseless synthetic data decays to zero between dispatch sign changes)
+MIN_OMEGA_STD = 1e-4
 
 # Early stopping config
 MAX_EPOCHS = 10000
@@ -81,7 +87,11 @@ def load_synthetic_data(data_path):
         })
 
     print(f"  Total 5-min chunks: {len(chunks)}")
-    return chunks
+
+    # Filter out dead chunks (omega ≈ 0 everywhere)
+    active_chunks = [c for c in chunks if np.std(c['omega']) >= MIN_OMEGA_STD]
+    print(f"  Active chunks (omega std >= {MIN_OMEGA_STD}): {len(active_chunks)}/{len(chunks)}")
+    return active_chunks
 
 
 def prepare_synthetic_chunk(chunk, dt=1.0, sigma=0):
@@ -96,14 +106,17 @@ def prepare_synthetic_chunk(chunk, dt=1.0, sigma=0):
         t, X, omega_raw: time array, state matrix [theta, omega], raw omega
     """
     omega_raw = chunk['omega'].copy()
+    theta_raw = chunk['theta'].copy()
 
     if sigma > 0:
         omega = gaussian_filter1d(omega_raw, sigma=sigma)
+        # Recalculate theta from filtered omega
+        theta = np.cumsum(omega) * dt
     else:
         omega = omega_raw.copy()
+        # Use E-M theta directly (matches Wen's noiseless approach)
+        theta = theta_raw.copy()
 
-    # Recalculate theta from omega for consistency
-    theta = np.cumsum(omega) * dt
     t = np.arange(len(omega)) * dt
     X = np.stack([theta, omega], axis=1)
 
@@ -111,11 +124,86 @@ def prepare_synthetic_chunk(chunk, dt=1.0, sigma=0):
 
 
 # =============================================================================
+# Simulation RMSE helpers
+# =============================================================================
+
+try:
+    import sympy
+    from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application, convert_xor
+    _SYMPY_AVAILABLE = True
+    _SYMPY_TRANSFORMS = (standard_transformations + (implicit_multiplication_application, convert_xor))
+    _THETA, _OMEGA = sympy.symbols('theta omega')
+    _X0, _X1 = sympy.symbols('x0 x1')
+    _GLOBAL_DICT = {
+        'theta': _THETA, 'omega': _OMEGA, 'x0': _X0, 'x1': _X1,
+        'Symbol': sympy.Symbol, 'Float': sympy.Float, 'Integer': sympy.Integer,
+        'Add': sympy.Add, 'Mul': sympy.Mul, 'Pow': sympy.Pow,
+    }
+except ImportError:
+    _SYMPY_AVAILABLE = False
+
+
+@functools.lru_cache(maxsize=100000)
+def extract_coeffs_from_eq(eq_str):
+    if not _SYMPY_AVAILABLE or not isinstance(eq_str, str) or "nan" in eq_str.lower() or "error" in eq_str.lower() or eq_str == "N/A":
+        return None
+    try:
+        expr = parse_expr(eq_str, transformations=_SYMPY_TRANSFORMS, global_dict=_GLOBAL_DICT)
+        expr = sympy.expand(expr)
+        expr = expr.subs({_X0: _THETA, _X1: _OMEGA})
+
+        c0 = float(expr.subs({_THETA: 0, _OMEGA: 0}))
+        c1 = float(expr.coeff(_THETA, 1).subs({_OMEGA: 0}))
+        c2 = float(expr.coeff(_OMEGA, 1).subs({_THETA: 0}))
+        c3 = float(expr.coeff(_THETA, 2).subs({_OMEGA: 0}))
+        c4 = float(expr.coeff(_THETA*_OMEGA))
+        c5 = float(expr.coeff(_OMEGA, 2).subs({_THETA: 0}))
+        c6 = float(expr.coeff(_THETA, 3).subs({_OMEGA: 0}))
+        c7 = float(expr.coeff(_THETA**2 * _OMEGA))
+        c8 = float(expr.coeff(_THETA * _OMEGA**2))
+        c9 = float(expr.coeff(_OMEGA, 3).subs({_THETA: 0}))
+        return [c0, c1, c2, c3, c4, c5, c6, c7, c8, c9]
+    except Exception:
+        return None
+
+
+def simulate_ode_rmse(eq_str, train_x, mean_x, std_x, t_scale=30.0, dt=1.0):
+    c = extract_coeffs_from_eq(eq_str)
+    if c is None:
+        return np.nan
+
+    t = np.arange(len(train_x)) * dt
+    x0_scaled = (train_x[0] - mean_x) / std_x
+    t_scaled = t / t_scale
+
+    def drift(state, t_):
+        th, om = state
+        domega = (c[0] + c[1]*th + c[2]*om + c[3]*th**2 + c[4]*th*om + c[5]*om**2
+                  + c[6]*th**3 + c[7]*th**2*om + c[8]*th*om**2 + c[9]*om**3)
+        return [om, domega]
+
+    try:
+        sol_scaled = odeint(drift, x0_scaled, t_scaled, full_output=False)
+        sol = sol_scaled * std_x + mean_x
+
+        if np.any(np.isnan(sol)) or np.any(np.isinf(sol)):
+            return np.nan
+        if np.max(np.abs(sol[:, 1])) > 100 * np.max(np.abs(train_x[:, 1])):
+            return np.nan
+
+        rmse_om = np.sqrt(np.mean((sol[:, 1] - train_x[:, 1])**2))
+        return rmse_om
+    except Exception:
+        return np.nan
+
+
+# =============================================================================
 # Training a single chunk (same as real data pipeline)
 # =============================================================================
 
 def train_single_chunk(chunk, hyperparams):
-    """Train one SVISE model on one synthetic chunk."""
+    """Train one SVISE model on one synthetic chunk.
+    Returns (state_rmse, sim_rmse, loss)."""
     DT = 1.0
     sigma = hyperparams["sigma"]
     model_type = hyperparams["model"]
@@ -227,18 +315,31 @@ def train_single_chunk(chunk, hyperparams):
         model.load_state_dict(copy.deepcopy(best_checkpoint['model']))
         model.sde_prior.resample_weights()
 
-        # Calculate RMSE (omega only)
+        # State estimation RMSE (omega only)
         with torch.no_grad():
             x_pred_scaled = model.marginal_sde.mean(train_t_scaled)
             x_pred = x_pred_scaled * std_x + mean_x
             mse_omega = ((x_pred[:, 1] - train_x[:, 1]) ** 2).mean()
             rmse_omega = torch.sqrt(mse_omega).item()
 
-        return rmse_omega, best_checkpoint['loss']
+        # Simulation RMSE (forward ODE from recovered equation)
+        sim_rmse = np.nan
+        try:
+            eq_strs = model.sde_prior.get_feature_names()
+            eq_omega = eq_strs[1] if len(eq_strs) > 1 else None
+            if eq_omega:
+                sim_rmse = simulate_ode_rmse(
+                    eq_omega, X_np,
+                    mean_x.numpy(), std_x.numpy(), t_scale
+                )
+        except Exception:
+            pass
+
+        return rmse_omega, sim_rmse, best_checkpoint['loss']
 
     except Exception as e:
         print(f"    Chunk training failed: {e}")
-        return float('nan'), float('nan')
+        return float('nan'), float('nan'), float('nan')
 
 
 # =============================================================================
@@ -246,8 +347,9 @@ def train_single_chunk(chunk, hyperparams):
 # =============================================================================
 
 def evaluate_hyperparams(chunks, hyperparams, verbose=True):
-    """Train on chunks with given hyperparams. Returns (mean_rmse, mean_loss, n_success)."""
+    """Train on chunks with given hyperparams. Returns (mean_rmse, mean_sim_rmse, mean_loss, n_success)."""
     rmse_values = []
+    sim_rmse_values = []
     loss_values = []
     n_total = len(chunks)
 
@@ -255,17 +357,21 @@ def evaluate_hyperparams(chunks, hyperparams, verbose=True):
         if verbose and (i % 50 == 0 or i == n_total - 1):
             print(f"    -> Chunk {i+1}/{n_total}...")
 
-        rmse, loss = train_single_chunk(chunk, hyperparams)
+        rmse, sim_rmse, loss = train_single_chunk(chunk, hyperparams)
         rmse_values.append(rmse)
+        sim_rmse_values.append(sim_rmse)
         loss_values.append(loss)
 
-    valid_rmses = [r for r in rmse_values if not np.isnan(r)]
-    valid_losses = [l for l in loss_values if not np.isnan(l)]
+    valid_rmses = [r for r in rmse_values if np.isfinite(r)]
+    valid_sim_rmses = [r for r in sim_rmse_values if np.isfinite(r)]
+    valid_losses = [l for l in loss_values if np.isfinite(l)]
     mean_rmse = np.mean(valid_rmses) if valid_rmses else float('nan')
+    mean_sim_rmse = np.mean(valid_sim_rmses) if valid_sim_rmses else float('nan')
     mean_loss = np.mean(valid_losses) if valid_losses else float('nan')
     n_success = len(valid_rmses)
+    n_sim_success = len(valid_sim_rmses)
 
-    return mean_rmse, mean_loss, n_success, rmse_values, loss_values
+    return mean_rmse, mean_sim_rmse, mean_loss, n_success, n_sim_success
 
 
 # =============================================================================
@@ -398,11 +504,13 @@ def main():
         writer = csv.writer(f)
         writer.writerow(
             ["Combo_Index"] + [k.title() for k in hp_keys] +
-            ["Mean_RMSE_Omega", "Mean_Loss", "Num_Success", "Num_Total"]
+            ["Mean_RMSE_Omega", "Mean_Sim_RMSE_Omega", "Mean_Loss",
+             "Num_Success", "Num_Sim_Success", "Num_Total"]
         )
 
     best_avg_loss = float('inf')
     best_rmse_for_best_combo = float('nan')
+    best_sim_rmse_for_best_combo = float('nan')
     best_combo = None
     best_combo_idx = -1
 
@@ -414,9 +522,10 @@ def main():
         print(f"Combo {combo_idx + 1}/{n_combos}: {hyperparams}")
         print(f"{'=' * 60}")
 
-        mean_rmse, mean_loss, n_success, _, _ = evaluate_hyperparams(chunks, hyperparams)
+        mean_rmse, mean_sim_rmse, mean_loss, n_success, n_sim_success = evaluate_hyperparams(chunks, hyperparams)
 
-        print(f"  => Mean RMSE: {mean_rmse:.6f}, Mean Loss (-ELBO): {mean_loss:.6f} ({n_success}/{n_chunks} succeeded)")
+        print(f"  => RMSE (GP): {mean_rmse:.6f}, RMSE (Sim): {mean_sim_rmse:.6f}, "
+              f"Loss: {mean_loss:.6f} ({n_success}/{n_chunks} GP, {n_sim_success}/{n_chunks} Sim)")
 
         # Append to CSV
         with open(csv_path, 'a', newline='') as f:
@@ -430,8 +539,10 @@ def main():
                     row.append(v)
             row += [
                 f"{mean_rmse:.6f}" if not np.isnan(mean_rmse) else "nan",
+                f"{mean_sim_rmse:.6f}" if not np.isnan(mean_sim_rmse) else "nan",
                 f"{mean_loss:.6f}" if not np.isnan(mean_loss) else "nan",
                 n_success,
+                n_sim_success,
                 n_chunks,
             ]
             writer.writerow(row)
@@ -439,6 +550,7 @@ def main():
         if not np.isnan(mean_loss) and mean_loss < best_avg_loss:
             best_avg_loss = mean_loss
             best_rmse_for_best_combo = mean_rmse
+            best_sim_rmse_for_best_combo = mean_sim_rmse
             best_combo = hyperparams.copy()
             best_combo_idx = combo_idx + 1
 
@@ -453,7 +565,8 @@ def main():
         for k, v in best_combo.items():
             print(f"  {k}: {v}")
         print(f"  Mean Loss (-ELBO): {best_avg_loss:.6f}")
-        print(f"  Mean RMSE (omega): {best_rmse_for_best_combo:.6f}")
+        print(f"  Mean RMSE omega (GP):  {best_rmse_for_best_combo:.6f}")
+        print(f"  Mean RMSE omega (Sim): {best_sim_rmse_for_best_combo:.6f}")
 
         if args.combo_index is not None:
             best_json_path = os.path.join(results_dir, f"combo_{args.combo_index:03d}.json")
@@ -466,6 +579,7 @@ def main():
                 "best_hyperparams_raw": best_combo,
                 "mean_loss_negELBO": best_avg_loss,
                 "mean_rmse_omega": best_rmse_for_best_combo,
+                "mean_sim_rmse_omega": best_sim_rmse_for_best_combo,
                 "combo_index": best_combo_idx,
                 "n_combos_evaluated": n_combos,
                 "total_search_space": total_grid_size,

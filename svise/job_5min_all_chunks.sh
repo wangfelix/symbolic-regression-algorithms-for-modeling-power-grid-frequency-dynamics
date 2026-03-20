@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=svise_all
-#SBATCH --time=48:00:00
+#SBATCH --time=72:00:00
 #SBATCH --partition=cpu
 #SBATCH --output=./slurm-logs-5min-all-chunks/%x-%A_%a.out
 #SBATCH --mail-type=ALL

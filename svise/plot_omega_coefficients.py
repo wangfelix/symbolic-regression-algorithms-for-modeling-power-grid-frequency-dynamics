@@ -24,11 +24,18 @@ matplotlib.rcParams.update({
     "figure.dpi": 150,
 })
 
+import sys
+RUN_NAME = sys.argv[1] if len(sys.argv) > 1 else "run_SLURM_3708675"
+
 # --- Paths ---
 SCRIPT_DIR = os.path.dirname(__file__)
-RESULTS_DIR = os.path.join(SCRIPT_DIR, "results_5min_all_chunks")
+RESULTS_DIR = os.path.join(SCRIPT_DIR, "results_5min_all_chunks", RUN_NAME)
+if not os.path.exists(RESULTS_DIR):
+    RESULTS_DIR = os.path.join(SCRIPT_DIR, "results_5min_all_chunks")
+
 INPUT_CSV = os.path.join(RESULTS_DIR, "omega_coefficient_stats.csv")
-OUTPUT_PNG = os.path.join(RESULTS_DIR, "omega_coefficient_importance.png")
+OUTPUT_PNG_LOG = os.path.join(RESULTS_DIR, "omega_coefficient_importance_log.png")
+OUTPUT_PNG_LIN = os.path.join(RESULTS_DIR, "omega_coefficient_importance_linear.png")
 
 # --- Term display labels (using Unicode for Greek letters) ---
 TERM_KEYS = [
@@ -54,7 +61,7 @@ def load_stats(csv_path):
     return np.array(means), np.array(stds)
 
 
-def plot_coefficients(models, output_path):
+def plot_coefficients(models, output_path, use_log=True):
     """
     Plot coefficient importance for one or more models.
 
@@ -64,6 +71,8 @@ def plot_coefficients(models, output_path):
         Each dict has keys: 'name', 'means', 'stds', 'color', 'marker'
     output_path : str
         Path to save the figure.
+    use_log : bool
+        Whether to use logarithmic scale
     """
     n_terms = len(TERM_LABELS)
     n_models = len(models)
@@ -81,13 +90,23 @@ def plot_coefficients(models, output_path):
         means = model["means"]
         stds = model["stds"]
 
-        # Clamp lower error bar so it doesn't go below zero on log scale
-        lower_err = np.where(means - stds > 0, stds, means - 1e-10)
-        upper_err = stds
+        if use_log:
+            # Clamp lower error bar so it doesn't go below zero on log scale
+            # Also mathematically absolutely guard against negative error lengths if 'means' identically equals 0
+            lower_err = np.where(means - stds > 0, stds, means - 1e-10)
+            lower_err = np.maximum(0, lower_err)
+            upper_err = stds
+            
+            # Guard the scatter plots from attempting to draw absolute zero on Log scales safely
+            safe_means = np.maximum(1e-14, means)
+        else:
+            lower_err = stds
+            upper_err = stds
+            safe_means = means
 
         ax.errorbar(
             x + offsets[i],
-            means,
+            safe_means,
             yerr=[lower_err, upper_err],
             fmt="none",
             ecolor=model["color"],
@@ -97,7 +116,7 @@ def plot_coefficients(models, output_path):
         )
         ax.scatter(
             x + offsets[i],
-            means,
+            safe_means,
             color=model["color"],
             marker=model["marker"],
             s=80,
@@ -107,7 +126,9 @@ def plot_coefficients(models, output_path):
             linewidths=0.5,
         )
 
-    ax.set_yscale("log")
+    if use_log:
+        ax.set_yscale("log")
+        
     ax.set_xticks(x)
     ax.set_xticklabels(TERM_LABELS)
     ax.set_xlabel("Feature Candidates")
@@ -127,6 +148,14 @@ def main():
     # --- Load SVISE model stats ---
     means, stds = load_stats(INPUT_CSV)
 
+    global TERM_KEYS, TERM_LABELS
+    # Dynamically strip identical 0.0 cubic terms if strictly quadratic equations arose
+    if np.all(means[6:] == 0.0) and np.all(stds[6:] == 0.0):
+        means = means[:6]
+        stds = stds[:6]
+        TERM_KEYS = TERM_KEYS[:6]
+        TERM_LABELS = TERM_LABELS[:6]
+
     models = [
         {
             "name": "SVISE",
@@ -137,7 +166,8 @@ def main():
         },
     ]
 
-    plot_coefficients(models, OUTPUT_PNG)
+    plot_coefficients(models, OUTPUT_PNG_LOG, use_log=True)
+    plot_coefficients(models, OUTPUT_PNG_LIN, use_log=False)
 
 
 if __name__ == "__main__":

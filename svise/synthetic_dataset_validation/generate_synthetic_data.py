@@ -34,7 +34,7 @@ T_FINAL = 900 * 96 * 30    # 30 days in seconds (= 2,592,000)
 SEED = 42
 TREND = 1                  # Boolean-like: 1 = de-trend before KM, 0 = don't
 
-# KM analysis parameters (same as Wen)
+# KM analysis parameters
 BW_DRIFT = 0.1
 BW_DIFF = 0.1
 DIST_DRIFT = 500

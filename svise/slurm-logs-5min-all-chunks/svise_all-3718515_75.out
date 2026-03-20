@@ -1,0 +1,47 @@
+Array task 75: processing chunks 16500 to 16719
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/South_Korea_2024-08-15_2025-08-31_1s.parquet...
+Finding all valid 5-minute chunks in the dataset...
+Found 107059 valid 5-minute chunks in total.
+
+============================================================
+SVISE FINAL EVALUATION — ALL CHUNKS
+============================================================
+Hyperparameters: {
+  "model": "integrator",
+  "sigma": 0,
+  "degree": 3,
+  "tau": 0.5,
+  "lr": 0.001,
+  "n_tau": 200,
+  "measurement_noise": 0.0001,
+  "n_reparam_samples": 15
+}
+Total valid chunks in dataset: 107059
+Processing chunk range: [16500, 16719] (220 chunks)
+Early stopping: patience=300, max_epochs=10000
+============================================================
+
+
+--- Chunk 16500 (1/220) | Start: 2024-10-16 07:05:00 ---
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:196: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+    RMSE omega (GP): 0.004808 | RMSE omega (Sim): 0.040358
+    Loss: 49.5435 | Epoch: 9999
+    Eq omega: -0.021651 + -0.00453theta + 0.01273omega + -0.00201theta^2 + 0.00073theta omega + -0.00424omega^2 + -0.00082theta^3 + 0.00001theta^2 omega + 0.00059theta omega^2 + -0.00372omega^3
+    Eq omega Phys: -0.051431*omega**3 + 0.000272*omega**2*theta - 0.007809*omega**2 + 1.1e-5*omega*theta + 0.000175*omega + 2.1e-5*theta**2 - 0.000364*theta + 0.002062
+
+--- Chunk 16501 (2/220) | Start: 2024-10-16 07:10:00 ---
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/run_analysis_5min_all_chunks.py:212: ODEintWarning: Excess work done on this call (perhaps wrong Dfun type). Run with full_output = 1 to get quantitative information.
+  sol_scaled = odeint(drift, x0_scaled, t_scaled, full_output=False)
+    RMSE omega (GP): 0.002728 | RMSE omega (Sim): nan
+    Loss: 4.1582 | Epoch: 5989
+    Eq omega: 0.166151 + -0.82148theta + 0.08809omega + -0.01943theta^2 + 0.01891theta omega + 0.56549omega^2 + 0.00138theta^3 + -0.05306theta^2 omega + 0.03545theta omega^2 + 0.00237omega^3
+    Eq omega Phys: 0.013331*omega**3 + 0.006647*omega**2*theta + 0.208236*omega**2 - 0.000332*omega*theta**2 + 0.003927*omega*theta - 0.008636*omega - 1.4e-5*theta**2 - 0.000784*theta + 0.005124
+
+--- Chunk 16502 (3/220) | Start: 2024-10-16 07:15:00 ---

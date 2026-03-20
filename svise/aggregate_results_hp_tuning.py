@@ -27,6 +27,10 @@ def main():
     for f in csv_files:
         try:
             df = pd.read_csv(f)
+            # Securely embed the literal file identifier to inherently bypass SLURM index mapping errors
+            base = os.path.basename(f)
+            task_id_str = base.replace("hp_tuning_combo_", "").replace(".csv", "")
+            df["Task_ID"] = int(task_id_str)
             dfs.append(df)
         except Exception as e:
             print(f"Could not read {f}: {e}")
@@ -45,20 +49,37 @@ def main():
     combined_df.to_csv(master_csv_path, index=False)
     print(f"Generated master CSV at: {master_csv_path}")
 
-    # Find best model evaluating numerical Mean_Loss
-    if "Mean_Loss" in combined_df.columns:
+    # Find best model evaluating strictly empirical Mean_RMSE_Omega instead of the volatile Neural ELBO Loss
+    if "Mean_RMSE_Omega" in combined_df.columns and "Mean_Loss" in combined_df.columns:
+        combined_df["Mean_RMSE_Omega"] = pd.to_numeric(combined_df["Mean_RMSE_Omega"], errors="coerce")
         combined_df["Mean_Loss"] = pd.to_numeric(combined_df["Mean_Loss"], errors="coerce")
-        best_row = combined_df.loc[combined_df["Mean_Loss"].idxmin()]
+        
+        # CRITICAL: We must heavily filter any PyTorch Gradient Explosions (Loss < -50000)
+        # Even if the RMSE looks phenomenally small, a blown-up SDE Loss means the mathematical Equations degenerated linearly!
+        mask = (combined_df["Mean_Loss"] > -50000) & (combined_df["Mean_Loss"] < 50000)
+        
+        # Only consider chunks that reliably succeeded (e.g., > 50% success rate to avoid statistical flukes)
+        if "Num_Success" in combined_df.columns and "Num_Total" in combined_df.columns:
+            combined_df["Num_Success"] = pd.to_numeric(combined_df["Num_Success"], errors="coerce")
+            combined_df["Num_Total"] = pd.to_numeric(combined_df["Num_Total"], errors="coerce")
+            mask = mask & (combined_df["Num_Success"] > (combined_df["Num_Total"] * 0.5))
+            
+        valid_df = combined_df[mask]
+            
+        if len(valid_df) == 0:
+            valid_df = combined_df
+            
+        best_row = valid_df.loc[valid_df["Mean_RMSE_Omega"].idxmin()]
         
         print("\n" + "="*60)
-        print("BEST OVERALL HYPERPARAMETER COMBINATION (-ELBO)")
+        print("BEST OVERALL HYPERPARAMETER COMBINATION (Minimum Valid RMSE)")
         print("="*60)
         print(best_row)
         print("="*60)
         
-        # Copy the best json over
-        combo_idx = int(best_row["Combo_Index"])
-        json_path = os.path.join(results_dir, f"combo_{combo_idx:03d}.json")
+        # Copy the best json over explicitly utilizing the mapped File ID physically!
+        task_idx = int(best_row["Task_ID"])
+        json_path = os.path.join(results_dir, f"combo_{task_idx:03d}.json")
         if os.path.exists(json_path):
             best_json_path = os.path.join(results_dir, "best_overall.json")
             shutil.copy(json_path, best_json_path)
