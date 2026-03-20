@@ -35,13 +35,13 @@ from svise.sde_learning import SparsePolynomialSDE, SparsePolynomialIntegratorSD
 # =============================================================================
 BEST_HYPERPARAMS = {
     "model": "integrator",
-    "sigma": 10,
-    "degree": 3,
-    "tau": 0.5,
-    "lr": 0.001,
+    "sigma": 0,
+    "degree": 2,
+    "tau": 1e-05,
+    "lr": 0.1,
     "n_tau": 100,
-    "measurement_noise": 1e-5,
-    "n_reparam_samples": 30,
+    "measurement_noise": 0.001,
+    "n_reparam_samples": 15,
 }
 
 # Early stopping config (same as tuning)
@@ -54,7 +54,10 @@ PATIENCE = 300
 
 def load_data(data_path, limit_interpolation=10):
     print(f"Loading data from {data_path}...")
-    data = pd.read_pickle(data_path)
+    if data_path.endswith('.parquet'):
+        data = pd.read_parquet(data_path)
+    else:
+        data = pd.read_pickle(data_path)
 
     if 'QI' in data.columns:
         data.loc[:, 'freq'] = data.loc[:, 'freq'].interpolate(method='time', limit=limit_interpolation)
@@ -74,9 +77,9 @@ def get_all_valid_chunks(data):
     """
     print("Finding all valid 5-minute chunks in the dataset...")
     if 'QI' in data.columns:
-        data_filtered = data[(data['QI'] == 0) & (data['freq'].notna())].dropna()
+        data_filtered = data[(data['QI'] == 0) & (data['freq'].notna())].dropna(subset=['freq', 'QI'])
     else:
-        data_filtered = data[data['freq'].notna()].dropna()
+        data_filtered = data[data['freq'].notna()].dropna(subset=['freq'])
 
     chunk_groups = data_filtered.groupby(data_filtered.index.floor('5min'))
 
@@ -298,15 +301,23 @@ def main():
                         help="Start chunk index (inclusive, 0-indexed)")
     parser.add_argument("--end-chunk", type=int, default=-1,
                         help="End chunk index (inclusive, 0-indexed). -1 = last chunk.")
+    parser.add_argument("--run-name", type=str, default=None,
+                        help="Custom name for the run folder to aggregate array results")
     args = parser.parse_args()
 
     start_time = datetime.datetime.now()
     timestamp = start_time.strftime("%Y%m%d_%H%M%S")
 
     # Load data
-    DATA_PATH = os.path.join(os.path.dirname(__file__), "../dataset/Frequency_data_SK.pkl")
-    if not os.path.exists(DATA_PATH):
-        print(f"Error: Data file not found at {DATA_PATH}")
+    # Try parquet first (new dataset), then pickle (old dataset)
+    parquet_path = os.path.join(os.path.dirname(__file__), "../dataset/South_Korea_2024-08-15_2025-08-31_1s.parquet")
+    pickle_path = os.path.join(os.path.dirname(__file__), "../dataset/Frequency_data_SK.pkl")
+    if os.path.exists(parquet_path):
+        DATA_PATH = parquet_path
+    elif os.path.exists(pickle_path):
+        DATA_PATH = pickle_path
+    else:
+        print(f"Error: Data file not found. Tried:\n  {parquet_path}\n  {pickle_path}")
         return
 
     data = load_data(DATA_PATH)
@@ -334,7 +345,12 @@ def main():
     print(f"{'=' * 60}\n")
 
     # Output directory
-    results_dir = os.path.join(os.path.dirname(__file__), "results_5min_all_chunks")
+    results_base = os.path.join(os.path.dirname(__file__), "results_5min_all_chunks")
+    if args.run_name:
+        results_dir = os.path.join(results_base, args.run_name)
+    else:
+        results_dir = os.path.join(results_base, f"run_{timestamp}")
+
     os.makedirs(results_dir, exist_ok=True)
 
     # Per-chunk CSV (append-safe for resumability)

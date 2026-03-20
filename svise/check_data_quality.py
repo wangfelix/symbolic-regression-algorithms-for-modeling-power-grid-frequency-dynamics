@@ -23,9 +23,9 @@ def load_data(data_path, limit_interpolation=10):
 def get_valid_chunk(data):
     print("Filtering for valid 15-minute chunks...")
     if 'QI' in data.columns:
-        data_filtered = data[(data['QI'] == 0) & (data['freq'].notna())].dropna()
+        data_filtered = data[(data['QI'] == 0) & (data['freq'].notna())].dropna(subset=['freq', 'QI'])
     else:
-        data_filtered = data[data['freq'].notna()].dropna()
+        data_filtered = data[data['freq'].notna()].dropna(subset=['freq'])
 
     # Group by 15min
     chunk_groups = data_filtered.groupby(data_filtered.index.floor('15T'))

@@ -5,13 +5,13 @@
 #SBATCH --output=./slurm-logs-5min-all-chunks/%x-%A_%a.out
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=bj2362@partner.kit.edu
-#SBATCH -c 70
-#SBATCH --mem=32G
-#SBATCH --array=0-31
+#SBATCH -c 4
+#SBATCH --mem=12G
+#SBATCH --array=0-499
 
 # ---- Configuration ----
-TOTAL_CHUNKS=31760
-N_JOBS=32  # Must match --array range (0 to N_JOBS-1)
+TOTAL_CHUNKS=110000
+N_JOBS=500  # Must match --array range (0 to N_JOBS-1)
 
 # Calculate chunk range for this array task
 CHUNKS_PER_JOB=$(( (TOTAL_CHUNKS + N_JOBS - 1) / N_JOBS ))  # ceiling division
@@ -31,5 +31,12 @@ source /home/ka/ka_iai/ka_bj2362/dsr/.venv_svise/bin/activate
 # Change to the project directory
 cd /home/ka/ka_iai/ka_bj2362/dsr/svise
 
+# Use the base slurm job ID to force all jobs into the same directory
+if [ -z "$SLURM_ARRAY_JOB_ID" ]; then
+    RUN_NAME="run_local_$(date +%Y%m%d_%H%M%S)"
+else
+    RUN_NAME="run_SLURM_${SLURM_ARRAY_JOB_ID}"
+fi
+
 # Run the evaluation script for this chunk range
-python -u run_analysis_5min_all_chunks.py --start-chunk $START_CHUNK --end-chunk $END_CHUNK
+python -u run_analysis_5min_all_chunks.py --start-chunk $START_CHUNK --end-chunk $END_CHUNK --run-name ${RUN_NAME}

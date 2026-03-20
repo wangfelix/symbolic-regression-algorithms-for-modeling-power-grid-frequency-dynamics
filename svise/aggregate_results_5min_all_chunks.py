@@ -13,10 +13,14 @@ import pandas as pd
 import numpy as np
 import json
 import datetime
-
+import argparse
 
 def main():
-    results_dir = os.path.join(os.path.dirname(__file__), "results_5min_all_chunks")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--run-name", type=str, required=True, help="Folder name inside results_5min_all_chunks, e.g. run_SLURM_12345")
+    args = parser.parse_args()
+
+    results_dir = os.path.join(os.path.dirname(__file__), "results_5min_all_chunks", args.run_name)
 
     # Find all per-chunk CSV files
     csv_files = sorted(glob.glob(os.path.join(results_dir, "chunks_*.csv")))

@@ -39,9 +39,9 @@ def load_data(data_path, limit_interpolation=10):
 def get_valid_chunk_5min(data, chunk_index=0):
     """Get a valid 5-minute chunk by index."""
     if 'QI' in data.columns:
-        data_filtered = data[(data['QI'] == 0) & (data['freq'].notna())].dropna()
+        data_filtered = data[(data['QI'] == 0) & (data['freq'].notna())].dropna(subset=['freq', 'QI'])
     else:
-        data_filtered = data[data['freq'].notna()].dropna()
+        data_filtered = data[data['freq'].notna()].dropna(subset=['freq'])
     
     chunk_groups = data_filtered.groupby(data_filtered.index.floor('5min'))
     valid_chunks = [group for _, group in chunk_groups if len(group) == 300]

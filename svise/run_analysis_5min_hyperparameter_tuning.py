@@ -24,8 +24,8 @@ from svise.sde_learning import SparsePolynomialSDE, SparsePolynomialIntegratorSD
 # =============================================================================
 HYPERPARAMETER_SPACE = {
     "model": ["integrator"],
-    "sigma": [0, 5, 10],
-    "degree": [2, 3],
+    "sigma": [0],  # Changed from [0, 5, 10] to only use raw data for now. Re-add [5, 10] to explore smoothing again.
+    "degree": [1, 2, 3],
     "tau": [5e-1, 1e-1, 1e-2, 1e-3, 1e-5],
     "lr": [1e-1, 1e-2, 1e-3, 1e-4, 1e-5],
     "n_tau": [50, 100, 200],
@@ -47,7 +47,10 @@ PATIENCE = 300  # Stop if loss hasn't improved for this many epochs
 
 def load_data(data_path, limit_interpolation=10):
     print(f"Loading data from {data_path}...")
-    data = pd.read_pickle(data_path)
+    if data_path.endswith('.parquet'):
+        data = pd.read_parquet(data_path)
+    else:
+        data = pd.read_pickle(data_path)
 
     if 'QI' in data.columns:
         data.loc[:,'freq'] = data.loc[:,'freq'].interpolate(method='time', limit=limit_interpolation)
@@ -67,9 +70,9 @@ def get_valid_chunks_9_to_10(data, max_chunks=5000, seed=42):
     """
     print("Filtering for valid 5-minute chunks in the 9:00-10:00 window...")
     if 'QI' in data.columns:
-        data_filtered = data[(data['QI'] == 0) & (data['freq'].notna())].dropna()
+        data_filtered = data[(data['QI'] == 0) & (data['freq'].notna())].dropna(subset=['freq', 'QI'])
     else:
-        data_filtered = data[data['freq'].notna()].dropna()
+        data_filtered = data[data['freq'].notna()].dropna(subset=['freq'])
 
     # Group by 5min intervals
     chunk_groups = data_filtered.groupby(data_filtered.index.floor('5min'))
@@ -272,16 +275,19 @@ def evaluate_hyperparams(chunks, hyperparams, verbose=True):
     n_total = len(chunks)
 
     for i, chunk_df in enumerate(chunks):
+        if verbose:
+            print(f"    -> Starting chunk {i+1}/{n_total}...")
+            
         rmse, loss = train_single_chunk(chunk_df, hyperparams)
         rmse_values.append(rmse)
         loss_values.append(loss)
 
-        if verbose and (i + 1) % max(1, n_total // 10) == 0:
+        if verbose:
             valid_rmse = [r for r in rmse_values if not np.isnan(r)]
             valid_loss = [l for l in loss_values if not np.isnan(l)]
             running_mean_rmse = np.mean(valid_rmse) if valid_rmse else float('nan')
             running_mean_loss = np.mean(valid_loss) if valid_loss else float('nan')
-            print(f"    Chunk {i+1}/{n_total}: running mean RMSE = {running_mean_rmse:.6f}, mean Loss = {running_mean_loss:.6f} ({len(valid_rmse)} valid)")
+            print(f"       Finished chunk {i+1}/{n_total} | RMSE: {rmse:.6f} | Loss: {loss:.4f} | Running Mean Loss: {running_mean_loss:.6f}")
 
     valid_rmses = [r for r in rmse_values if not np.isnan(r)]
     valid_losses = [l for l in loss_values if not np.isnan(l)]
@@ -347,6 +353,10 @@ def main():
                         help="Random seed for reproducible sampling (default: 42)")
     parser.add_argument("--dry-run", action="store_true",
                         help="Quick sanity check: use only 2 chunks, 5 epochs, and 3 combos")
+    parser.add_argument("--combo-index", type=int, default=None,
+                        help="Specific combo index to evaluate (for slurm arrays)")
+    parser.add_argument("--run-name", type=str, default=None,
+                        help="Custom name for the run folder to aggregate array results")
     args = parser.parse_args()
 
     # Dry-run overrides
@@ -365,7 +375,7 @@ def main():
         n_samples = 3
 
     # Load data once
-    DATA_PATH = os.path.join(os.path.dirname(__file__), "../dataset/Frequency_data_SK.pkl")
+    DATA_PATH = os.path.join(os.path.dirname(__file__), "../dataset/South_Korea_2024-08-15_2025-08-31_1s.parquet")
     if not os.path.exists(DATA_PATH):
         print(f"Error: Data file not found at {DATA_PATH}")
         return
@@ -402,10 +412,17 @@ def main():
 
     # Results CSV
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    results_base = os.path.join(os.path.dirname(__file__), "results_hp_tuning")
-    results_dir = os.path.join(results_base, f"run_{timestamp}")
+    if args.run_name:
+        results_dir = os.path.join(os.path.dirname(__file__), "results_hp_tuning", args.run_name)
+    else:
+        results_dir = os.path.join(os.path.dirname(__file__), "results_hp_tuning", f"run_{timestamp}")
+
     os.makedirs(results_dir, exist_ok=True)
-    csv_path = os.path.join(results_dir, f"hp_tuning_{timestamp}.csv")
+
+    if args.combo_index is not None:
+        csv_path = os.path.join(results_dir, f"hp_tuning_combo_{args.combo_index:03d}.csv")
+    else:
+        csv_path = os.path.join(results_dir, f"hp_tuning_{timestamp}.csv")
 
     # Write CSV header
     hp_keys = list(HYPERPARAMETER_SPACE.keys())
@@ -422,6 +439,9 @@ def main():
     best_combo_idx = -1
 
     for combo_idx, hyperparams in enumerate(all_combos):
+        if args.combo_index is not None and combo_idx != args.combo_index:
+            continue
+
         print(f"\n{'=' * 60}")
         print(f"Combo {combo_idx + 1}/{n_combos}: {hyperparams}")
         print(f"{'=' * 60}")
@@ -469,7 +489,12 @@ def main():
         print(f"  Mean RMSE (omega): {best_rmse_for_best_combo:.6f}")
 
         # Save best result as JSON
-        best_json_path = os.path.join(results_dir, f"best_hyperparams_{timestamp}.json")
+        if args.combo_index is not None:
+            best_json_path = os.path.join(results_dir, f"combo_{args.combo_index:03d}.json")
+        else:
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            best_json_path = os.path.join(results_dir, f"best_hyperparams_{timestamp}.json")
+            
         with open(best_json_path, 'w') as f:
             json.dump({
                 "best_hyperparams": {k: str(v) if isinstance(v, float) else v for k, v in best_combo.items()},
