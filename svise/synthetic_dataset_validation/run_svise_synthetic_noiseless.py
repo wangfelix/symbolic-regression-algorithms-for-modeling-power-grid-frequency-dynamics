@@ -41,18 +41,21 @@ from svise.sde_learning import SparsePolynomialSDE, SparsePolynomialIntegratorSD
 BEST_HYPERPARAMS = {
     "model": "integrator",
     "sigma": 0,
-    "degree": 2,
-    "tau": 1e-05,
-    "lr": 0.1,
+    "degree": 1,
+    "tau": 0.01,
+    "lr": 0.001,
     "n_tau": 100,
-    "measurement_noise": 0.001,
-    "n_reparam_samples": 15,
+    "measurement_noise": 1e-05,
+    "n_reparam_samples": 30,
 }
+# Source: HP tuning run_SLURM_3718590, combo 56
+# best_sim_rmse_capped: sim_rmse=0.002119, gp_rmse=0.000479, loss=25.58
 
 # Filter threshold for dead chunks
 MIN_OMEGA_STD = 1e-4
 
 # Early stopping config
+
 MAX_EPOCHS = 10000
 PATIENCE = 300
 

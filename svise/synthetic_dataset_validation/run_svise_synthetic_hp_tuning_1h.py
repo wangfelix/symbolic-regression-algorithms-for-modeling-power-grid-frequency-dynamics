@@ -1,0 +1,601 @@
+"""
+SVISE Hyperparameter Tuning on Synthetic Noiseless Dataset (1-Hour Chunks).
+
+Same search space as 5-min HP tuning, but uses 1-hour (3600 sample) chunks
+to match Wen et al.'s original chunk size.
+
+Designed for SLURM array jobs: 60 tasks, 1 combo per task.
+
+Usage:
+    # Single combo (SLURM array task):
+    python run_svise_synthetic_hp_tuning_1h.py --combo-index 0 --run-name run_SLURM_12345
+
+    # Dry run:
+    python run_svise_synthetic_hp_tuning_1h.py --dry-run
+"""
+import os
+import sys
+import pandas as pd
+import numpy as np
+import torch
+import torch.nn as nn
+from scipy.ndimage import gaussian_filter1d
+from scipy.integrate import odeint
+import argparse
+import csv
+import json
+import datetime
+import copy
+import itertools
+import random
+import functools
+
+# Ensure svise is in path
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+
+import svise
+from svise.sde_learning import SparsePolynomialSDE, SparsePolynomialIntegratorSDE
+
+# =============================================================================
+# HYPERPARAMETER SEARCH SPACE
+# =============================================================================
+HYPERPARAMETER_SPACE = {
+    "model": ["integrator"],
+    "sigma": [0],  # No filtering for noiseless synthetic data
+    "degree": [1, 2, 3],
+    "tau": [5e-1, 1e-1, 1e-2, 1e-3, 1e-5],
+    "lr": [1e-1, 1e-2, 1e-3, 1e-4, 1e-5],
+    "n_tau": [50, 100, 200],
+    "measurement_noise": [1e-3, 1e-4, 1e-5],
+    "n_reparam_samples": [15, 30, 50],
+}
+
+N_RANDOM_SAMPLES = 60   # 60 combos total
+N_CHUNKS_PER_COMBO = 100  # Evaluate each combo on 100 chunks (239 active total)
+
+# Chunk configuration
+CHUNK_SIZE = 3600        # 1 hour at 1s resolution
+T_SCALE = 360.0          # Time scaling: 3600/360 = 10
+
+# Filter threshold: skip chunks where omega has near-zero dynamics
+MIN_OMEGA_STD = 1e-4
+
+# Early stopping config
+MAX_EPOCHS = 10000
+PATIENCE = 300
+
+
+# =============================================================================
+# Data Loading for Synthetic Data (1-hour chunks)
+# =============================================================================
+
+def load_synthetic_data(data_path):
+    """Load synthetic data and chunk into 1-hour windows."""
+    print(f"Loading synthetic data from {data_path}...")
+    df = pd.read_pickle(data_path)
+    omega = df['omega'].values
+    theta = df['theta'].values
+    print(f"  Total samples: {len(omega)}")
+
+    n_chunks = len(omega) // CHUNK_SIZE
+    chunks = []
+    for i in range(n_chunks):
+        start = i * CHUNK_SIZE
+        end = start + CHUNK_SIZE
+        chunks.append({
+            'omega': omega[start:end],
+            'theta': theta[start:end],
+        })
+
+    print(f"  Total 1-hour chunks: {len(chunks)}")
+
+    # Filter out dead chunks (omega ~ 0 everywhere)
+    active_chunks = [c for c in chunks if np.std(c['omega']) >= MIN_OMEGA_STD]
+    print(f"  Active chunks (omega std >= {MIN_OMEGA_STD}): {len(active_chunks)}/{len(chunks)}")
+    return active_chunks
+
+
+def prepare_synthetic_chunk(chunk, dt=1.0, sigma=0):
+    """Prepare a synthetic chunk for SVISE training."""
+    omega_raw = chunk['omega'].copy()
+    theta_raw = chunk['theta'].copy()
+
+    if sigma > 0:
+        omega = gaussian_filter1d(omega_raw, sigma=sigma)
+        theta = np.cumsum(omega) * dt
+    else:
+        omega = omega_raw.copy()
+        theta = theta_raw.copy()
+
+    t = np.arange(len(omega)) * dt
+    X = np.stack([theta, omega], axis=1)
+
+    return t, X, omega_raw
+
+
+# =============================================================================
+# Simulation RMSE helpers
+# =============================================================================
+
+try:
+    import sympy
+    from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application, convert_xor
+    _SYMPY_AVAILABLE = True
+    _SYMPY_TRANSFORMS = (standard_transformations + (implicit_multiplication_application, convert_xor))
+    _THETA, _OMEGA = sympy.symbols('theta omega')
+    _X0, _X1 = sympy.symbols('x0 x1')
+    _GLOBAL_DICT = {
+        'theta': _THETA, 'omega': _OMEGA, 'x0': _X0, 'x1': _X1,
+        'Symbol': sympy.Symbol, 'Float': sympy.Float, 'Integer': sympy.Integer,
+        'Add': sympy.Add, 'Mul': sympy.Mul, 'Pow': sympy.Pow,
+    }
+except ImportError:
+    _SYMPY_AVAILABLE = False
+
+
+@functools.lru_cache(maxsize=100000)
+def extract_coeffs_from_eq(eq_str):
+    if not _SYMPY_AVAILABLE or not isinstance(eq_str, str) or "nan" in eq_str.lower() or "error" in eq_str.lower() or eq_str == "N/A":
+        return None
+    try:
+        expr = parse_expr(eq_str, transformations=_SYMPY_TRANSFORMS, global_dict=_GLOBAL_DICT)
+        expr = sympy.expand(expr)
+        expr = expr.subs({_X0: _THETA, _X1: _OMEGA})
+
+        c0 = float(expr.subs({_THETA: 0, _OMEGA: 0}))
+        c1 = float(expr.coeff(_THETA, 1).subs({_OMEGA: 0}))
+        c2 = float(expr.coeff(_OMEGA, 1).subs({_THETA: 0}))
+        c3 = float(expr.coeff(_THETA, 2).subs({_OMEGA: 0}))
+        c4 = float(expr.coeff(_THETA*_OMEGA))
+        c5 = float(expr.coeff(_OMEGA, 2).subs({_THETA: 0}))
+        c6 = float(expr.coeff(_THETA, 3).subs({_OMEGA: 0}))
+        c7 = float(expr.coeff(_THETA**2 * _OMEGA))
+        c8 = float(expr.coeff(_THETA * _OMEGA**2))
+        c9 = float(expr.coeff(_OMEGA, 3).subs({_THETA: 0}))
+        return [c0, c1, c2, c3, c4, c5, c6, c7, c8, c9]
+    except Exception:
+        return None
+
+
+def simulate_ode_rmse(eq_str, train_x, mean_x, std_x, t_scale=T_SCALE, dt=1.0):
+    c = extract_coeffs_from_eq(eq_str)
+    if c is None:
+        return np.nan
+
+    t = np.arange(len(train_x)) * dt
+    x0_scaled = (train_x[0] - mean_x) / std_x
+    t_scaled = t / t_scale
+
+    def drift(state, t_):
+        th, om = state
+        domega = (c[0] + c[1]*th + c[2]*om + c[3]*th**2 + c[4]*th*om + c[5]*om**2
+                  + c[6]*th**3 + c[7]*th**2*om + c[8]*th*om**2 + c[9]*om**3)
+        return [om, domega]
+
+    try:
+        sol_scaled = odeint(drift, x0_scaled, t_scaled, full_output=False)
+        sol = sol_scaled * std_x + mean_x
+
+        if np.any(np.isnan(sol)) or np.any(np.isinf(sol)):
+            return np.nan
+        if np.max(np.abs(sol[:, 1])) > 100 * np.max(np.abs(train_x[:, 1])):
+            return np.nan
+
+        rmse_om = np.sqrt(np.mean((sol[:, 1] - train_x[:, 1])**2))
+        return rmse_om
+    except Exception:
+        return np.nan
+
+
+# =============================================================================
+# Training a single chunk
+# =============================================================================
+
+def train_single_chunk(chunk, hyperparams):
+    """Train one SVISE model on one synthetic 1-hour chunk.
+    Returns (state_rmse, sim_rmse, loss)."""
+    DT = 1.0
+    sigma = hyperparams["sigma"]
+    model_type = hyperparams["model"]
+    degree = hyperparams["degree"]
+    tau = hyperparams["tau"]
+    lr = hyperparams["lr"]
+    n_tau = hyperparams["n_tau"]
+    meas_noise_val = hyperparams["measurement_noise"]
+    n_reparam = hyperparams["n_reparam_samples"]
+
+    try:
+        t_np, X_np, _ = prepare_synthetic_chunk(chunk, dt=DT, sigma=sigma)
+
+        train_t = torch.tensor(t_np, dtype=torch.float32)
+        train_x = torch.tensor(X_np, dtype=torch.float32)
+
+        # Global Scaling
+        mean_x = train_x.mean(dim=0)
+        std_x = train_x.std(dim=0)
+        std_x[std_x < 1e-6] = 1.0
+
+        t_scale = T_SCALE
+
+        if model_type == "integrator":
+            mean_x[1] = 0.0
+            std_x[0] = std_x[1] * t_scale
+
+        train_x_scaled = (train_x - mean_x) / std_x
+
+        # Model Setup
+        d = 2
+        num_meas = 2
+        G = torch.eye(d)
+        measurement_noise = torch.tensor([meas_noise_val, meas_noise_val])
+
+        train_t_scaled = train_t / t_scale
+        t_span = (train_t_scaled[0], train_t_scaled[-1])
+
+        common_params = {
+            "d": d,
+            "t_span": t_span,
+            "degree": degree,
+            "n_reparam_samples": n_reparam,
+            "G": G,
+            "num_meas": num_meas,
+            "measurement_noise": measurement_noise,
+            "tau": tau,
+            "train_t": train_t_scaled,
+            "train_x": train_x_scaled,
+            "input_labels": ["theta", "omega"],
+        }
+
+        if model_type == "sparse":
+            model = SparsePolynomialSDE(**common_params, n_tau=n_tau)
+        elif model_type == "integrator":
+            model = SparsePolynomialIntegratorSDE(**common_params, n_tau=n_tau)
+        else:
+            return float('nan'), float('nan'), float('nan')
+
+        # Training with early stopping
+        optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+        best_loss = float('inf')
+        epochs_without_improvement = 0
+        nan_recoveries = 0
+        max_nan_recoveries = 5
+        current_lr = lr
+
+        best_checkpoint = {
+            'model': copy.deepcopy(model.state_dict()),
+            'epoch': -1,
+            'loss': float('inf'),
+        }
+
+        for epoch in range(MAX_EPOCHS):
+            optimizer.zero_grad()
+            loss = -model.elbo(train_t_scaled, train_x_scaled, beta=1.0, N=len(train_t))
+
+            if torch.isnan(loss) or torch.isinf(loss):
+                nan_recoveries += 1
+                current_lr *= 0.5
+                model.load_state_dict(copy.deepcopy(best_checkpoint['model']))
+                model.sde_prior.resample_weights()
+                optimizer = torch.optim.Adam(model.parameters(), lr=current_lr)
+                if nan_recoveries >= max_nan_recoveries:
+                    break
+                continue
+
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            optimizer.step()
+
+            current_loss = loss.item()
+
+            if current_loss < best_loss - 1e-4:
+                best_loss = current_loss
+                epochs_without_improvement = 0
+                best_checkpoint = {
+                    'model': copy.deepcopy(model.state_dict()),
+                    'epoch': epoch,
+                    'loss': current_loss,
+                }
+            else:
+                epochs_without_improvement += 1
+
+            if epochs_without_improvement >= PATIENCE:
+                break
+
+        # Restore best checkpoint
+        model.load_state_dict(copy.deepcopy(best_checkpoint['model']))
+        model.sde_prior.resample_weights()
+
+        # State estimation RMSE (omega only)
+        with torch.no_grad():
+            x_pred_scaled = model.marginal_sde.mean(train_t_scaled)
+            x_pred = x_pred_scaled * std_x + mean_x
+            mse_omega = ((x_pred[:, 1] - train_x[:, 1]) ** 2).mean()
+            rmse_omega = torch.sqrt(mse_omega).item()
+
+        # Simulation RMSE (forward ODE from recovered equation)
+        sim_rmse = np.nan
+        try:
+            eq_strs = model.sde_prior.get_feature_names()
+            eq_omega = eq_strs[1] if len(eq_strs) > 1 else None
+            if eq_omega:
+                sim_rmse = simulate_ode_rmse(
+                    eq_omega, X_np,
+                    mean_x.numpy(), std_x.numpy(), t_scale
+                )
+        except Exception:
+            pass
+
+        return rmse_omega, sim_rmse, best_checkpoint['loss']
+
+    except Exception as e:
+        print(f"    Chunk training failed: {e}")
+        return float('nan'), float('nan'), float('nan')
+
+
+# =============================================================================
+# Evaluate one hyperparameter combination
+# =============================================================================
+
+def evaluate_hyperparams(chunks, hyperparams, verbose=True):
+    """Train on chunks with given hyperparams. Returns (mean_rmse, mean_sim_rmse, mean_loss, n_success, n_sim_success)."""
+    rmse_values = []
+    sim_rmse_values = []
+    loss_values = []
+    n_total = len(chunks)
+
+    for i, chunk in enumerate(chunks):
+        rmse, sim_rmse, loss = train_single_chunk(chunk, hyperparams)
+        rmse_values.append(rmse)
+        sim_rmse_values.append(sim_rmse)
+        loss_values.append(loss)
+
+        if verbose:
+            gp_str = f"{rmse:.6f}" if np.isfinite(rmse) else "FAIL"
+            sim_str = f"{sim_rmse:.6f}" if np.isfinite(sim_rmse) else "FAIL"
+            loss_str = f"{loss:.4f}" if np.isfinite(loss) else "FAIL"
+            # Running stats
+            valid_so_far = [r for r in rmse_values if np.isfinite(r)]
+            mean_so_far = np.mean(valid_so_far) if valid_so_far else float('nan')
+            print(f"    Chunk {i+1:3d}/{n_total} | GP: {gp_str} | Sim: {sim_str} | "
+                  f"Loss: {loss_str} | Running mean GP: {mean_so_far:.6f} ({len(valid_so_far)}/{i+1} ok)")
+
+    valid_rmses = [r for r in rmse_values if np.isfinite(r)]
+    valid_sim_rmses = [r for r in sim_rmse_values if np.isfinite(r)]
+    valid_losses = [l for l in loss_values if np.isfinite(l)]
+    mean_rmse = np.mean(valid_rmses) if valid_rmses else float('nan')
+    mean_sim_rmse = np.mean(valid_sim_rmses) if valid_sim_rmses else float('nan')
+    mean_loss = np.mean(valid_losses) if valid_losses else float('nan')
+    n_success = len(valid_rmses)
+    n_sim_success = len(valid_sim_rmses)
+
+    return mean_rmse, mean_sim_rmse, mean_loss, n_success, n_sim_success
+
+
+# =============================================================================
+# Combo generation
+# =============================================================================
+
+def generate_all_combos(space):
+    keys = list(space.keys())
+    values = list(space.values())
+    for combo_values in itertools.product(*values):
+        yield dict(zip(keys, combo_values))
+
+
+def sample_random_combos(space, n_samples, seed=42):
+    rng = random.Random(seed)
+    keys = list(space.keys())
+    values = list(space.values())
+
+    total_possible = 1
+    for v in values:
+        total_possible *= len(v)
+
+    if n_samples >= total_possible:
+        print(f"Requested {n_samples} but only {total_possible} unique combos. Using full grid.")
+        return list(generate_all_combos(space))
+
+    sampled_indices = rng.sample(range(total_possible), n_samples)
+    combos = []
+    for idx in sampled_indices:
+        combo = {}
+        remaining = idx
+        for key, vals in zip(keys, values):
+            combo[key] = vals[remaining % len(vals)]
+            remaining //= len(vals)
+        combos.append(combo)
+
+    return combos
+
+
+# =============================================================================
+# Main
+# =============================================================================
+
+def main():
+    parser = argparse.ArgumentParser(description="HP tuning for SVISE on synthetic data (1-hour chunks)")
+    parser.add_argument("--n-chunks", type=int, default=N_CHUNKS_PER_COMBO,
+                        help=f"Chunks per combo (default: {N_CHUNKS_PER_COMBO})")
+    parser.add_argument("--n-samples", type=int, default=None,
+                        help="Number of random combos to sample")
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Quick sanity check: 2 chunks, 5 epochs, 3 combos")
+    parser.add_argument("--combo-index", type=int, default=None,
+                        help="Specific combo index for SLURM array")
+    parser.add_argument("--run-name", type=str, default=None,
+                        help="Run folder name for aggregating array results")
+    args = parser.parse_args()
+
+    global MAX_EPOCHS, PATIENCE
+    if args.dry_run:
+        MAX_EPOCHS = 5
+        PATIENCE = 3
+        args.n_chunks = min(args.n_chunks, 2)
+        print("=" * 60)
+        print("DRY RUN MODE: max_epochs=5, patience=3, n_chunks=2")
+        print("=" * 60)
+
+    n_samples = args.n_samples if args.n_samples is not None else N_RANDOM_SAMPLES
+    if args.dry_run and (n_samples is None or n_samples > 3):
+        n_samples = 3
+
+    # Load synthetic data
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    data_path = os.path.join(script_dir, "synthetic_data_noiseless.pkl")
+    if not os.path.exists(data_path):
+        print(f"Error: Synthetic data not found at {data_path}")
+        print("Run generate_synthetic_data.py first.")
+        sys.exit(1)
+
+    all_chunks = load_synthetic_data(data_path)
+
+    # Sample chunks for evaluation
+    rng = random.Random(args.seed)
+    if args.n_chunks < len(all_chunks):
+        chunks = rng.sample(all_chunks, args.n_chunks)
+    else:
+        chunks = all_chunks
+    n_chunks = len(chunks)
+
+    # Generate combos
+    total_grid_size = 1
+    for v in HYPERPARAMETER_SPACE.values():
+        total_grid_size *= len(v)
+
+    if n_samples is not None and n_samples > 0:
+        search_mode = "RANDOMIZED"
+        all_combos = sample_random_combos(HYPERPARAMETER_SPACE, n_samples, seed=args.seed)
+    else:
+        search_mode = "FULL GRID"
+        all_combos = list(generate_all_combos(HYPERPARAMETER_SPACE))
+
+    n_combos = len(all_combos)
+
+    print(f"\n{'=' * 60}")
+    print(f"HP {search_mode} SEARCH (Synthetic Noiseless, 1-HOUR CHUNKS)")
+    print(f"{'=' * 60}")
+    print(f"Chunk size: {CHUNK_SIZE} samples (1 hour)")
+    print(f"Time scale: {T_SCALE}")
+    print(f"Total search space: {total_grid_size} combinations")
+    print(f"Evaluating: {n_combos} combinations ({search_mode})")
+    print(f"Chunks per combination: {n_chunks}")
+    print(f"Total training runs: {n_combos * n_chunks}")
+    print(f"Early stopping: patience={PATIENCE}, max_epochs={MAX_EPOCHS}")
+    print(f"{'=' * 60}\n")
+
+    # Results directory
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    if args.run_name:
+        results_dir = os.path.join(script_dir, "results_hp_tuning_1h", args.run_name)
+    else:
+        results_dir = os.path.join(script_dir, "results_hp_tuning_1h", f"run_{timestamp}")
+    os.makedirs(results_dir, exist_ok=True)
+
+    if args.combo_index is not None:
+        csv_path = os.path.join(results_dir, f"hp_tuning_combo_{args.combo_index:03d}.csv")
+    else:
+        csv_path = os.path.join(results_dir, f"hp_tuning_{timestamp}.csv")
+
+    # Write CSV header
+    hp_keys = list(HYPERPARAMETER_SPACE.keys())
+    with open(csv_path, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(
+            ["Combo_Index"] + [k.title() for k in hp_keys] +
+            ["Mean_RMSE_Omega", "Mean_Sim_RMSE_Omega", "Mean_Loss",
+             "Num_Success", "Num_Sim_Success", "Num_Total"]
+        )
+
+    best_avg_loss = float('inf')
+    best_rmse_for_best_combo = float('nan')
+    best_sim_rmse_for_best_combo = float('nan')
+    best_combo = None
+    best_combo_idx = -1
+
+    for combo_idx, hyperparams in enumerate(all_combos):
+        if args.combo_index is not None and combo_idx != args.combo_index:
+            continue
+
+        print(f"\n{'=' * 60}")
+        print(f"Combo {combo_idx + 1}/{n_combos}: {hyperparams}")
+        print(f"{'=' * 60}")
+
+        mean_rmse, mean_sim_rmse, mean_loss, n_success, n_sim_success = evaluate_hyperparams(chunks, hyperparams)
+
+        print(f"\n  => RMSE (GP): {mean_rmse:.6f}, RMSE (Sim): {mean_sim_rmse:.6f}, "
+              f"Loss: {mean_loss:.6f} ({n_success}/{n_chunks} GP, {n_sim_success}/{n_chunks} Sim)")
+
+        # Append to CSV
+        with open(csv_path, 'a', newline='') as f:
+            writer = csv.writer(f)
+            row = [combo_idx + 1]
+            for k in hp_keys:
+                v = hyperparams[k]
+                if isinstance(v, float):
+                    row.append(f"{v:.1e}")
+                else:
+                    row.append(v)
+            row += [
+                f"{mean_rmse:.6f}" if not np.isnan(mean_rmse) else "nan",
+                f"{mean_sim_rmse:.6f}" if not np.isnan(mean_sim_rmse) else "nan",
+                f"{mean_loss:.6f}" if not np.isnan(mean_loss) else "nan",
+                n_success,
+                n_sim_success,
+                n_chunks,
+            ]
+            writer.writerow(row)
+
+        if not np.isnan(mean_loss) and mean_loss < best_avg_loss:
+            best_avg_loss = mean_loss
+            best_rmse_for_best_combo = mean_rmse
+            best_sim_rmse_for_best_combo = mean_sim_rmse
+            best_combo = hyperparams.copy()
+            best_combo_idx = combo_idx + 1
+
+    # Final summary
+    print(f"\n{'=' * 60}")
+    print(f"{search_mode} SEARCH COMPLETE (1-HOUR CHUNKS)")
+    print(f"{'=' * 60}")
+    print(f"Results saved to: {csv_path}")
+
+    if best_combo is not None:
+        print(f"\nBest combination (combo #{best_combo_idx}):")
+        for k, v in best_combo.items():
+            print(f"  {k}: {v}")
+        print(f"  Mean Loss (-ELBO): {best_avg_loss:.6f}")
+        print(f"  Mean RMSE omega (GP):  {best_rmse_for_best_combo:.6f}")
+        print(f"  Mean RMSE omega (Sim): {best_sim_rmse_for_best_combo:.6f}")
+
+        if args.combo_index is not None:
+            best_json_path = os.path.join(results_dir, f"combo_{args.combo_index:03d}.json")
+        else:
+            best_json_path = os.path.join(results_dir, f"best_hyperparams_{timestamp}.json")
+
+        with open(best_json_path, 'w') as f:
+            json.dump({
+                "best_hyperparams": {k: str(v) if isinstance(v, float) else v for k, v in best_combo.items()},
+                "best_hyperparams_raw": best_combo,
+                "mean_loss_negELBO": best_avg_loss,
+                "mean_rmse_omega": best_rmse_for_best_combo,
+                "mean_sim_rmse_omega": best_sim_rmse_for_best_combo,
+                "combo_index": best_combo_idx,
+                "n_combos_evaluated": n_combos,
+                "total_search_space": total_grid_size,
+                "search_mode": search_mode.lower(),
+                "n_chunks": n_chunks,
+                "chunk_size": CHUNK_SIZE,
+                "t_scale": T_SCALE,
+                "timestamp": timestamp,
+                "seed": args.seed,
+                "early_stopping": {"max_epochs": MAX_EPOCHS, "patience": PATIENCE},
+            }, f, indent=4)
+        print(f"Best hyperparams saved to: {best_json_path}")
+    else:
+        print("\nNo valid results found.")
+
+    print(f"{'=' * 60}")
+
+
+if __name__ == "__main__":
+    main()

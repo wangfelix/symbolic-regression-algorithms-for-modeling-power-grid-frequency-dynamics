@@ -352,6 +352,27 @@ def train_single_chunk(chunk_df, hp=BEST_HYPERPARAMS):
         except Exception as e:
             equations = [f"Error: {e}"] * d
 
+        # Extract diffusion (process noise diagonal)
+        diffusion_theta_phys = np.nan
+        diffusion_omega_phys = np.nan
+        try:
+            with torch.no_grad():
+                # process_noise is the Q matrix in scaled space
+                # For SparseDiagonalDiffusionPrior: diag(Sigma^2 * Q_diag)
+                pn = model.diffusion_prior.process_noise
+                if pn.dim() == 3:
+                    pn = pn.mean(0)  # average over reparam samples
+                q_diag_scaled = pn.diag().cpu().numpy()  # [q_theta_scaled, q_omega_scaled]
+                # Unscale: physical diffusion = scaled_diffusion * (std_x / t_scale)^2
+                # Because dx_scaled/dt_scaled = f(...), and dx_phys = std_x * dx_scaled, dt_phys = t_scale * dt_scaled
+                # So the SDE noise variance in physical units: q_phys = q_scaled * (std_x^2 / t_scale)
+                std_x_np = std_x.numpy() if isinstance(std_x, torch.Tensor) else np.array(std_x)
+                q_diag_phys = q_diag_scaled * (std_x_np ** 2) / t_scale
+                diffusion_theta_phys = float(q_diag_phys[0])
+                diffusion_omega_phys = float(q_diag_phys[1])
+        except Exception as e:
+            print(f"    Diffusion extraction failed: {e}")
+
         # Calculate RMSE
         with torch.no_grad():
             x_pred_scaled = model.marginal_sde.mean(train_t_scaled)
@@ -378,6 +399,8 @@ def train_single_chunk(chunk_df, hp=BEST_HYPERPARAMS):
                 "t_scale": float(t_scale),
             },
             "train_x": train_x.numpy() if hasattr(train_x, "numpy") else train_x,
+            "diffusion_theta_phys": diffusion_theta_phys,
+            "diffusion_omega_phys": diffusion_omega_phys,
         }
 
     except Exception as e:
@@ -391,6 +414,8 @@ def train_single_chunk(chunk_df, hp=BEST_HYPERPARAMS):
             "nan_recoveries": -1,
             "equations": [f"FAILED: {e}"],
             "scaling_params": None,
+            "diffusion_theta_phys": float('nan'),
+            "diffusion_omega_phys": float('nan'),
         }
 
 
@@ -467,6 +492,7 @@ def main():
             "Orig_RMSE_Omega", "Orig_RMSE_Theta", "Orig_RMSE_Total",
             "Sim_RMSE_Omega", "Sim_RMSE_Theta", "Sim_RMSE_Total",
             "Final_Loss", "Stopped_Epoch", "NaN_Recoveries",
+            "Diffusion_Theta", "Diffusion_Omega",
             "Eq_Theta", "Eq_Omega", "Eq_Omega_Physical"
         ])
 
@@ -506,8 +532,12 @@ def main():
         sim_rmse_omega_list.append(sim_om)
         loss_list.append(result["final_loss"])
 
+        diff_theta = result.get("diffusion_theta_phys", np.nan)
+        diff_omega = result.get("diffusion_omega_phys", np.nan)
+
         print(f"    RMSE omega (GP): {result['rmse_omega']:.6f} | RMSE omega (Sim): {sim_om:.6f}")
         print(f"    Loss: {result['final_loss']:.4f} | Epoch: {result['stopped_epoch']}")
+        print(f"    Diffusion: theta={diff_theta:.6e}, omega={diff_omega:.6e}")
         print(f"    Eq omega: {eq_omega}")
         print(f"    Eq omega Phys: {eq_omega_phys}")
 
@@ -525,6 +555,8 @@ def main():
                 f"{result['final_loss']:.4f}" if not np.isnan(result['final_loss']) else "nan",
                 result['stopped_epoch'],
                 result['nan_recoveries'],
+                f"{diff_theta:.6e}" if not np.isnan(diff_theta) else "nan",
+                f"{diff_omega:.6e}" if not np.isnan(diff_omega) else "nan",
                 eq_theta,
                 eq_omega,
                 eq_omega_phys

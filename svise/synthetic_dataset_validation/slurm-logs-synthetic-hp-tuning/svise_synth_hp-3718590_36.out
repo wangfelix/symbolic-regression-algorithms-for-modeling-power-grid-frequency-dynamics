@@ -1,0 +1,75 @@
+Loading synthetic data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/synthetic_dataset_validation/synthetic_data_noiseless.pkl...
+  Total samples: 2592000
+  Total 5-min chunks: 8640
+  Active chunks (omega std >= 0.0001): 1559/8640
+
+============================================================
+HYPERPARAMETER RANDOMIZED SEARCH (Synthetic Noiseless)
+============================================================
+Total search space: 2025 combinations
+Evaluating: 60 combinations (RANDOMIZED)
+Chunks per combination: 100
+Total training runs: 6000
+Early stopping: patience=300, max_epochs=10000
+============================================================
+
+
+============================================================
+Combo 37/60: {'model': 'integrator', 'sigma': 0, 'degree': 2, 'tau': 0.001, 'lr': 0.0001, 'n_tau': 200, 'measurement_noise': 0.0001, 'n_reparam_samples': 50}
+============================================================
+    -> Chunk 1/100...
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/.venv_svise/lib64/python3.9/site-packages/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/.venv_svise/lib64/python3.9/site-packages/svise/quadrature/_unbiased_quadrature.py:178: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+    Chunk training failed: index 0 is out of bounds for dimension 0 with size 0
+    Chunk training failed: index 0 is out of bounds for dimension 0 with size 0
+    Chunk training failed: index 0 is out of bounds for dimension 0 with size 0
+    -> Chunk 51/100...
+    Chunk training failed: index 0 is out of bounds for dimension 0 with size 0
+    Chunk training failed: index 0 is out of bounds for dimension 0 with size 0
+    Chunk training failed: index 0 is out of bounds for dimension 0 with size 0
+    Chunk training failed: index 0 is out of bounds for dimension 0 with size 0
+    Chunk training failed: index 0 is out of bounds for dimension 0 with size 0
+    -> Chunk 100/100...
+  => RMSE (GP): 0.004196, RMSE (Sim): 0.111498, Loss: 26534.811692 (92/100 GP, 92/100 Sim)
+
+============================================================
+RANDOMIZED SEARCH COMPLETE
+============================================================
+Results saved to: /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/synthetic_dataset_validation/results_hp_tuning/run_SLURM_3718590/hp_tuning_combo_036.csv
+
+Best combination (combo #37):
+  model: integrator
+  sigma: 0
+  degree: 2
+  tau: 0.001
+  lr: 0.0001
+  n_tau: 200
+  measurement_noise: 0.0001
+  n_reparam_samples: 50
+  Mean Loss (-ELBO): 26534.811692
+  Mean RMSE omega (GP):  0.004196
+  Mean RMSE omega (Sim): 0.111498
+Best hyperparams saved to: /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/synthetic_dataset_validation/results_hp_tuning/run_SLURM_3718590/combo_036.json
+============================================================
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n051
+Job ID: 3720452
+Array Job ID: 3718590_36
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 20
+CPU Utilized: 07:13:13
+CPU Efficiency: 4.96% of 6-01:31:40 core-walltime
+Job Wall-clock time: 07:16:35
+Memory Utilized: 298.66 MB
+Memory Efficiency: 1.82% of 16.00 GB (16.00 GB/node)

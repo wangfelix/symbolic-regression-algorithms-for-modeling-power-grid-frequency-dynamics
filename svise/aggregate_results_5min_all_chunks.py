@@ -65,9 +65,11 @@ def main():
     print(f"\nTotal unique chunks: {len(combined)}")
 
     # Convert numeric columns
-    for col in ["Orig_RMSE_Omega", "Orig_RMSE_Theta", "Orig_RMSE_Total", 
-                "Sim_RMSE_Omega", "Sim_RMSE_Theta", "Sim_RMSE_Total", "Final_Loss"]:
-        combined[col] = pd.to_numeric(combined[col], errors="coerce")
+    for col in ["Orig_RMSE_Omega", "Orig_RMSE_Theta", "Orig_RMSE_Total",
+                "Sim_RMSE_Omega", "Sim_RMSE_Theta", "Sim_RMSE_Total", "Final_Loss",
+                "Diffusion_Theta", "Diffusion_Omega"]:
+        if col in combined.columns:
+            combined[col] = pd.to_numeric(combined[col], errors="coerce")
 
     # Filter valid results
     valid = combined[combined["Orig_RMSE_Omega"].notna()]
@@ -126,6 +128,25 @@ def main():
         "timestamp": datetime.datetime.now().strftime("%Y%m%d_%H%M%S"),
     }
 
+    # Add diffusion stats if columns exist
+    if "Diffusion_Omega" in valid.columns:
+        diff_omega_valid = valid["Diffusion_Omega"].dropna()
+        diff_theta_valid = valid["Diffusion_Theta"].dropna()
+        if len(diff_omega_valid) > 0:
+            stats["diffusion_omega"] = {
+                "count": int(len(diff_omega_valid)),
+                "mean": float(diff_omega_valid.mean()),
+                "std": float(diff_omega_valid.std()),
+                "median": float(diff_omega_valid.median()),
+            }
+        if len(diff_theta_valid) > 0:
+            stats["diffusion_theta"] = {
+                "count": int(len(diff_theta_valid)),
+                "mean": float(diff_theta_valid.mean()),
+                "std": float(diff_theta_valid.std()),
+                "median": float(diff_theta_valid.median()),
+            }
+
     # Print summary
     print(f"\n{'=' * 60}")
     print(f"AGGREGATED RESULTS OVER {stats['successful_chunks']} CHUNKS")
@@ -150,6 +171,15 @@ def main():
     print(f"")
     print(f"Loss:")
     print(f"  Mean:   {stats['loss']['mean']:.4f} ± {stats['loss']['std']:.4f}")
+
+    if "diffusion_omega" in stats:
+        print(f"")
+        print(f"Diffusion (process noise, physical units):")
+        d = stats["diffusion_omega"]
+        print(f"  Omega: mean={d['mean']:.6e} ± {d['std']:.6e}, median={d['median']:.6e} ({d['count']} valid)")
+    if "diffusion_theta" in stats:
+        d = stats["diffusion_theta"]
+        print(f"  Theta: mean={d['mean']:.6e} ± {d['std']:.6e}, median={d['median']:.6e} ({d['count']} valid)")
     print(f"{'=' * 60}")
 
     # Save aggregated results

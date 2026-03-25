@@ -1,0 +1,1869 @@
+Array task 469: processing chunks 103180 to 103399
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/South_Korea_2024-08-15_2025-08-31_1s.parquet...
+Finding all valid 5-minute chunks in the dataset...
+Found 107059 valid 5-minute chunks in total.
+
+============================================================
+SVISE FINAL EVALUATION — ALL CHUNKS
+============================================================
+Hyperparameters: {
+  "model": "integrator",
+  "sigma": 0,
+  "degree": 3,
+  "tau": 0.01,
+  "lr": 0.001,
+  "n_tau": 100,
+  "measurement_noise": 1e-05,
+  "n_reparam_samples": 15
+}
+Total valid chunks in dataset: 107059
+Processing chunk range: [103180, 103399] (220 chunks)
+Early stopping: patience=300, max_epochs=10000
+============================================================
+
+
+--- Chunk 103180 (1/220) | Start: 2025-08-18 12:35:00 ---
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/sde_learning/_marginal_sde.py:284: UserWarning: torch.triangular_solve is deprecated in favor of torch.linalg.solve_triangularand will be removed in a future PyTorch release.
+torch.linalg.solve_triangular has its arguments reversed and does not return a copy of one of the inputs.
+X = torch.triangular_solve(B, A).solution
+should be replaced with
+X = torch.linalg.solve_triangular(A, B). (Triggered internally at ../aten/src/ATen/native/BatchLinearAlgebra.cpp:2192.)
+  return torch.triangular_solve(self.raw_w, self.C.t()).solution
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:196: UserWarning: Interp is nan, reducing interp degree.
+  warnings.warn("Interp is nan, reducing interp degree.")
+    RMSE omega (GP): 0.003994 | RMSE omega (Sim): 0.060419
+    Loss: 193.1111 | Epoch: 5506
+    Eq omega: 0.051581 + -0.31541theta + 0.05279omega + -0.65191theta^2 + 0.00882theta omega + 0.24333omega^2 + -0.35324theta^3 + 0.03991theta^2 omega + -0.01220theta omega^2 + -0.00448omega^3
+    Eq omega Phys: -0.0359*omega**3 - 0.003259*omega**2*theta + 0.128228*omega**2 + 0.000355*omega*theta**2 - 0.000386*omega*theta + 0.001848*omega - 0.000105*theta**3 - 0.000136*theta**2 + 3.6e-5*theta + 0.000207
+    Diffusion: theta=1.131001e-04, omega=1.049987e-05
+
+--- Chunk 103181 (2/220) | Start: 2025-08-18 12:40:00 ---
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/run_analysis_5min_all_chunks_combo5.py:212: ODEintWarning: Excess work done on this call (perhaps wrong Dfun type). Run with full_output = 1 to get quantitative information.
+  sol_scaled = odeint(drift, x0_scaled, t_scaled, full_output=False)
+    RMSE omega (GP): 0.004304 | RMSE omega (Sim): nan
+    Loss: 166.0386 | Epoch: 7152
+    Eq omega: 0.101451 + -0.19747theta + 0.08045omega + 0.01369theta^2 + 0.02618theta omega + 0.00876omega^2 + -0.01360theta^3 + 0.00416theta^2 omega + 0.04276theta omega^2 + 0.08128omega^3
+    Eq omega Phys: 0.485517*omega**3 + 0.008514*omega**2*theta - 0.045883*omega**2 + 2.8e-5*omega*theta**2 + 6.6e-5*omega*theta + 0.001349*omega - 3.0e-6*theta**3 + 6.0e-5*theta**2 - 0.000608*theta + 0.00237
+    Diffusion: theta=2.053687e-04, omega=8.862983e-06
+
+--- Chunk 103182 (3/220) | Start: 2025-08-18 12:45:00 ---
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:177: UserWarning: NaN detected in fmc (Monte-Carlo node evaluations). Clamping to 0.
+  warnings.warn("NaN detected in fmc (Monte-Carlo node evaluations). Clamping to 0.")
+/pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/svise/quadrature/_unbiased_quadrature.py:174: UserWarning: NaN detected in fxq (quadrature node evaluations). Clamping to 0.
+  warnings.warn("NaN detected in fxq (quadrature node evaluations). Clamping to 0.")
+    RMSE omega (GP): 0.004592 | RMSE omega (Sim): 0.054996
+    Loss: 318.5104 | Epoch: 8940
+    Eq omega: -0.029561 + -0.01962theta + 0.02967omega + -0.01388theta^2 + 0.01249theta omega + -0.04936omega^2 + -0.00040theta^3 + 0.00294theta^2 omega + -0.02186theta omega^2 + 0.00130omega^3
+    Eq omega Phys: 0.012961*omega**3 - 0.007265*omega**2*theta - 0.045584*omega**2 + 3.3e-5*omega*theta**2 + 0.000394*omega*theta + 0.001736*omega - 1.0e-5*theta**2 - 6.6e-5*theta - 0.00016
+    Diffusion: theta=7.301360e-05, omega=1.156313e-05
+
+--- Chunk 103183 (4/220) | Start: 2025-08-18 12:50:00 ---
+    RMSE omega (GP): 0.004368 | RMSE omega (Sim): 0.808072
+    Loss: 123.6339 | Epoch: 7303
+    Eq omega: 0.006411 + -1.62215theta + 0.04318omega + 0.90480theta^2 + 0.12998theta omega + -0.01588omega^2 + -0.01837theta^3 + -0.00481theta^2 omega + -0.00049theta omega^2 + -0.01630omega^3
+    Eq omega Phys: -0.071585*omega**3 - 7.2e-5*omega**2*theta - 0.006328*omega**2 - 2.3e-5*omega*theta**2 + 0.001493*omega*theta + 0.006969*omega - 3.0e-6*theta**3 + 0.000353*theta**2 + 0.000788*theta - 0.001698
+    Diffusion: theta=6.787835e-05, omega=9.123222e-06
+
+--- Chunk 103184 (5/220) | Start: 2025-08-18 12:55:00 ---
+    RMSE omega (GP): 0.003492 | RMSE omega (Sim): 0.074464
+    Loss: 107.8364 | Epoch: 7787
+    Eq omega: -0.273171 + -0.37962theta + -0.15555omega + -0.05403theta^2 + 0.01475theta omega + -0.02759omega^2 + -0.00367theta^3 + -0.00062theta^2 omega + 0.00239theta omega^2 + -0.01831omega^3
+    Eq omega Phys: -0.108167*omega**3 + 0.000471*omega**2*theta - 0.01756*omega**2 - 4.0e-6*omega*theta**2 + 0.00031*omega*theta - 0.008169*omega - 0.e-6*theta**3 + 1.0e-6*theta**2 - 0.000127*theta + 0.001839
+    Diffusion: theta=1.293833e-04, omega=1.478575e-05
+
+--- Chunk 103185 (6/220) | Start: 2025-08-18 13:00:00 ---
+    RMSE omega (GP): 0.004140 | RMSE omega (Sim): 0.052212
+    Loss: 278.9643 | Epoch: 8746
+    Eq omega: 0.103691 + -0.00742theta + -0.08464omega + 0.00145theta^2 + 0.00879theta omega + 0.00810omega^2 + -0.00061theta^3 + -0.00030theta^2 omega + -0.00284theta omega^2 + -0.01180omega^3
+    Eq omega Phys: -0.127319*omega**3 - 0.001021*omega**2*theta - 0.008227*omega**2 - 4.0e-6*omega*theta**2 + 8.4e-5*omega*theta - 0.001161*omega - 8.0e-6*theta**2 - 0.000103*theta - 0.000267
+    Diffusion: theta=8.955052e-05, omega=7.702227e-06
+
+--- Chunk 103186 (7/220) | Start: 2025-08-18 13:05:00 ---
+    RMSE omega (GP): 0.004208 | RMSE omega (Sim): 0.067316
+    Loss: 161.7226 | Epoch: 8452
+    Eq omega: -0.082071 + -0.02597theta + -0.26017omega + -0.01464theta^2 + -0.04707theta omega + -0.08369omega^2 + -0.12030theta^3 + 0.05853theta^2 omega + 0.03219theta omega^2 + 0.00156omega^3
+    Eq omega Phys: 0.009502*omega**3 + 0.006535*omega**2*theta - 0.062021*omega**2 + 0.000396*omega*theta**2 - 0.003654*omega*theta - 0.000561*omega - 2.7e-5*theta**3 + 0.000296*theta**2 - 0.001101*theta + 0.0012
+    Diffusion: theta=1.073973e-04, omega=1.274274e-05
+
+--- Chunk 103187 (8/220) | Start: 2025-08-18 13:10:00 ---
+    RMSE omega (GP): 0.004306 | RMSE omega (Sim): 0.121702
+    Loss: 200.6622 | Epoch: 5693
+    Eq omega: 0.575751 + -0.11559theta + -0.00372omega + -0.33138theta^2 + -0.10227theta omega + 0.01622omega^2 + -0.08843theta^3 + -0.02951theta^2 omega + -0.07751theta omega^2 + 0.02733omega^3
+    Eq omega Phys: 0.198325*omega**3 - 0.018749*omega**2*theta - 0.010698*omega**2 - 0.000238*omega*theta**2 - 0.002151*omega*theta - 0.00203*omega - 2.4e-5*theta**3 - 0.000252*theta**2 - 0.00056*theta + 0.00097
+    Diffusion: theta=9.501606e-05, omega=8.474553e-06
+
+--- Chunk 103188 (9/220) | Start: 2025-08-18 13:15:00 ---
+    RMSE omega (GP): 0.004200 | RMSE omega (Sim): 0.081460
+    Loss: 248.0595 | Epoch: 9999
+    Eq omega: 0.004091 + -0.00128theta + -0.01162omega + -0.00125theta^2 + -0.00043theta omega + 0.00372omega^2 + 0.00005theta^3 + 0.00001theta^2 omega + -0.00087theta omega^2 + -0.00444omega^3
+    Eq omega Phys: -0.040684*omega**3 - 0.000266*omega**2*theta - 0.000802*omega**2 - 6.0e-6*omega*theta - 0.000461*omega - 1.2e-5*theta - 7.5e-5
+    Diffusion: theta=1.974944e-04, omega=8.203299e-06
+
+--- Chunk 103189 (10/220) | Start: 2025-08-18 13:20:00 ---
+    RMSE omega (GP): 0.004160 | RMSE omega (Sim): 0.089921
+    Loss: 183.6286 | Epoch: 8602
+    Eq omega: 0.032731 + -0.00261theta + -0.01368omega + -0.00298theta^2 + -0.00133theta omega + 0.01012omega^2 + -0.00135theta^3 + 0.00001theta^2 omega + 0.00071theta omega^2 + -0.00160omega^3
+    Eq omega Phys: -0.011336*omega**3 + 0.000168*omega**2*theta + 0.006618*omega**2 - 2.0e-5*omega*theta - 0.000666*omega - 1.2e-5*theta**2 - 0.000145*theta - 0.000489
+    Diffusion: theta=1.673521e-04, omega=7.557375e-06
+
+--- Chunk 103190 (11/220) | Start: 2025-08-18 13:25:00 ---
+    RMSE omega (GP): 0.004348 | RMSE omega (Sim): nan
+    Loss: 186.3390 | Epoch: 5440
+    Eq omega: -0.010541 + -0.01082theta + 0.08921omega + -0.01810theta^2 + -0.04678theta omega + 0.00679omega^2 + -0.02991theta^3 + -0.00082theta^2 omega + 0.07601theta omega^2 + 0.06258omega^3
+    Eq omega Phys: 0.413435*omega**3 + 0.016739*omega**2*theta + 0.073543*omega**2 - 6.0e-6*omega*theta**2 - 0.000782*omega*theta - 0.000208*omega - 7.0e-6*theta**3 - 0.000102*theta**2 - 0.000479*theta - 0.000786
+    Diffusion: theta=5.334762e-05, omega=1.377911e-05
+
+--- Chunk 103191 (12/220) | Start: 2025-08-18 13:30:00 ---
+    RMSE omega (GP): 0.004025 | RMSE omega (Sim): 0.061170
+    Loss: 177.9198 | Epoch: 9999
+    Eq omega: 0.002441 + -0.07492theta + -0.21300omega + -0.01152theta^2 + 0.02962theta omega + 0.04311omega^2 + -0.00697theta^3 + 0.00205theta^2 omega + -0.03469theta omega^2 + -0.00454omega^3
+    Eq omega Phys: -0.033104*omega**3 - 0.008432*omega**2*theta - 0.042857*omega**2 + 1.7e-5*omega*theta**2 + 0.000739*omega*theta - 0.002439*omega - 2.0e-6*theta**3 - 4.9e-5*theta**2 - 0.000506*theta - 0.00182
+    Diffusion: theta=1.197439e-04, omega=8.777657e-06
+
+--- Chunk 103192 (13/220) | Start: 2025-08-18 13:35:00 ---
+    RMSE omega (GP): 0.004754 | RMSE omega (Sim): 0.110471
+    Loss: 302.1957 | Epoch: 6844
+    Eq omega: -0.149941 + -0.04602theta + 0.01017omega + -0.01616theta^2 + 0.00841theta omega + -0.00715omega^2 + -0.02453theta^3 + -0.00858theta^2 omega + 0.01541theta omega^2 + -0.00934omega^3
+    Eq omega Phys: -0.083376*omega**3 + 0.004585*omega**2*theta + 0.004181*omega**2 - 8.5e-5*omega*theta**2 - 0.000147*omega*theta + 0.000344*omega - 8.0e-6*theta**3 - 5.3e-5*theta**2 - 0.000161*theta - 0.00047
+    Diffusion: theta=3.381508e-05, omega=9.043917e-06
+
+--- Chunk 103193 (14/220) | Start: 2025-08-18 13:40:00 ---
+    RMSE omega (GP): 0.003794 | RMSE omega (Sim): 0.073218
+    Loss: 160.7882 | Epoch: 5060
+    Eq omega: -0.074781 + -1.01570theta + -0.03000omega + -0.04057theta^2 + -0.05945theta omega + -0.24986omega^2 + 0.01295theta^3 + -0.11046theta^2 omega + -0.28535theta omega^2 + -0.05689omega^3
+    Eq omega Phys: -0.425004*omega**3 - 0.071058*omega**2*theta - 0.210514*omega**2 - 0.000917*omega*theta**2 - 0.003204*omega*theta - 0.003532*omega + 4.0e-6*theta**3 - 1.0e-5*theta**2 - 0.001167*theta - 0.001556
+    Diffusion: theta=8.000037e-05, omega=8.971379e-06
+
+--- Chunk 103194 (15/220) | Start: 2025-08-18 13:45:00 ---
+    RMSE omega (GP): 0.003880 | RMSE omega (Sim): 0.059304
+    Loss: 113.2541 | Epoch: 5918
+    Eq omega: -0.029161 + -0.15326theta + -0.18021omega + -0.00190theta^2 + -0.34943theta omega + 0.03052omega^2 + -0.77369theta^3 + -0.10847theta^2 omega + 0.09866theta omega^2 + -0.24524omega^3
+    Eq omega Phys: -1.256673*omega**3 + 0.016852*omega**2*theta + 0.098312*omega**2 - 0.000618*omega*theta**2 - 0.011095*omega*theta - 0.046458*omega - 0.000147*theta**3 - 0.002241*theta**2 - 0.011571*theta - 0.020278
+    Diffusion: theta=9.253601e-05, omega=9.202334e-06
+
+--- Chunk 103195 (16/220) | Start: 2025-08-18 13:50:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 1441.2314 | Epoch: 2809
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103196 (17/220) | Start: 2025-08-18 13:55:00 ---
+    RMSE omega (GP): 0.003710 | RMSE omega (Sim): nan
+    Loss: 226.9926 | Epoch: 7186
+    Eq omega: -0.009971 + 0.01979theta + -0.01512omega + -0.00210theta^2 + -0.01271theta omega + 0.02392omega^2 + -0.00003theta^3 + 0.00482theta^2 omega + 0.00320theta omega^2 + -0.00036omega^3
+    Eq omega Phys: -0.003938*omega**3 + 0.001167*omega**2*theta + 0.027324*omega**2 + 5.9e-5*omega*theta**2 + 0.001038*omega*theta + 0.003812*omega - 2.0e-6*theta**2 - 1.4e-5*theta + 3.6e-5
+    Diffusion: theta=3.757614e-05, omega=1.052742e-05
+
+--- Chunk 103197 (18/220) | Start: 2025-08-18 14:00:00 ---
+    RMSE omega (GP): 0.006023 | RMSE omega (Sim): 0.048147
+    Loss: 973.6057 | Epoch: 9999
+    Eq omega: 0.010741 + -0.00022theta + -0.00342omega + -0.00008theta^2 + 0.00027theta omega + 0.00049omega^2 + 0.00003theta^3 + -0.00001theta^2 omega + 0.00025theta omega^2 + -0.00044omega^3
+    Eq omega Phys: -0.007544*omega**3 + 0.000143*omega**2*theta + 0.003369*omega**2 - 1.0e-6*omega*theta - 5.5e-5*omega + 1.0e-6*theta**2 + 2.2e-5*theta + 0.000157
+    Diffusion: theta=4.187998e-04, omega=6.482592e-06
+
+--- Chunk 103198 (19/220) | Start: 2025-08-18 14:05:00 ---
+    RMSE omega (GP): 0.004245 | RMSE omega (Sim): 0.069538
+    Loss: 217.8571 | Epoch: 8304
+    Eq omega: 0.026311 + -0.00308theta + 0.00943omega + 0.00524theta^2 + -0.00015theta omega + 0.04233omega^2 + -0.00069theta^3 + -0.00273theta^2 omega + -0.00471theta omega^2 + -0.00357omega^3
+    Eq omega Phys: -0.028043*omega**3 - 0.001233*omega**2*theta + 0.008996*omega**2 - 2.4e-5*omega*theta**2 - 0.000492*omega*theta - 0.002225*omega - 3.0e-6*theta**2 - 6.0e-6*theta + 0.000119
+    Diffusion: theta=1.817480e-04, omega=1.459652e-05
+
+--- Chunk 103199 (20/220) | Start: 2025-08-18 14:10:00 ---
+    RMSE omega (GP): 0.004052 | RMSE omega (Sim): 0.058645
+    Loss: 151.7936 | Epoch: 6145
+    Eq omega: -0.048211 + -0.17383theta + -0.19755omega + 0.00673theta^2 + -0.12430theta omega + -0.06612omega^2 + -0.09016theta^3 + -0.01122theta^2 omega + -0.14999theta omega^2 + 0.01091omega^3
+    Eq omega Phys: 0.068157*omega**3 - 0.031234*omega**2*theta + 0.128114*omega**2 - 7.8e-5*omega*theta**2 - 0.001101*omega*theta + 0.000997*omega - 2.1e-5*theta**3 + 0.000321*theta**2 - 0.001835*theta + 0.003664
+    Diffusion: theta=1.837086e-04, omega=9.342420e-06
+
+--- Chunk 103200 (21/220) | Start: 2025-08-18 14:15:00 ---
+    RMSE omega (GP): 0.003456 | RMSE omega (Sim): 0.059447
+    Loss: 233.6080 | Epoch: 6672
+    Eq omega: 0.003931 + -0.10624theta + -0.07346omega + -0.01273theta^2 + -0.06752theta omega + 0.10959omega^2 + -0.00439theta^3 + 0.00237theta^2 omega + 0.00391theta omega^2 + -0.02200omega^3
+    Eq omega Phys: -0.28329*omega**3 + 0.001678*omega**2*theta + 0.08186*omega**2 + 3.4e-5*omega*theta**2 - 0.001068*omega*theta - 0.01007*omega - 2.0e-6*theta**3 - 4.7e-5*theta**2 - 0.000455*theta - 0.001485
+    Diffusion: theta=8.200433e-05, omega=8.093276e-06
+
+--- Chunk 103201 (22/220) | Start: 2025-08-18 14:20:00 ---
+    RMSE omega (GP): 0.004666 | RMSE omega (Sim): 0.063100
+    Loss: 284.6344 | Epoch: 9999
+    Eq omega: 0.140691 + -0.00283theta + -0.03724omega + 0.00072theta^2 + 0.00051theta omega + 0.01685omega^2 + -0.00002theta^3 + -0.00041theta^2 omega + -0.00070theta omega^2 + -0.00148omega^3
+    Eq omega Phys: -0.012873*omega**3 - 0.000203*omega**2*theta + 0.005858*omega**2 - 4.0e-6*omega*theta**2 - 0.000116*omega*theta - 0.002091*omega + 6.0e-6*theta + 0.000323
+    Diffusion: theta=8.146505e-05, omega=8.269519e-06
+
+--- Chunk 103202 (23/220) | Start: 2025-08-18 14:25:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 2156.7739 | Epoch: 2680
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103203 (24/220) | Start: 2025-08-18 14:30:00 ---
+    RMSE omega (GP): 0.004816 | RMSE omega (Sim): 0.103543
+    Loss: 270.2864 | Epoch: 6166
+    Eq omega: 0.023591 + -0.06045theta + -0.03757omega + 0.02424theta^2 + -0.04572theta omega + -0.02210omega^2 + -0.22770theta^3 + 0.04037theta^2 omega + 0.01375theta omega^2 + -0.04700omega^3
+    Eq omega Phys: -0.36663*omega**3 + 0.003575*omega**2*theta + 0.004163*omega**2 + 0.00035*omega*theta**2 + 0.002243*omega*theta + 0.001912*omega - 6.6e-5*theta**3 - 0.000838*theta**2 - 0.003625*theta - 0.005273
+    Diffusion: theta=1.459252e-04, omega=7.754737e-06
+
+--- Chunk 103204 (25/220) | Start: 2025-08-18 14:35:00 ---
+    RMSE omega (GP): 0.004385 | RMSE omega (Sim): nan
+    Loss: 113.9222 | Epoch: 7419
+    Eq omega: -0.030541 + -0.06365theta + 0.09109omega + 0.00067theta^2 + -0.06814theta omega + 0.01487omega^2 + 0.00147theta^3 + 0.00262theta^2 omega + -0.00762theta omega^2 + 0.04558omega^3
+    Eq omega Phys: 0.184914*omega**3 - 0.00103*omega**2*theta + 0.000231*omega**2 + 1.2e-5*omega*theta**2 - 0.000715*omega*theta - 0.000904*omega + 4.0e-6*theta**2 - 5.1e-5*theta - 0.000416
+    Diffusion: theta=5.049982e-05, omega=1.187444e-05
+
+--- Chunk 103205 (26/220) | Start: 2025-08-18 14:40:00 ---
+    RMSE omega (GP): 0.004331 | RMSE omega (Sim): 0.053768
+    Loss: 111.3126 | Epoch: 9999
+    Eq omega: 0.106821 + -0.07749theta + -0.06557omega + -0.05997theta^2 + 0.04551theta omega + 0.04103omega^2 + -0.00250theta^3 + -0.00165theta^2 omega + 0.00318theta omega^2 + 0.02963omega^3
+    Eq omega Phys: 0.115431*omega**3 + 0.000413*omega**2*theta + 0.017401*omega**2 - 7.0e-6*omega*theta**2 + 0.000456*omega*theta + 0.000991*omega - 3.1e-5*theta**2 - 0.000434*theta - 0.001271
+    Diffusion: theta=2.939593e-04, omega=1.307979e-05
+
+--- Chunk 103206 (27/220) | Start: 2025-08-18 14:45:00 ---
+    RMSE omega (GP): 0.011361 | RMSE omega (Sim): 0.048012
+    Loss: 3457.5344 | Epoch: 9305
+    Eq omega: -0.003551 + -0.00007theta + -0.00435omega + -0.00015theta^2 + 0.00021theta omega + 0.00131omega^2 + 0.00000theta^3 + -0.00003theta^2 omega + 0.00002theta omega^2 + -0.00111omega^3
+    Eq omega Phys: -0.01951*omega**3 + 1.2e-5*omega**2*theta + 0.001262*omega**2 - 0.e-6*omega*theta**2 - 2.1e-5*omega*theta - 0.000314*omega - 6.0e-6*theta - 7.0e-5
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103207 (28/220) | Start: 2025-08-18 14:50:00 ---
+    RMSE omega (GP): 0.004348 | RMSE omega (Sim): nan
+    Loss: 199.3916 | Epoch: 5919
+    Eq omega: 0.008111 + -2.27887theta + 0.02205omega + 1.04465theta^2 + 0.29378theta omega + 0.03560omega^2 + 0.02708theta^3 + 0.05028theta^2 omega + -0.04764theta omega^2 + -0.00609omega^3
+    Eq omega Phys: -0.042853*omega**3 - 0.011174*omega**2*theta + 0.017311*omega**2 + 0.000393*omega*theta**2 + 0.004738*omega*theta + 0.000706*omega + 7.0e-6*theta**3 + 0.000562*theta**2 - 0.002539*theta + 3.4e-5
+    Diffusion: theta=5.774292e-05, omega=9.287539e-06
+
+--- Chunk 103208 (29/220) | Start: 2025-08-18 14:55:00 ---
+    RMSE omega (GP): 0.004107 | RMSE omega (Sim): nan
+    Loss: 193.7019 | Epoch: 7087
+    Eq omega: -0.631211 + -1.30084theta + 0.20418omega + 1.12565theta^2 + -0.01740theta omega + -0.18195omega^2 + -0.11904theta^3 + -0.00281theta^2 omega + 0.08728theta omega^2 + 0.21785omega^3
+    Eq omega Phys: 1.664338*omega**3 + 0.022227*omega**2*theta - 0.143233*omega**2 - 2.4e-5*omega*theta**2 - 0.000182*omega*theta + 0.007355*omega - 3.4e-5*theta**3 + 0.000865*theta**2 - 0.004906*theta + 0.005748
+    Diffusion: theta=8.229595e-05, omega=1.007415e-05
+
+--- Chunk 103209 (30/220) | Start: 2025-08-18 15:00:00 ---
+    RMSE omega (GP): 0.004560 | RMSE omega (Sim): 2.616729
+    Loss: 298.9208 | Epoch: 6226
+    Eq omega: -0.015411 + -0.16027theta + 0.23213omega + -0.07794theta^2 + 0.03085theta omega + -0.04698omega^2 + -0.01115theta^3 + -0.00210theta^2 omega + 0.02885theta omega^2 + -0.01566omega^3
+    Eq omega Phys: -0.148796*omega**3 + 0.009137*omega**2*theta - 0.084233*omega**2 - 2.2e-5*omega*theta**2 + 0.000859*omega*theta + 0.00319*omega - 4.0e-6*theta**3 + 2.6e-5*theta**2 - 3.2e-5*theta + 0.000139
+    Diffusion: theta=1.908747e-04, omega=1.085352e-05
+
+--- Chunk 103210 (31/220) | Start: 2025-08-18 15:05:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 253.7562 | Epoch: 5321
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103211 (32/220) | Start: 2025-08-18 15:10:00 ---
+    RMSE omega (GP): 0.004835 | RMSE omega (Sim): 0.065627
+    Loss: 194.5538 | Epoch: 8723
+    Eq omega: -0.050271 + -0.12019theta + 0.01311omega + -0.02012theta^2 + 0.01566theta omega + 0.00074omega^2 + -0.00895theta^3 + 0.00315theta^2 omega + 0.00277theta omega^2 + -0.00677omega^3
+    Eq omega Phys: -0.037575*omega**3 + 0.000512*omega**2*theta + 0.002318*omega**2 + 1.9e-5*omega*theta**2 + 0.000376*omega*theta + 0.001609*omega - 2.0e-6*theta**3 - 3.1e-5*theta**2 - 0.000293*theta - 0.000907
+    Diffusion: theta=1.967321e-04, omega=9.154180e-06
+
+--- Chunk 103212 (33/220) | Start: 2025-08-18 15:15:00 ---
+    RMSE omega (GP): 0.006223 | RMSE omega (Sim): 0.074016
+    Loss: 242.6400 | Epoch: 9999
+    Eq omega: -0.020141 + -0.00259theta + 0.02061omega + -0.00086theta^2 + 0.00131theta omega + 0.00466omega^2 + -0.00160theta^3 + -0.00002theta^2 omega + 0.00044theta omega^2 + -0.00454omega^3
+    Eq omega Phys: -0.018757*omega**3 + 6.1e-5*omega**2*theta + 0.003181*omega**2 + 1.2e-5*omega*theta + 0.001022*omega - 1.8e-5*theta**2 - 0.000441*theta - 0.003695
+    Diffusion: theta=2.766291e-04, omega=1.201666e-05
+
+--- Chunk 103213 (34/220) | Start: 2025-08-18 15:20:00 ---
+    RMSE omega (GP): 0.004555 | RMSE omega (Sim): 0.075130
+    Loss: 196.5463 | Epoch: 6703
+    Eq omega: -0.027451 + -0.03220theta + -0.01737omega + -0.03400theta^2 + -0.03891theta omega + 0.02870omega^2 + -0.06128theta^3 + -0.00602theta^2 omega + -0.04660theta omega^2 + 0.01236omega^3
+    Eq omega Phys: 0.07829*omega**3 - 0.009839*omega**2*theta + 0.06701*omega**2 - 4.2e-5*omega*theta**2 - 0.000132*omega*theta + 0.001413*omega - 1.4e-5*theta**3 + 0.000219*theta**2 - 0.001136*theta + 0.001963
+    Diffusion: theta=8.871839e-05, omega=1.205929e-05
+
+--- Chunk 103214 (35/220) | Start: 2025-08-18 15:25:00 ---
+    RMSE omega (GP): 0.004438 | RMSE omega (Sim): 0.078382
+    Loss: 106.3729 | Epoch: 5972
+    Eq omega: -0.030941 + -0.01373theta + -0.05039omega + -0.09308theta^2 + -0.06020theta omega + 0.05395omega^2 + -0.67753theta^3 + 0.00874theta^2 omega + 0.00196theta omega^2 + -0.13034omega^3
+    Eq omega Phys: -0.476226*omega**3 + 0.000239*omega**2*theta + 0.017599*omega**2 + 3.5e-5*omega*theta**2 - 0.001065*omega*theta + 0.002864*omega - 9.2e-5*theta**3 + 0.001379*theta**2 - 0.006928*theta + 0.01152
+    Diffusion: theta=2.532923e-04, omega=1.524852e-05
+
+--- Chunk 103215 (36/220) | Start: 2025-08-18 15:30:00 ---
+    RMSE omega (GP): 0.004182 | RMSE omega (Sim): 0.058298
+    Loss: 307.4417 | Epoch: 6291
+    Eq omega: -0.003851 + -0.03569theta + -0.02267omega + -0.01332theta^2 + 0.08479theta omega + -0.02078omega^2 + 0.00018theta^3 + 0.00144theta^2 omega + -0.01690theta omega^2 + -0.00258omega^3
+    Eq omega Phys: -0.030238*omega**3 - 0.006602*omega**2*theta - 0.049666*omega**2 + 1.9e-5*omega*theta**2 + 0.001975*omega*theta + 0.009637*omega - 8.0e-6*theta**2 - 0.000135*theta - 0.000499
+    Diffusion: theta=9.646287e-05, omega=7.669972e-06
+
+--- Chunk 103216 (37/220) | Start: 2025-08-18 15:35:00 ---
+    RMSE omega (GP): 0.004432 | RMSE omega (Sim): nan
+    Loss: 331.4422 | Epoch: 9999
+    Eq omega: -0.007581 + -0.01258theta + 0.11779omega + 0.00200theta^2 + 0.00775theta omega + -0.03399omega^2 + -0.00034theta^3 + 0.00062theta^2 omega + -0.00989theta omega^2 + 0.00906omega^3
+    Eq omega Phys: 0.100507*omega**3 - 0.003657*omega**2*theta - 0.07657*omega**2 + 8.0e-6*omega*theta**2 + 0.000391*omega*theta + 0.008113*omega - 5.0e-6*theta**2 - 7.1e-5*theta - 0.000411
+    Diffusion: theta=1.386727e-04, omega=1.003073e-05
+
+--- Chunk 103217 (38/220) | Start: 2025-08-18 15:40:00 ---
+    RMSE omega (GP): 0.004473 | RMSE omega (Sim): 0.050394
+    Loss: 386.9380 | Epoch: 9468
+    Eq omega: 0.020411 + 0.00407theta + -0.04586omega + -0.00258theta^2 + 0.00383theta omega + -0.00807omega^2 + -0.00013theta^3 + 0.00042theta^2 omega + -0.00088theta omega^2 + 0.00730omega^3
+    Eq omega Phys: 0.094024*omega**3 - 0.000378*omega**2*theta - 0.008721*omega**2 + 6.0e-6*omega*theta**2 + 0.000193*omega*theta - 0.000272*omega - 4.0e-6*theta**2 - 4.5e-5*theta - 0.000126
+    Diffusion: theta=4.323976e-05, omega=8.021926e-06
+
+--- Chunk 103218 (39/220) | Start: 2025-08-18 15:45:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 6388.4224 | Epoch: 1211
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103219 (40/220) | Start: 2025-08-18 15:50:00 ---
+    RMSE omega (GP): 0.004149 | RMSE omega (Sim): 0.090279
+    Loss: 144.2526 | Epoch: 8120
+    Eq omega: 0.444321 + -0.96024theta + -0.15996omega + 0.00237theta^2 + -0.04519theta omega + 0.08760omega^2 + -0.00756theta^3 + -0.10288theta^2 omega + -0.24263theta omega^2 + -0.03799omega^3
+    Eq omega Phys: -0.214565*omega**3 - 0.045679*omega**2*theta - 0.130867*omega**2 - 0.000646*omega*theta**2 - 0.005427*omega*theta - 0.016573*omega - 2.0e-6*theta**3 - 1.6e-5*theta**2 - 0.001123*theta - 0.002871
+    Diffusion: theta=9.282744e-05, omega=1.020550e-05
+
+--- Chunk 103220 (41/220) | Start: 2025-08-18 15:55:00 ---
+    RMSE omega (GP): 0.004166 | RMSE omega (Sim): 0.064052
+    Loss: 345.5649 | Epoch: 9999
+    Eq omega: -0.113281 + 0.00853theta + 0.00845omega + -0.07257theta^2 + 0.19408theta omega + 0.46480omega^2 + -0.00043theta^3 + 0.02699theta^2 omega + 0.02571theta omega^2 + -0.01098omega^3
+    Eq omega Phys: -0.144836*omega**3 + 0.011305*omega**2*theta + 0.3956*omega**2 + 0.000396*omega*theta**2 + 0.010406*omega*theta + 0.057086*omega - 5.8e-5*theta**2 - 0.000855*theta - 0.003409
+    Diffusion: theta=6.346436e-05, omega=8.822034e-06
+
+--- Chunk 103221 (42/220) | Start: 2025-08-18 16:00:00 ---
+    RMSE omega (GP): 0.004555 | RMSE omega (Sim): nan
+    Loss: 335.2408 | Epoch: 9999
+    Eq omega: 0.003301 + -0.00308theta + -0.01067omega + 0.00012theta^2 + 0.00279theta omega + -0.00361omega^2 + 0.00031theta^3 + 0.00062theta^2 omega + -0.00653theta omega^2 + 0.01503omega^3
+    Eq omega Phys: 0.16076*omega**3 - 0.002328*omega**2*theta - 0.029659*omega**2 + 7.0e-6*omega*theta**2 + 0.00023*omega*theta + 0.001329*omega + 4.0e-6*theta**2 + 5.0e-5*theta + 0.000179
+    Diffusion: theta=6.922278e-05, omega=8.490896e-06
+
+--- Chunk 103222 (43/220) | Start: 2025-08-18 16:05:00 ---
+    RMSE omega (GP): 0.004921 | RMSE omega (Sim): 0.075605
+    Loss: 433.9434 | Epoch: 9754
+    Eq omega: -0.030541 + 0.00963theta + 0.06251omega + 0.00119theta^2 + 0.00405theta omega + -0.00118omega^2 + -0.00004theta^3 + 0.00042theta^2 omega + -0.01096theta omega^2 + 0.00129omega^3
+    Eq omega Phys: 0.015391*omega**3 - 0.004359*omega**2*theta - 0.052085*omega**2 + 6.0e-6*omega*theta**2 + 0.000216*omega*theta + 0.003859*omega + 2.3e-5*theta + 0.000159
+    Diffusion: theta=1.050527e-04, omega=7.456268e-06
+
+--- Chunk 103223 (44/220) | Start: 2025-08-18 16:10:00 ---
+    RMSE omega (GP): 0.005093 | RMSE omega (Sim): 0.074437
+    Loss: 419.3895 | Epoch: 8075
+    Eq omega: -0.115901 + -0.26455theta + -0.06833omega + 0.01754theta^2 + 0.03398theta omega + 0.00416omega^2 + -0.00400theta^3 + -0.00389theta^2 omega + -0.00843theta omega^2 + -0.02261omega^3
+    Eq omega Phys: -0.241487*omega**3 - 0.003001*omega**2*theta - 0.021813*omega**2 - 4.6e-5*omega*theta**2 - 7.2e-5*omega*theta + 0.000168*omega - 2.0e-6*theta**3 - 2.7e-5*theta**2 - 0.000417*theta - 0.002673
+    Diffusion: theta=2.110004e-04, omega=9.786284e-06
+
+--- Chunk 103224 (45/220) | Start: 2025-08-18 16:15:00 ---
+    RMSE omega (GP): 0.003970 | RMSE omega (Sim): 0.074965
+    Loss: 179.5949 | Epoch: 5567
+    Eq omega: 0.063861 + -1.85894theta + -0.03104omega + 0.52615theta^2 + -0.51020theta omega + 0.04404omega^2 + -0.31674theta^3 + 0.00771theta^2 omega + 0.06158theta omega^2 + -0.14489omega^3
+    Eq omega Phys: -1.081253*omega**3 + 0.015318*omega**2*theta + 0.093194*omega**2 + 6.4e-5*omega*theta**2 - 0.007888*omega*theta - 0.039094*omega - 8.8e-5*theta**3 - 0.00093*theta**2 - 0.005033*theta - 0.01196
+    Diffusion: theta=1.515530e-04, omega=1.234007e-05
+
+--- Chunk 103225 (46/220) | Start: 2025-08-18 16:20:00 ---
+    RMSE omega (GP): 0.003459 | RMSE omega (Sim): nan
+    Loss: 146.7913 | Epoch: 7147
+    Eq omega: 0.046871 + -0.08133theta + -0.01717omega + -0.00933theta^2 + 0.01159theta omega + 0.00721omega^2 + -0.00151theta^3 + 0.03465theta^2 omega + -0.00555theta omega^2 + 0.00078omega^3
+    Eq omega Phys: 0.006235*omega**3 - 0.001479*omega**2*theta - 0.007949*omega**2 + 0.000308*omega*theta**2 + 0.005057*omega*theta + 0.020168*omega - 1.6e-5*theta**2 - 0.000258*theta - 0.001165
+    Diffusion: theta=1.785803e-04, omega=1.245186e-05
+
+--- Chunk 103226 (47/220) | Start: 2025-08-18 16:25:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 18342.8262 | Epoch: 1098
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103227 (48/220) | Start: 2025-08-18 16:30:00 ---
+    RMSE omega (GP): 0.006730 | RMSE omega (Sim): 0.099679
+    Loss: 327.2812 | Epoch: 9999
+    Eq omega: 0.011731 + -0.00131theta + -0.00643omega + 0.00187theta^2 + 0.00193theta omega + 0.00069omega^2 + -0.00024theta^3 + 0.00016theta^2 omega + 0.00031theta omega^2 + -0.00242omega^3
+    Eq omega Phys: -0.011446*omega**3 + 4.9e-5*omega**2*theta + 0.001005*omega**2 + 1.0e-6*omega*theta**2 + 5.1e-5*omega*theta + 0.000356*omega - 1.0e-6*theta**2 - 5.0e-6*theta + 5.5e-5
+    Diffusion: theta=4.764071e-04, omega=1.054686e-05
+
+--- Chunk 103228 (49/220) | Start: 2025-08-18 16:35:00 ---
+    RMSE omega (GP): 0.006947 | RMSE omega (Sim): 0.071852
+    Loss: 173.2781 | Epoch: 9999
+    Eq omega: 0.060291 + -0.05700theta + 0.00626omega + 0.01658theta^2 + 0.00007theta omega + -0.00318omega^2 + 0.00007theta^3 + -0.00028theta^2 omega + 0.00815theta omega^2 + 0.00089omega^3
+    Eq omega Phys: 0.002093*omega**3 + 0.000639*omega**2*theta - 0.005968*omega**2 - 0.e-6*omega*theta**2 + 1.2e-5*omega*theta + 0.000157*omega + 5.0e-6*theta**2 - 0.000144*theta + 0.001066
+    Diffusion: theta=7.718531e-04, omega=1.577873e-05
+
+--- Chunk 103229 (50/220) | Start: 2025-08-18 16:40:00 ---
+    RMSE omega (GP): 0.004994 | RMSE omega (Sim): 0.055790
+    Loss: 185.7792 | Epoch: 9999
+    Eq omega: -0.016901 + -0.04650theta + 0.02018omega + -0.02609theta^2 + 0.00240theta omega + -0.00635omega^2 + -0.00022theta^3 + 0.00050theta^2 omega + 0.00088theta omega^2 + -0.00051omega^3
+    Eq omega Phys: -0.002478*omega**3 + 0.000143*omega**2*theta - 0.004922*omega**2 + 3.0e-6*omega*theta**2 - 5.7e-5*omega*theta + 0.000883*omega - 1.0e-5*theta**2 + 0.000303*theta - 0.002225
+    Diffusion: theta=3.051052e-04, omega=1.199731e-05
+
+  [Progress 50/220] Mean RMSE omega (GP): 0.004639 | (Sim): 0.162338 | Mean loss: 853.9257 | Valid GP: 45/50 | Valid Sim: 36/50 | Elapsed: 160.8min | ETA: 546.9min
+
+--- Chunk 103230 (51/220) | Start: 2025-08-18 16:45:00 ---
+    RMSE omega (GP): 0.004567 | RMSE omega (Sim): 0.085831
+    Loss: 112.3547 | Epoch: 9999
+    Eq omega: 0.028631 + -0.05424theta + 0.00652omega + 0.00679theta^2 + 0.01547theta omega + -0.03436omega^2 + -0.00342theta^3 + 0.00085theta^2 omega + 0.00537theta omega^2 + 0.00057omega^3
+    Eq omega Phys: 0.002057*omega**3 + 0.000646*omega**2*theta - 0.001493*omega**2 + 3.0e-6*omega*theta**2 + 0.000289*omega*theta + 0.003991*omega - 2.0e-5*theta**2 - 0.000333*theta - 0.002121
+    Diffusion: theta=2.700094e-04, omega=1.171323e-05
+
+--- Chunk 103231 (52/220) | Start: 2025-08-18 16:50:00 ---
+    RMSE omega (GP): 0.004605 | RMSE omega (Sim): 0.158797
+    Loss: 97.9234 | Epoch: 6680
+    Eq omega: -0.053871 + -0.02515theta + -0.08414omega + -0.06185theta^2 + 0.00290theta omega + -0.00763omega^2 + -0.00613theta^3 + -0.00070theta^2 omega + -0.00340theta omega^2 + -0.03022omega^3
+    Eq omega Phys: -0.096126*omega**3 - 0.00036*omega**2*theta - 0.00726*omega**2 - 2.0e-6*omega*theta**2 - 3.4e-5*omega*theta - 0.002822*omega - 0.e-6*theta**3 - 5.1e-5*theta**2 - 0.001001*theta - 0.006161
+    Diffusion: theta=2.001149e-04, omega=1.751959e-05
+
+--- Chunk 103232 (53/220) | Start: 2025-08-18 16:55:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 3324.4700 | Epoch: 1401
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103233 (54/220) | Start: 2025-08-18 17:00:00 ---
+    RMSE omega (GP): 0.004625 | RMSE omega (Sim): 0.088205
+    Loss: 420.2850 | Epoch: 8078
+    Eq omega: -0.025281 + -0.02524theta + 0.01477omega + 0.00687theta^2 + 0.12719theta omega + 0.08449omega^2 + -0.01289theta^3 + -0.00844theta^2 omega + -0.02892theta omega^2 + -0.00357omega^3
+    Eq omega Phys: -0.046572*omega**3 - 0.012576*omega**2*theta - 0.022327*omega**2 - 0.000122*omega*theta**2 + 0.001277*omega*theta + 0.013131*omega - 6.0e-6*theta**3 - 0.000111*theta**2 - 0.000685*theta - 0.001511
+    Diffusion: theta=7.785120e-05, omega=7.390296e-06
+
+--- Chunk 103234 (55/220) | Start: 2025-08-18 17:05:00 ---
+    RMSE omega (GP): 0.004347 | RMSE omega (Sim): 0.048109
+    Loss: 291.3791 | Epoch: 7666
+    Eq omega: 0.022761 + -0.05291theta + -0.18399omega + -0.00066theta^2 + 0.00342theta omega + 0.00510omega^2 + -0.00693theta^3 + 0.00263theta^2 omega + -0.01036theta omega^2 + 0.00069omega^3
+    Eq omega Phys: 0.007054*omega**3 - 0.00353*omega**2*theta - 0.030719*omega**2 + 3.0e-5*omega*theta**2 + 0.000637*omega*theta - 0.002776*omega - 3.0e-6*theta**3 - 7.6e-5*theta**2 - 0.000784*theta - 0.002838
+    Diffusion: theta=5.231174e-05, omega=1.059684e-05
+
+--- Chunk 103235 (56/220) | Start: 2025-08-18 17:10:00 ---
+    RMSE omega (GP): 0.005078 | RMSE omega (Sim): 0.096664
+    Loss: 108.8256 | Epoch: 9999
+    Eq omega: -0.076191 + -0.02372theta + -0.00961omega + -0.00462theta^2 + 0.00339theta omega + -0.00138omega^2 + -0.00016theta^3 + 0.00022theta^2 omega + 0.00077theta omega^2 + -0.00419omega^3
+    Eq omega Phys: -0.01162*omega**3 + 7.1e-5*omega**2*theta + 8.0e-6*omega**2 + 1.0e-6*omega*theta**2 + 4.3e-5*omega*theta - 8.9e-5*omega - 2.0e-6*theta**2 - 4.7e-5*theta - 0.000497
+    Diffusion: theta=6.691322e-04, omega=1.519025e-05
+
+--- Chunk 103236 (57/220) | Start: 2025-08-18 17:15:00 ---
+    RMSE omega (GP): 0.005445 | RMSE omega (Sim): 0.064542
+    Loss: 130.8296 | Epoch: 9999
+    Eq omega: 0.231051 + -0.02138theta + 0.00732omega + 0.00088theta^2 + -0.00118theta omega + -0.00303omega^2 + -0.00030theta^3 + 0.00083theta^2 omega + -0.00225theta omega^2 + -0.00207omega^3
+    Eq omega Phys: -0.006032*omega**3 - 0.000219*omega**2*theta - 0.005231*omega**2 + 3.0e-6*omega*theta**2 + 9.3e-5*omega*theta + 0.001037*omega - 2.0e-6*theta**2 - 4.9e-5*theta + 0.000231
+    Diffusion: theta=5.368170e-04, omega=9.683621e-06
+
+--- Chunk 103237 (58/220) | Start: 2025-08-18 17:20:00 ---
+    RMSE omega (GP): 0.003569 | RMSE omega (Sim): 0.114215
+    Loss: 92.7664 | Epoch: 7787
+    Eq omega: 0.156571 + -0.56087theta + 0.00122omega + -0.19292theta^2 + 0.00372theta omega + 0.00789omega^2 + 0.00070theta^3 + -0.00903theta^2 omega + -0.05110theta omega^2 + 0.00157omega^3
+    Eq omega Phys: 0.007597*omega**3 - 0.008242*omega**2*theta + 0.091196*omega**2 - 4.9e-5*omega*theta**2 + 0.001087*omega*theta - 0.006029*omega - 9.0e-5*theta**2 + 0.001259*theta - 0.002883
+    Diffusion: theta=1.944018e-04, omega=1.523256e-05
+
+--- Chunk 103238 (59/220) | Start: 2025-08-18 17:25:00 ---
+    RMSE omega (GP): 0.005644 | RMSE omega (Sim): 0.066505
+    Loss: 190.5545 | Epoch: 9999
+    Eq omega: -0.068301 + -0.01360theta + -0.01734omega + -0.00311theta^2 + -0.01379theta omega + -0.01244omega^2 + -0.00093theta^3 + 0.00239theta^2 omega + -0.01227theta omega^2 + -0.01693omega^3
+    Eq omega Phys: -0.065042*omega**3 - 0.001571*omega**2*theta + 0.027362*omega**2 + 1.0e-5*omega*theta**2 - 0.000578*omega*theta + 0.006935*omega + 7.0e-6*theta**2 - 0.000128*theta + 0.000685
+    Diffusion: theta=6.118264e-04, omega=1.197261e-05
+
+--- Chunk 103239 (60/220) | Start: 2025-08-18 17:30:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 9471.8359 | Epoch: 867
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103240 (61/220) | Start: 2025-08-18 17:35:00 ---
+    RMSE omega (GP): 0.006228 | RMSE omega (Sim): 0.106858
+    Loss: 190.6562 | Epoch: 9416
+    Eq omega: -0.022131 + -0.61928theta + 0.02650omega + 0.02823theta^2 + -0.49819theta omega + 0.52623omega^2 + -0.00710theta^3 + -0.21925theta^2 omega + -0.75225theta omega^2 + -0.06230omega^3
+    Eq omega Phys: -0.210074*omega**3 - 0.084552*omega**2*theta - 0.418154*omega**2 - 0.000821*omega*theta**2 - 0.01712*omega*theta - 0.078888*omega - 0.e-6*theta**3 - 8.0e-6*theta**2 - 0.000672*theta - 0.0047
+    Diffusion: theta=1.547211e-04, omega=1.081401e-05
+
+--- Chunk 103241 (62/220) | Start: 2025-08-18 17:40:00 ---
+    RMSE omega (GP): 0.003967 | RMSE omega (Sim): 0.158730
+    Loss: 80.8615 | Epoch: 7326
+    Eq omega: -0.051431 + -0.03808theta + 0.02115omega + 0.08876theta^2 + -0.04299theta omega + -0.21954omega^2 + -0.05315theta^3 + 0.00456theta^2 omega + -0.01565theta omega^2 + -0.03870omega^3
+    Eq omega Phys: -0.135214*omega**3 - 0.001823*omega**2*theta - 0.087124*omega**2 + 1.8e-5*omega*theta**2 - 0.000252*omega*theta - 0.001775*omega - 7.0e-6*theta**3 - 0.000104*theta**2 - 0.000516*theta - 0.001006
+    Diffusion: theta=1.194440e-04, omega=1.549419e-05
+
+--- Chunk 103242 (63/220) | Start: 2025-08-18 17:45:00 ---
+    RMSE omega (GP): 0.004030 | RMSE omega (Sim): 0.121719
+    Loss: 127.2627 | Epoch: 6590
+    Eq omega: -0.086131 + -0.05457theta + 0.00440omega + -0.70731theta^2 + 0.20430theta omega + -0.00819omega^2 + -0.57312theta^3 + -0.03777theta^2 omega + 0.18396theta omega^2 + 0.10906omega^3
+    Eq omega Phys: 0.574783*omega**3 + 0.032318*omega**2*theta - 0.131445*omega**2 - 0.000221*omega*theta**2 + 0.004607*omega*theta - 0.01463*omega - 0.000112*theta**3 + 0.001*theta**2 - 0.002717*theta + 0.001796
+    Diffusion: theta=8.635965e-05, omega=1.235958e-05
+
+--- Chunk 103243 (64/220) | Start: 2025-08-18 17:50:00 ---
+    RMSE omega (GP): 0.004210 | RMSE omega (Sim): 0.071537
+    Loss: 246.2315 | Epoch: 8464
+    Eq omega: 1.345811 + 0.08273theta + -0.09169omega + 0.01158theta^2 + 0.00497theta omega + -0.03734omega^2 + -0.00299theta^3 + -0.01892theta^2 omega + -0.04151theta omega^2 + -0.03322omega^3
+    Eq omega Phys: -0.303007*omega**3 - 0.012621*omega**2*theta + 0.058911*omega**2 - 0.000192*omega*theta**2 + 0.002507*omega*theta - 0.01124*omega - 1.0e-6*theta**3 + 2.6e-5*theta**2 - 0.000118*theta + 0.002667
+    Diffusion: theta=1.391168e-04, omega=1.438751e-05
+
+--- Chunk 103244 (65/220) | Start: 2025-08-18 17:55:00 ---
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4121376003985D+01   r2 =  0.4254186492975D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4121376003985D+01   r2 =  0.4254186492975D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4121376003985D+01   r2 =  0.4254186492975D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4121376003985D+01   r2 =  0.3496372966532D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4121376003985D+01   r2 =  0.3496372966532D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4121376003985D+01   r2 =  0.3496372966532D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4121376003985D+01   r2 =  0.2873551486927D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4121376003985D+01   r2 =  0.2873551486927D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4121376003985D+01   r2 =  0.2873551486927D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4121376003985D+01   r2 =  0.2361675435349D-15
+ lsoda--  above warning has been issued i1 times.    
+       it will not be issued again for this problem  
+      in above message,  i1 =        10
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.2601634580562D+01   r2 =  0.2216426706738D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.2601634580562D+01   r2 =  0.2216426706738D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.2601634580562D+01   r2 =  0.2216426706738D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.2601634580562D+01   r2 =  0.1821606651769D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.2601634580562D+01   r2 =  0.1821606651769D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.2601634580562D+01   r2 =  0.1821606651769D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+    RMSE omega (GP): 0.004409 | RMSE omega (Sim): nan
+    Loss: 112.5112 | Epoch: 8550
+    Eq omega: -0.018871 + -0.09840theta + 0.29479omega + 0.00311theta^2 + -0.07845theta omega + -0.12014omega^2 + -0.01447theta^3 + -0.00083theta^2 omega + -0.00495theta omega^2 + 0.15477omega^3
+    Eq omega Phys: 0.612802*omega**3 - 0.000653*omega**2*theta - 0.050324*omega**2 - 4.0e-6*omega*theta**2 - 0.001025*omega*theta - 0.000267*omega - 2.0e-6*theta**3 - 6.4e-5*theta**2 - 0.000749*theta - 0.003311
+    Diffusion: theta=2.126206e-04, omega=1.228338e-05
+
+--- Chunk 103245 (66/220) | Start: 2025-08-18 18:00:00 ---
+    RMSE omega (GP): 0.003700 | RMSE omega (Sim): nan
+    Loss: 120.7646 | Epoch: 7265
+    Eq omega: -0.348901 + -0.10452theta + 0.66424omega + 0.00185theta^2 + 0.01403theta omega + -0.08903omega^2 + -0.00513theta^3 + -0.00911theta^2 omega + -0.00988theta omega^2 + 0.02019omega^3
+    Eq omega Phys: 0.117991*omega**3 - 0.001925*omega**2*theta - 0.041568*omega**2 - 5.9e-5*omega*theta**2 + 6.7e-5*omega*theta + 0.022303*omega - 1.0e-6*theta**3 - 3.0e-6*theta**2 - 0.000119*theta - 0.001016
+    Diffusion: theta=1.432824e-04, omega=1.318365e-05
+
+--- Chunk 103246 (67/220) | Start: 2025-08-18 18:05:00 ---
+    RMSE omega (GP): 0.004713 | RMSE omega (Sim): 0.098340
+    Loss: 227.8310 | Epoch: 9807
+    Eq omega: 0.051641 + -0.02253theta + -0.00717omega + 0.00165theta^2 + 0.00227theta omega + -0.02628omega^2 + -0.00006theta^3 + 0.00002theta^2 omega + 0.00019theta omega^2 + 0.00131omega^3
+    Eq omega Phys: 0.00891*omega**3 + 4.3e-5*omega**2*theta - 0.011878*omega**2 + 4.0e-5*omega*theta + 0.000325*omega - 9.0e-6*theta - 0.000107
+    Diffusion: theta=1.003372e-04, omega=1.267632e-05
+
+--- Chunk 103247 (68/220) | Start: 2025-08-18 18:10:00 ---
+    RMSE omega (GP): 0.005029 | RMSE omega (Sim): 0.099216
+    Loss: 319.2420 | Epoch: 6039
+    Eq omega: 0.037061 + -0.03591theta + 0.13331omega + 0.00142theta^2 + -0.01845theta omega + -0.01436omega^2 + -0.24424theta^3 + -0.12243theta^2 omega + 0.22455theta omega^2 + -0.00166omega^3
+    Eq omega Phys: -0.014056*omega**3 + 0.06338*omega**2*theta - 0.335428*omega**2 - 0.001152*omega*theta**2 + 0.011588*omega*theta - 0.024678*omega - 7.7e-5*theta**3 + 0.001189*theta**2 - 0.006195*theta + 0.010903
+    Diffusion: theta=9.744756e-05, omega=8.892952e-06
+
+--- Chunk 103248 (69/220) | Start: 2025-08-18 18:15:00 ---
+    RMSE omega (GP): 0.003430 | RMSE omega (Sim): 0.054716
+    Loss: 128.5864 | Epoch: 6311
+    Eq omega: 0.185351 + -0.07495theta + -0.16888omega + -0.58687theta^2 + 0.20928theta omega + -0.20090omega^2 + -0.66741theta^3 + -0.08133theta^2 omega + 0.12838theta omega^2 + -0.08770omega^3
+    Eq omega Phys: -0.630853*omega**3 + 0.030783*omega**2*theta - 0.136774*omega**2 - 0.00065*omega*theta**2 + 0.005038*omega*theta - 0.010902*omega - 0.000178*theta**3 + 0.000346*theta**2 - 0.000117*theta + 0.000373
+    Diffusion: theta=1.316512e-04, omega=1.374497e-05
+
+--- Chunk 103249 (70/220) | Start: 2025-08-18 18:20:00 ---
+    RMSE omega (GP): 0.004342 | RMSE omega (Sim): 0.289377
+    Loss: 195.3428 | Epoch: 7066
+    Eq omega: 0.099431 + -0.02900theta + 0.13925omega + -0.00732theta^2 + -0.06802theta omega + 0.12568omega^2 + -0.03581theta^3 + 0.00690theta^2 omega + 0.00627theta omega^2 + 0.00846omega^3
+    Eq omega Phys: 0.058365*omega**3 + 0.001442*omega**2*theta + 0.067711*omega**2 + 5.3e-5*omega*theta**2 - 0.000541*omega*theta + 0.000439*omega - 9.0e-6*theta**3 - 0.000146*theta**2 - 0.000804*theta - 0.001298
+    Diffusion: theta=5.418295e-05, omega=1.078223e-05
+
+--- Chunk 103250 (71/220) | Start: 2025-08-18 18:25:00 ---
+    RMSE omega (GP): 0.005645 | RMSE omega (Sim): 0.070371
+    Loss: 440.5705 | Epoch: 6116
+    Eq omega: -0.085301 + -2.61031theta + -0.01971omega + 0.76996theta^2 + -0.84420theta omega + 0.26635omega^2 + -0.02278theta^3 + -0.14986theta^2 omega + -0.27353theta omega^2 + 0.00060omega^3
+    Eq omega Phys: 0.005507*omega**3 - 0.083688*omega**2*theta - 0.176042*omega**2 - 0.001528*omega*theta**2 - 0.027376*omega*theta - 0.083619*omega - 8.0e-6*theta**3 + 0.000383*theta**2 + 0.00041*theta - 0.00476
+    Diffusion: theta=9.978505e-05, omega=1.250507e-05
+
+--- Chunk 103251 (72/220) | Start: 2025-08-18 18:30:00 ---
+    RMSE omega (GP): 0.004298 | RMSE omega (Sim): 0.074636
+    Loss: 274.0087 | Epoch: 6978
+    Eq omega: -0.148271 + 0.07289theta + -0.09870omega + 0.01081theta^2 + -0.14534theta omega + 0.05340omega^2 + -0.03591theta^3 + -0.08070theta^2 omega + -0.09748theta omega^2 + 0.01146omega^3
+    Eq omega Phys: 0.114578*omega**3 - 0.032487*omega**2*theta + 0.166464*omega**2 - 0.000896*omega*theta**2 + 0.004689*omega*theta - 0.00724*omega - 1.3e-5*theta**3 + 0.000173*theta**2 - 0.000672*theta + 0.000465
+    Diffusion: theta=8.847721e-05, omega=7.105865e-06
+
+--- Chunk 103252 (73/220) | Start: 2025-08-18 18:35:00 ---
+    RMSE omega (GP): 0.003997 | RMSE omega (Sim): 0.041288
+    Loss: 143.9389 | Epoch: 9999
+    Eq omega: -0.018641 + -0.01366theta + -0.01898omega + -0.00211theta^2 + 0.03423theta omega + 0.02644omega^2 + -0.00696theta^3 + 0.00584theta^2 omega + -0.06990theta omega^2 + -0.05259omega^3
+    Eq omega Phys: -0.316087*omega**3 - 0.014004*omega**2*theta - 0.119628*omega**2 + 3.9e-5*omega*theta**2 + 0.001243*omega*theta + 0.007598*omega - 2.0e-6*theta**3 - 4.5e-5*theta**2 - 0.000444*theta - 0.001563
+    Diffusion: theta=8.218195e-05, omega=9.527746e-06
+
+--- Chunk 103253 (74/220) | Start: 2025-08-18 18:40:00 ---
+    RMSE omega (GP): 0.004269 | RMSE omega (Sim): 0.065484
+    Loss: 124.9980 | Epoch: 7534
+    Eq omega: -0.108911 + -0.00413theta + -0.00856omega + -0.09104theta^2 + 0.02578theta omega + 0.13766omega^2 + -0.13186theta^3 + -0.01013theta^2 omega + 0.09013theta omega^2 + 0.01712omega^3
+    Eq omega Phys: 0.078829*omega**3 + 0.013833*omega**2*theta - 0.006875*omega**2 - 5.2e-5*omega*theta**2 + 0.000792*omega*theta - 0.002767*omega - 2.2e-5*theta**3 + 0.000257*theta**2 - 0.00096*theta + 0.000855
+    Diffusion: theta=1.423963e-04, omega=1.339201e-05
+
+--- Chunk 103254 (75/220) | Start: 2025-08-18 18:45:00 ---
+    RMSE omega (GP): 0.003789 | RMSE omega (Sim): nan
+    Loss: 135.2721 | Epoch: 7098
+    Eq omega: 0.023481 + 0.00823theta + 0.10210omega + 0.02084theta^2 + 0.00704theta omega + 0.12287omega^2 + -0.17114theta^3 + 0.00530theta^2 omega + 0.12263theta omega^2 + 0.04496omega^3
+    Eq omega Phys: 0.283787*omega**3 + 0.025801*omega**2*theta + 0.017592*omega**2 + 3.7e-5*omega*theta**2 - 4.0e-6*omega*theta + 0.003326*omega - 4.0e-5*theta**3 + 0.000191*theta**2 - 0.000294*theta + 0.000203
+    Diffusion: theta=4.326771e-05, omega=1.423032e-05
+
+--- Chunk 103255 (76/220) | Start: 2025-08-18 18:50:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 19521.0801 | Epoch: 1080
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103256 (77/220) | Start: 2025-08-18 18:55:00 ---
+    RMSE omega (GP): 0.005246 | RMSE omega (Sim): 0.082424
+    Loss: 568.8170 | Epoch: 5473
+    Eq omega: 0.079241 + -0.20704theta + 0.00252omega + 0.02783theta^2 + -0.00108theta omega + 0.05893omega^2 + 0.00204theta^3 + -0.00086theta^2 omega + 0.00479theta omega^2 + -0.00680omega^3
+    Eq omega Phys: -0.092919*omega**3 + 0.002182*omega**2*theta + 0.05251*omega**2 - 1.3e-5*omega*theta**2 - 0.000177*omega*theta - 0.000503*omega + 1.0e-6*theta**3 + 3.9e-5*theta**2 + 0.000119*theta - 0.000296
+    Diffusion: theta=1.140060e-04, omega=8.610511e-06
+
+--- Chunk 103257 (78/220) | Start: 2025-08-18 19:00:00 ---
+    RMSE omega (GP): 0.005367 | RMSE omega (Sim): nan
+    Loss: 325.0709 | Epoch: 4947
+    Eq omega: -0.011431 + -0.49559theta + -0.09261omega + -0.18348theta^2 + 1.04237theta omega + 0.04435omega^2 + -0.46956theta^3 + 0.89087theta^2 omega + 0.12874theta omega^2 + -0.02585omega^3
+    Eq omega Phys: -0.192027*omega**3 + 0.031878*omega**2*theta - 0.060409*omega**2 + 0.007353*omega*theta**2 - 0.020759*omega*theta + 0.001401*omega - 0.000129*theta**3 + 0.000901*theta**2 - 0.00262*theta + 0.002958
+    Diffusion: theta=2.424778e-04, omega=1.514369e-05
+
+--- Chunk 103258 (79/220) | Start: 2025-08-18 19:05:00 ---
+    RMSE omega (GP): 0.004204 | RMSE omega (Sim): 0.153691
+    Loss: 237.1600 | Epoch: 6319
+    Eq omega: -0.285031 + -0.13381theta + 0.16712omega + 0.00284theta^2 + 0.00344theta omega + -0.26010omega^2 + -0.10490theta^3 + 0.07653theta^2 omega + -0.02680theta omega^2 + -0.01247omega^3
+    Eq omega Phys: -0.109332*omega**3 - 0.007832*omega**2*theta - 0.104382*omega**2 + 0.000746*omega*theta**2 - 0.006835*omega*theta + 0.021235*omega - 3.4e-5*theta**3 + 0.000474*theta**2 - 0.002351*theta + 0.00351
+    Diffusion: theta=2.104469e-04, omega=1.373319e-05
+
+--- Chunk 103259 (80/220) | Start: 2025-08-18 19:10:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 325112.2188 | Epoch: 5
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103260 (81/220) | Start: 2025-08-18 19:15:00 ---
+    RMSE omega (GP): 0.005507 | RMSE omega (Sim): 0.056447
+    Loss: 418.3821 | Epoch: 7821
+    Eq omega: -0.064391 + -0.01386theta + -0.00717omega + 0.01030theta^2 + 0.00812theta omega + 0.02302omega^2 + -0.00090theta^3 + 0.00080theta^2 omega + -0.01738theta omega^2 + 0.00709omega^3
+    Eq omega Phys: 0.064777*omega**3 - 0.005293*omega**2*theta - 0.0433*omega**2 + 8.0e-6*omega*theta**2 + 0.000321*omega*theta + 0.002251*omega - 3.0e-6*theta**2 + 1.6e-5*theta + 5.4e-5
+    Diffusion: theta=6.537934e-05, omega=1.355172e-05
+
+--- Chunk 103261 (82/220) | Start: 2025-08-18 19:20:00 ---
+    RMSE omega (GP): 0.018162 | RMSE omega (Sim): 0.057815
+    Loss: 5827.9414 | Epoch: 9999
+    Eq omega: 0.045371 + -0.01625theta + -0.03517omega + 0.00083theta^2 + -0.00860theta omega + 0.01988omega^2 + -0.00323theta^3 + -0.01244theta^2 omega + 0.01590theta omega^2 + -0.01533omega^3
+    Eq omega Phys: -0.178273*omega**3 + 0.006163*omega**2*theta + 0.098189*omega**2 - 0.000161*omega*theta**2 - 0.004654*omega*theta - 0.034816*omega - 1.0e-6*theta**3 - 5.8e-5*theta**2 - 0.000811*theta - 0.003814
+    Diffusion: theta=1.436167e-04, omega=5.392899e-06
+
+--- Chunk 103262 (83/220) | Start: 2025-08-18 19:25:00 ---
+    RMSE omega (GP): 0.004204 | RMSE omega (Sim): 0.051278
+    Loss: 159.4993 | Epoch: 6679
+    Eq omega: 0.038991 + -0.05540theta + -0.21765omega + 0.12100theta^2 + -0.00780theta omega + 0.04562omega^2 + -0.08443theta^3 + -0.10625theta^2 omega + -0.12957theta omega^2 + -0.01086omega^3
+    Eq omega Phys: -0.064798*omega**3 - 0.02577*omega**2*theta - 0.016201*omega**2 - 0.000704*omega*theta**2 - 0.002114*omega*theta - 0.008836*omega - 1.9e-5*theta**3 - 1.9e-5*theta**2 - 4.0e-6*theta + 7.7e-5
+    Diffusion: theta=7.519621e-05, omega=1.507720e-05
+
+--- Chunk 103263 (84/220) | Start: 2025-08-18 19:30:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 489.6429 | Epoch: 5527
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103264 (85/220) | Start: 2025-08-18 19:35:00 ---
+    RMSE omega (GP): 0.003975 | RMSE omega (Sim): 0.089440
+    Loss: 137.2672 | Epoch: 7516
+    Eq omega: 0.011741 + -0.00012theta + -0.01059omega + -0.00042theta^2 + 0.00214theta omega + -0.00393omega^2 + -0.00016theta^3 + -0.00153theta^2 omega + -0.00130theta omega^2 + -0.00496omega^3
+    Eq omega Phys: -0.028658*omega**3 - 0.00025*omega**2*theta - 0.001165*omega**2 - 1.0e-5*omega*theta**2 + 7.5e-5*omega*theta - 0.000472*omega + 2.9e-5
+    Diffusion: theta=1.347328e-04, omega=1.382755e-05
+
+--- Chunk 103265 (86/220) | Start: 2025-08-18 19:40:00 ---
+    RMSE omega (GP): 0.005169 | RMSE omega (Sim): 0.054620
+    Loss: 244.6555 | Epoch: 9999
+    Eq omega: 0.013481 + -0.11401theta + -0.04405omega + -0.00516theta^2 + 0.00422theta omega + 0.06307omega^2 + -0.00248theta^3 + 0.00066theta^2 omega + -0.00356theta omega^2 + -0.05126omega^3
+    Eq omega Phys: -0.308273*omega**3 - 0.000714*omega**2*theta + 0.021304*omega**2 + 4.0e-6*omega*theta**2 + 0.000149*omega*theta - 0.00044*omega - 0.e-6*theta**3 - 1.9e-5*theta**2 - 0.000333*theta - 0.001947
+    Diffusion: theta=2.738935e-04, omega=1.110081e-05
+
+--- Chunk 103266 (87/220) | Start: 2025-08-18 19:45:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 1241110.7500 | Epoch: 5
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103267 (88/220) | Start: 2025-08-18 19:50:00 ---
+    RMSE omega (GP): 0.005339 | RMSE omega (Sim): 0.191628
+    Loss: 759.5842 | Epoch: 9196
+    Eq omega: -0.459541 + 0.00260theta + 0.22759omega + 0.00130theta^2 + 0.00340theta omega + -0.02413omega^2 + 0.00018theta^3 + -0.00014theta^2 omega + -0.00786theta omega^2 + 0.00117omega^3
+    Eq omega Phys: 0.020655*omega**3 - 0.004625*omega**2*theta - 0.076841*omega**2 - 3.0e-6*omega*theta**2 + 1.8e-5*omega*theta + 0.008246*omega + 6.0e-6*theta**2 + 8.7e-5*theta - 0.000217
+    Diffusion: theta=1.010682e-04, omega=7.591962e-06
+
+--- Chunk 103268 (89/220) | Start: 2025-08-18 19:55:00 ---
+    RMSE omega (GP): 0.005206 | RMSE omega (Sim): 0.073473
+    Loss: 311.7299 | Epoch: 7118
+    Eq omega: 0.293051 + -0.08156theta + -0.30998omega + 0.04371theta^2 + 0.06102theta omega + 0.03529omega^2 + -0.00702theta^3 + -0.00175theta^2 omega + -0.01847theta omega^2 + -0.00024omega^3
+    Eq omega Phys: -0.001846*omega**3 - 0.004737*omega**2*theta - 0.025671*omega**2 - 1.5e-5*omega*theta**2 + 0.000755*omega*theta - 0.002128*omega - 2.0e-6*theta**3 - 3.1e-5*theta**2 - 0.000146*theta + 0.000334
+    Diffusion: theta=1.225880e-04, omega=1.134830e-05
+
+--- Chunk 103269 (90/220) | Start: 2025-08-18 20:00:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 17129.0234 | Epoch: 1145
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103270 (91/220) | Start: 2025-08-18 20:05:00 ---
+    RMSE omega (GP): 0.004753 | RMSE omega (Sim): 0.083284
+    Loss: 561.4012 | Epoch: 7739
+    Eq omega: -0.021021 + -0.01247theta + 0.16781omega + 0.00155theta^2 + -0.03795theta omega + 0.01475omega^2 + -0.00395theta^3 + 0.00219theta^2 omega + 0.01380theta omega^2 + -0.02585omega^3
+    Eq omega Phys: -0.426114*omega**3 + 0.007583*omega**2*theta + 0.09791*omega**2 + 4.0e-5*omega*theta**2 - 1.8e-5*omega*theta + 0.000115*omega - 2.0e-6*theta**3 - 8.2e-5*theta**2 - 0.000936*theta - 0.003662
+    Diffusion: theta=9.152191e-05, omega=7.118033e-06
+
+--- Chunk 103271 (92/220) | Start: 2025-08-18 20:10:00 ---
+    RMSE omega (GP): 0.004387 | RMSE omega (Sim): 0.061302
+    Loss: 204.4036 | Epoch: 4865
+    Eq omega: 0.031571 + -1.18226theta + 0.09373omega + -0.10405theta^2 + 0.03171theta omega + -0.22856omega^2 + -0.70095theta^3 + -0.08863theta^2 omega + -0.16994theta omega^2 + 0.14959omega^3
+    Eq omega Phys: 1.052825*omega**3 - 0.039868*omega**2*theta - 0.10046*omega**2 - 0.000693*omega*theta**2 + 0.000868*omega*theta + 0.002947*omega - 0.000183*theta**3 + 8.5e-5*theta**2 - 0.001321*theta + 0.000409
+    Diffusion: theta=5.338498e-05, omega=1.435707e-05
+
+--- Chunk 103272 (93/220) | Start: 2025-08-18 20:15:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 9007.0420 | Epoch: 1556
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103273 (94/220) | Start: 2025-08-18 20:20:00 ---
+    RMSE omega (GP): 0.003210 | RMSE omega (Sim): 0.153483
+    Loss: -3801398272.0000 | Epoch: 7097
+    Eq omega: -0.060901 + -0.27084theta + -0.00864omega + 0.01818theta^2 + 0.03876theta omega + 0.13298omega^2 + -0.25431theta^3 + 0.00535theta^2 omega + 0.07112theta omega^2 + 0.01112omega^3
+    Eq omega Phys: 0.062709*omega**3 + 0.013369*omega**2*theta + 0.003569*omega**2 + 3.4e-5*omega*theta**2 + 0.000289*omega*theta - 0.002006*omega - 5.3e-5*theta**3 + 0.000653*theta**2 - 0.00298*theta + 0.004722
+    Diffusion: theta=1.161729e-07, omega=7.573143e-06
+
+--- Chunk 103274 (95/220) | Start: 2025-08-18 20:25:00 ---
+    RMSE omega (GP): 0.005609 | RMSE omega (Sim): nan
+    Loss: 403.2913 | Epoch: 9999
+    Eq omega: -0.019131 + -0.00882theta + 0.03559omega + 0.02270theta^2 + 0.00579theta omega + -0.04494omega^2 + -0.00105theta^3 + -0.00057theta^2 omega + -0.06261theta omega^2 + 0.03117omega^3
+    Eq omega Phys: 0.263736*omega**3 - 0.017659*omega**2*theta - 0.275892*omega**2 - 5.0e-6*omega*theta**2 - 5.0e-5*omega*theta + 0.001558*omega - 0.e-6*theta**2 + 0.000171*theta + 0.001592
+    Diffusion: theta=2.309956e-04, omega=7.853510e-06
+
+--- Chunk 103275 (96/220) | Start: 2025-08-18 20:30:00 ---
+    RMSE omega (GP): 0.004359 | RMSE omega (Sim): nan
+    Loss: 151.2024 | Epoch: 9999
+    Eq omega: -0.043131 + -0.02972theta + 0.16213omega + -0.00290theta^2 + 0.01457theta omega + 0.02597omega^2 + -0.00067theta^3 + 0.00092theta^2 omega + 0.00690theta omega^2 + 0.01163omega^3
+    Eq omega Phys: 0.061815*omega**3 + 0.001222*omega**2*theta - 0.003947*omega**2 + 5.0e-6*omega*theta**2 + 7.2e-5*omega*theta + 0.003721*omega + 3.0e-6*theta**2 - 5.9e-5*theta + 0.000325
+    Diffusion: theta=8.976148e-05, omega=1.221756e-05
+
+--- Chunk 103276 (97/220) | Start: 2025-08-18 20:35:00 ---
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.2601634580562D+01   r2 =  0.1497117312299D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.2601634580562D+01   r2 =  0.1497117312299D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.2601634580562D+01   r2 =  0.1497117312299D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.2601634580562D+01   r2 =  0.1230430425228D-15
+ lsoda--  above warning has been issued i1 times.    
+       it will not be issued again for this problem  
+      in above message,  i1 =        10
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.3774664631284D+01   r2 =  0.2079608933202D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.3774664631284D+01   r2 =  0.2079608933202D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.3774664631284D+01   r2 =  0.2079608933202D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.3774664631284D+01   r2 =  0.1709160727657D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.3774664631284D+01   r2 =  0.1709160727657D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.3774664631284D+01   r2 =  0.1709160727657D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.3774664631284D+01   r2 =  0.1404701790342D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.3774664631284D+01   r2 =  0.1404701790342D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.3774664631284D+01   r2 =  0.1404701790342D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.3774664631284D+01   r2 =  0.1154477216364D-15
+ lsoda--  above warning has been issued i1 times.    
+       it will not be issued again for this problem  
+      in above message,  i1 =        10
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.8971105911175D+01   r2 =  0.7746592648707D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.8971105911175D+01   r2 =  0.7746592648707D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+    RMSE omega (GP): 0.005483 | RMSE omega (Sim): nan
+    Loss: 200.4882 | Epoch: 9999
+    Eq omega: 0.038081 + -0.18261theta + 0.02042omega + 0.03165theta^2 + -0.01225theta omega + 0.01200omega^2 + -0.00022theta^3 + -0.00094theta^2 omega + -0.00720theta omega^2 + 0.01996omega^3
+    Eq omega Phys: 0.08836*omega**3 - 0.001062*omega**2*theta - 0.011458*omega**2 - 5.0e-6*omega*theta**2 - 0.000297*omega*theta - 0.002749*omega + 1.2e-5*theta**2 + 0.000181*theta + 7.0e-6
+    Diffusion: theta=2.173976e-04, omega=1.039281e-05
+
+--- Chunk 103277 (98/220) | Start: 2025-08-18 20:40:00 ---
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.8971105911175D+01   r2 =  0.7746592648707D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.8971105911175D+01   r2 =  0.7746592648707D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.8971105911175D+01   r2 =  0.6248359786747D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.8971105911175D+01   r2 =  0.6248359786747D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.8971105911175D+01   r2 =  0.6248359786747D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.8971105911175D+01   r2 =  0.6248359786747D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.8971105911175D+01   r2 =  0.5039893254680D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4969756838040D+01   r2 =  0.4431619650089D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4969756838040D+01   r2 =  0.4431619650089D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4969756838040D+01   r2 =  0.4431619650089D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4969756838040D+01   r2 =  0.3642199309910D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4969756838040D+01   r2 =  0.3642199309910D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4969756838040D+01   r2 =  0.3642199309910D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4969756838040D+01   r2 =  0.2993401254104D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4969756838040D+01   r2 =  0.2993401254104D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4969756838040D+01   r2 =  0.2993401254104D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.4969756838040D+01   r2 =  0.2460175928662D-15
+ lsoda--  above warning has been issued i1 times.    
+       it will not be issued again for this problem  
+      in above message,  i1 =        10
+    RMSE omega (GP): 0.004124 | RMSE omega (Sim): nan
+    Loss: 156.0095 | Epoch: 4847
+    Eq omega: -0.073121 + -0.47356theta + 0.55595omega + 0.29443theta^2 + -0.23519theta omega + -0.12844omega^2 + -0.39171theta^3 + 0.01396theta^2 omega + 0.01202theta omega^2 + 0.01798omega^3
+    Eq omega Phys: 0.109373*omega**3 + 0.002437*omega**2*theta - 0.061163*omega**2 + 9.4e-5*omega*theta**2 - 0.003788*omega*theta + 0.023526*omega - 8.8e-5*theta**3 + 0.000509*theta**2 - 0.001422*theta + 0.001037
+    Diffusion: theta=1.649659e-04, omega=1.390303e-05
+
+--- Chunk 103278 (99/220) | Start: 2025-08-18 20:45:00 ---
+    RMSE omega (GP): 0.004949 | RMSE omega (Sim): 0.266722
+    Loss: 225.2095 | Epoch: 7962
+    Eq omega: -0.549871 + -0.02817theta + 0.37614omega + 0.00211theta^2 + 0.00680theta omega + -0.02394omega^2 + -0.00101theta^3 + -0.00262theta^2 omega + -0.00864theta omega^2 + -0.00219omega^3
+    Eq omega Phys: -0.013299*omega**3 - 0.001749*omega**2*theta - 0.0202*omega**2 - 1.8e-5*omega*theta**2 - 8.9e-5*omega*theta + 0.012574*omega - 3.0e-6*theta**2 - 4.0e-5*theta - 0.001532
+    Diffusion: theta=1.680508e-04, omega=1.428612e-05
+
+--- Chunk 103279 (100/220) | Start: 2025-08-18 20:50:00 ---
+    RMSE omega (GP): 0.004720 | RMSE omega (Sim): 0.124645
+    Loss: 260.1013 | Epoch: 9999
+    Eq omega: 0.775771 + -0.04039theta + -0.11520omega + 0.00044theta^2 + 0.02456theta omega + 0.03192omega^2 + -0.00008theta^3 + 0.00113theta^2 omega + -0.00793theta omega^2 + -0.00201omega^3
+    Eq omega Phys: -0.015335*omega**3 - 0.002017*omega**2*theta - 0.023976*omega**2 + 1.0e-5*omega*theta**2 + 0.000794*omega*theta + 0.008146*omega - 1.0e-6*theta**2 - 6.2e-5*theta + 0.000738
+    Diffusion: theta=2.768165e-04, omega=8.777361e-06
+
+  [Progress 100/220] Mean RMSE omega (GP): 0.004789 | (Sim): 0.133136 | Mean loss: -37997149.4444 | Valid GP: 87/100 | Valid Sim: 70/100 | Elapsed: 311.1min | ETA: 373.3min
+
+--- Chunk 103280 (101/220) | Start: 2025-08-18 20:55:00 ---
+    RMSE omega (GP): 0.005046 | RMSE omega (Sim): 0.368669
+    Loss: 75.7347 | Epoch: 7701
+    Eq omega: 0.029911 + -0.06336theta + 0.15191omega + -0.01293theta^2 + 0.01265theta omega + -0.03412omega^2 + -0.04421theta^3 + 0.04788theta^2 omega + -0.00682theta omega^2 + 0.00254omega^3
+    Eq omega Phys: 0.005208*omega**3 - 0.000466*omega**2*theta - 0.005122*omega**2 + 0.000109*omega*theta**2 - 0.001668*omega*theta + 0.011409*omega - 3.0e-6*theta**3 + 7.8e-5*theta**2 - 0.000678*theta + 0.002268
+    Diffusion: theta=1.104246e-04, omega=1.941598e-05
+
+--- Chunk 103281 (102/220) | Start: 2025-08-18 21:00:00 ---
+    RMSE omega (GP): 0.005064 | RMSE omega (Sim): 0.130134
+    Loss: 121.1872 | Epoch: 9999
+    Eq omega: 0.004531 + -0.00113theta + -0.00439omega + -0.00005theta^2 + 0.00010theta omega + 0.00279omega^2 + -0.00012theta^3 + 0.00012theta^2 omega + -0.00023theta omega^2 + 0.00138omega^3
+    Eq omega Phys: 0.004326*omega**3 - 2.4e-5*omega**2*theta + 0.000364*omega**2 + 2.0e-5*omega*theta + 8.7e-5*omega - 0.e-6*theta**2 - 2.3e-5*theta - 0.000177
+    Diffusion: theta=3.541779e-04, omega=1.592185e-05
+
+--- Chunk 103282 (103/220) | Start: 2025-08-18 21:05:00 ---
+    RMSE omega (GP): 0.005264 | RMSE omega (Sim): 0.093305
+    Loss: 465.8986 | Epoch: 9999
+    Eq omega: 0.023921 + -0.03847theta + 0.00603omega + 0.00106theta^2 + 0.00012theta omega + 0.00026omega^2 + -0.00003theta^3 + -0.00004theta^2 omega + 0.00017theta omega^2 + 0.00175omega^3
+    Eq omega Phys: 0.018861*omega**3 + 6.1e-5*omega**2*theta + 0.001485*omega**2 - 1.8e-5*omega*theta + 2.6e-5*omega - 2.9e-5*theta - 0.000675
+    Diffusion: theta=3.693442e-04, omega=7.466688e-06
+
+--- Chunk 103283 (104/220) | Start: 2025-08-18 21:10:00 ---
+    RMSE omega (GP): 0.003531 | RMSE omega (Sim): 0.060572
+    Loss: 264.0282 | Epoch: 6106
+    Eq omega: 0.036271 + -0.58093theta + -0.59188omega + 0.66258theta^2 + 0.33368theta omega + 0.04030omega^2 + -0.35556theta^3 + -0.01351theta^2 omega + 0.06349theta omega^2 + -0.03707omega^3
+    Eq omega Phys: -0.52336*omega**3 + 0.029879*omega**2*theta - 0.082443*omega**2 - 0.000212*omega*theta**2 + 0.009192*omega*theta - 0.05072*omega - 0.000186*theta**3 + 0.00256*theta**2 - 0.011939*theta + 0.018593
+    Diffusion: theta=4.571809e-05, omega=7.906688e-06
+
+--- Chunk 103284 (105/220) | Start: 2025-08-18 21:15:00 ---
+    RMSE omega (GP): 0.004758 | RMSE omega (Sim): 0.050949
+    Loss: 513.0367 | Epoch: 6165
+    Eq omega: -0.047751 + -0.12564theta + 0.02949omega + 0.02648theta^2 + 0.53729theta omega + 0.05750omega^2 + -0.08614theta^3 + -0.04254theta^2 omega + -0.27085theta omega^2 + -0.01837omega^3
+    Eq omega Phys: -0.275897*omega**3 - 0.135595*omega**2*theta + 0.300705*omega**2 - 0.00071*omega*theta**2 + 0.015395*omega*theta - 0.025928*omega - 4.8e-5*theta**3 + 0.000296*theta**2 - 0.000748*theta + 0.000607
+    Diffusion: theta=6.336886e-05, omega=8.081704e-06
+
+--- Chunk 103285 (106/220) | Start: 2025-08-18 21:20:00 ---
+    RMSE omega (GP): 0.003596 | RMSE omega (Sim): nan
+    Loss: 241.4203 | Epoch: 5589
+    Eq omega: -0.041381 + -0.01032theta + -0.08156omega + -0.00228theta^2 + -0.03086theta omega + -0.17031omega^2 + -0.12898theta^3 + 0.04756theta^2 omega + 0.00646theta omega^2 + 0.09711omega^3
+    Eq omega Phys: 1.206737*omega**3 + 0.002676*omega**2*theta - 0.10207*omega**2 + 0.000657*omega*theta**2 + 0.003039*omega*theta + 0.000631*omega - 5.9e-5*theta**3 - 0.000504*theta**2 - 0.001435*theta - 0.001446
+    Diffusion: theta=3.041386e-05, omega=7.580328e-06
+
+--- Chunk 103286 (107/220) | Start: 2025-08-18 21:25:00 ---
+    RMSE omega (GP): 0.003941 | RMSE omega (Sim): 0.071048
+    Loss: 152.7009 | Epoch: 9657
+    Eq omega: 0.010821 + -0.01167theta + -0.02025omega + -0.00440theta^2 + -0.00036theta omega + -0.08381omega^2 + -0.00007theta^3 + 0.00052theta^2 omega + -0.03265theta omega^2 + 0.00326omega^3
+    Eq omega Phys: 0.021549*omega**3 - 0.007194*omega**2*theta - 0.074341*omega**2 + 4.0e-6*omega*theta**2 + 3.2e-5*omega*theta - 0.000612*omega - 3.0e-6*theta**2 - 3.7e-5*theta - 9.4e-5
+    Diffusion: theta=1.376841e-04, omega=6.650818e-06
+
+--- Chunk 103287 (108/220) | Start: 2025-08-18 21:30:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 530.0924 | Epoch: 2571
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103288 (109/220) | Start: 2025-08-18 21:35:00 ---
+    RMSE omega (GP): 0.003738 | RMSE omega (Sim): 0.089889
+    Loss: 177.8124 | Epoch: 8067
+    Eq omega: 0.025481 + -0.02739theta + -0.03320omega + 0.00995theta^2 + 0.04314theta omega + -0.05081omega^2 + -0.14550theta^3 + -0.11904theta^2 omega + 0.08193theta omega^2 + -0.00182omega^3
+    Eq omega Phys: -0.015334*omega**3 + 0.023009*omega**2*theta - 0.121908*omega**2 - 0.001114*omega*theta**2 + 0.009962*omega*theta - 0.023241*omega - 4.5e-5*theta**3 + 0.000568*theta**2 - 0.0024*theta + 0.003473
+    Diffusion: theta=1.443721e-04, omega=1.115797e-05
+
+--- Chunk 103289 (110/220) | Start: 2025-08-18 21:40:00 ---
+    RMSE omega (GP): 0.003920 | RMSE omega (Sim): 0.059592
+    Loss: 323.0960 | Epoch: 7018
+    Eq omega: -0.025841 + 0.01238theta + -0.05850omega + -0.00436theta^2 + 0.00464theta omega + -0.05786omega^2 + -0.00572theta^3 + 0.00153theta^2 omega + 0.00544theta omega^2 + -0.00470omega^3
+    Eq omega Phys: -0.065437*omega**3 + 0.002525*omega**2*theta - 0.054658*omega**2 + 2.4e-5*omega*theta**2 - 0.00018*omega*theta - 0.001724*omega - 3.0e-6*theta**3 + 5.0e-5*theta**2 - 0.000269*theta + 0.000403
+    Diffusion: theta=1.055565e-04, omega=8.365779e-06
+
+--- Chunk 103290 (111/220) | Start: 2025-08-18 21:45:00 ---
+    RMSE omega (GP): 0.003669 | RMSE omega (Sim): 0.080311
+    Loss: 159.2887 | Epoch: 5990
+    Eq omega: -0.029941 + -0.18767theta + 0.04114omega + -0.00454theta^2 + 0.00463theta omega + -0.03011omega^2 + -0.00124theta^3 + -0.00571theta^2 omega + -0.01309theta omega^2 + 0.01657omega^3
+    Eq omega Phys: 0.131113*omega**3 - 0.003453*omega**2*theta - 0.023886*omega**2 - 5.0e-5*omega*theta**2 - 0.000166*omega*theta + 0.001266*omega - 5.0e-6*theta**2 - 0.000228*theta - 0.000594
+    Diffusion: theta=1.017409e-04, omega=8.670192e-06
+
+--- Chunk 103291 (112/220) | Start: 2025-08-18 21:50:00 ---
+    RMSE omega (GP): 0.004392 | RMSE omega (Sim): 0.112268
+    Loss: 342.4901 | Epoch: 7612
+    Eq omega: -0.004591 + -0.07669theta + 0.05175omega + 0.00219theta^2 + 0.02505theta omega + 0.00943omega^2 + -0.00104theta^3 + -0.00052theta^2 omega + -0.01693theta omega^2 + 0.00353omega^3
+    Eq omega Phys: 0.041537*omega**3 - 0.00664*omega**2*theta - 0.047561*omega**2 - 7.0e-6*omega*theta**2 + 0.000413*omega*theta + 0.005495*omega - 9.0e-6*theta**2 - 0.000149*theta - 0.000832
+    Diffusion: theta=4.321819e-05, omega=9.334462e-06
+
+--- Chunk 103292 (113/220) | Start: 2025-08-18 21:55:00 ---
+    RMSE omega (GP): 0.005328 | RMSE omega (Sim): 0.264442
+    Loss: 166.8017 | Epoch: 6023
+    Eq omega: -0.060431 + -0.15349theta + -0.01245omega + -0.06349theta^2 + -0.18415theta omega + -0.10026omega^2 + -0.11924theta^3 + 0.02965theta^2 omega + -0.04925theta omega^2 + 0.00628omega^3
+    Eq omega Phys: 0.024815*omega**3 - 0.006487*omega**2*theta - 0.068886*omega**2 + 0.00013*omega*theta**2 - 0.000923*omega*theta - 0.008308*omega - 1.7e-5*theta**3 - 0.000288*theta**2 - 0.001741*theta - 0.003876
+    Diffusion: theta=2.073144e-04, omega=1.288001e-05
+
+--- Chunk 103293 (114/220) | Start: 2025-08-18 22:00:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 6496.6562 | Epoch: 1085
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103294 (115/220) | Start: 2025-08-18 22:05:00 ---
+    RMSE omega (GP): 0.004822 | RMSE omega (Sim): 0.055862
+    Loss: 602.1298 | Epoch: 9999
+    Eq omega: -0.051221 + -0.05483theta + 0.01967omega + 0.02408theta^2 + -0.00208theta omega + 0.01699omega^2 + -0.00029theta^3 + -0.00034theta^2 omega + -0.00014theta omega^2 + -0.01350omega^3
+    Eq omega Phys: -0.230977*omega**3 - 8.0e-5*omega**2*theta + 0.011807*omega**2 - 6.0e-6*omega*theta**2 - 0.000218*omega*theta - 0.001077*omega + 1.3e-5*theta**2 + 0.000366*theta + 0.002075
+    Diffusion: theta=8.430998e-05, omega=6.230906e-06
+
+--- Chunk 103295 (116/220) | Start: 2025-08-18 22:10:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 319.4548 | Epoch: 3048
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103296 (117/220) | Start: 2025-08-18 22:15:00 ---
+    RMSE omega (GP): 0.003971 | RMSE omega (Sim): 0.061312
+    Loss: 60.5603 | Epoch: 9345
+    Eq omega: -0.101581 + -0.28558theta + -0.20936omega + 0.22143theta^2 + 0.12202theta omega + -0.18859omega^2 + -0.01129theta^3 + -0.00310theta^2 omega + -0.03581theta omega^2 + -0.08754omega^3
+    Eq omega Phys: -0.236445*omega**3 - 0.003224*omega**2*theta - 0.087216*omega**2 - 9.0e-6*omega*theta**2 + 0.001044*omega*theta + 0.003776*omega - 1.0e-6*theta**3 + 4.2e-5*theta**2 + 0.00078*theta + 0.002304
+    Diffusion: theta=1.509211e-04, omega=1.106492e-05
+
+--- Chunk 103297 (118/220) | Start: 2025-08-18 22:20:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 230.0822 | Epoch: 5307
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103298 (119/220) | Start: 2025-08-18 22:25:00 ---
+    RMSE omega (GP): 0.005037 | RMSE omega (Sim): 0.084250
+    Loss: 126.2754 | Epoch: 8984
+    Eq omega: 0.143011 + -0.00562theta + 0.02383omega + -0.00067theta^2 + -0.01256theta omega + 0.00080omega^2 + -0.00245theta^3 + -0.00164theta^2 omega + -0.00290theta omega^2 + -0.00422omega^3
+    Eq omega Phys: -0.014122*omega**3 - 0.000323*omega**2*theta + 0.001889*omega**2 - 6.0e-6*omega*theta**2 - 7.9e-5*omega*theta + 0.001342*omega + 4.0e-6*theta**2 - 2.7e-5*theta + 0.000539
+    Diffusion: theta=2.971092e-04, omega=1.121566e-05
+
+--- Chunk 103299 (120/220) | Start: 2025-08-18 22:30:00 ---
+    RMSE omega (GP): 0.004302 | RMSE omega (Sim): 0.084847
+    Loss: 122.8876 | Epoch: 6016
+    Eq omega: 0.064381 + -0.23564theta + 0.04737omega + 0.00135theta^2 + 0.15314theta omega + -0.02660omega^2 + 0.00082theta^3 + -0.00316theta^2 omega + 0.01383theta omega^2 + -0.04628omega^3
+    Eq omega Phys: -0.208825*omega**3 + 0.00208*omega**2*theta - 0.028464*omega**2 - 1.6e-5*omega*theta**2 + 0.002256*omega*theta - 0.016899*omega - 3.0e-6*theta**2 - 0.000241*theta + 0.002422
+    Diffusion: theta=7.541732e-05, omega=1.169430e-05
+
+--- Chunk 103300 (121/220) | Start: 2025-08-18 22:35:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 18104.5195 | Epoch: 927
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103301 (122/220) | Start: 2025-08-18 22:40:00 ---
+    RMSE omega (GP): 0.004438 | RMSE omega (Sim): 0.089491
+    Loss: 217.8155 | Epoch: 9999
+    Eq omega: 0.003771 + -0.00458theta + 0.00473omega + 0.00003theta^2 + -0.00089theta omega + 0.00165omega^2 + -0.00010theta^3 + -0.00001theta^2 omega + 0.00096theta omega^2 + -0.00223omega^3
+    Eq omega Phys: -0.016176*omega**3 + 0.000232*omega**2*theta - 0.003398*omega**2 - 1.2e-5*omega*theta + 0.000396*omega + 1.0e-6*theta**2 - 3.2e-5*theta + 0.000266
+    Diffusion: theta=2.765562e-04, omega=5.772863e-06
+
+--- Chunk 103302 (123/220) | Start: 2025-08-18 22:45:00 ---
+    RMSE omega (GP): 0.004161 | RMSE omega (Sim): 0.057502
+    Loss: 294.9847 | Epoch: 9999
+    Eq omega: 0.036951 + -0.01219theta + -0.02506omega + 0.00218theta^2 + -0.00081theta omega + -0.00294omega^2 + -0.00018theta^3 + 0.00033theta^2 omega + -0.00084theta omega^2 + -0.00026omega^3
+    Eq omega Phys: -0.002857*omega**3 - 0.000308*omega**2*theta + 0.002169*omega**2 + 4.0e-6*omega*theta**2 - 0.00012*omega*theta + 3.8e-5*omega + 4.0e-6*theta**2 - 8.7e-5*theta + 0.000638
+    Diffusion: theta=2.170253e-04, omega=8.967922e-06
+
+--- Chunk 103303 (124/220) | Start: 2025-08-18 22:50:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 23443.2266 | Epoch: 1435
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103304 (125/220) | Start: 2025-08-18 22:55:00 ---
+    RMSE omega (GP): 0.014796 | RMSE omega (Sim): 0.069541
+    Loss: 1210.2004 | Epoch: 2104
+    Eq omega: -0.048061 + -0.02932theta + -0.00882omega + -0.00719theta^2 + -0.00429theta omega + -0.00104omega^2 + -0.00111theta^3 + 0.00003theta^2 omega + 0.00161theta omega^2 + -0.02243omega^3
+    Eq omega Phys: -0.079075*omega**3 + 0.000189*omega**2*theta - 0.003864*omega**2 - 5.3e-5*omega*theta + 0.000655*omega + 5.0e-6*theta**2 - 8.0e-5*theta + 0.00043
+    Diffusion: theta=1.333098e-03, omega=5.401615e-06
+
+--- Chunk 103305 (126/220) | Start: 2025-08-18 23:00:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 6773.3354 | Epoch: 891
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103306 (127/220) | Start: 2025-08-18 23:05:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 180438.1562 | Epoch: 1975
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103307 (128/220) | Start: 2025-08-18 23:10:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 34548.1055 | Epoch: 1631
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103308 (129/220) | Start: 2025-08-18 23:15:00 ---
+    RMSE omega (GP): 0.004223 | RMSE omega (Sim): nan
+    Loss: 225.1097 | Epoch: 7333
+    Eq omega: -0.035751 + -0.03163theta + 0.19504omega + 0.00070theta^2 + 0.04676theta omega + -0.05357omega^2 + -0.00856theta^3 + -0.00123theta^2 omega + -0.00777theta omega^2 + 0.11563omega^3
+    Eq omega Phys: 0.973041*omega**3 - 0.00218*omega**2*theta - 0.041882*omega**2 - 1.2e-5*omega*theta**2 + 0.000683*omega*theta + 0.011176*omega - 3.0e-6*theta**3 - 4.9e-5*theta**2 - 0.000338*theta - 0.000912
+    Diffusion: theta=7.005205e-05, omega=9.276057e-06
+
+--- Chunk 103309 (130/220) | Start: 2025-08-18 23:20:00 ---
+    RMSE omega (GP): 0.003532 | RMSE omega (Sim): 0.121443
+    Loss: 103.3380 | Epoch: 8565
+    Eq omega: -0.194981 + -0.23779theta + 0.06599omega + 0.09661theta^2 + -0.00894theta omega + -0.03740omega^2 + -0.00682theta^3 + -0.00628theta^2 omega + -0.00731theta omega^2 + 0.00114omega^3
+    Eq omega Phys: 0.006382*omega**3 - 0.001364*omega**2*theta - 0.026622*omega**2 - 3.9e-5*omega*theta**2 - 0.000728*omega*theta - 0.001088*omega - 1.0e-6*theta**3 + 1.4e-5*theta**2 + 0.000198*theta - 0.000438
+    Diffusion: theta=1.036633e-04, omega=1.009168e-05
+
+--- Chunk 103310 (131/220) | Start: 2025-08-18 23:25:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 13557.0713 | Epoch: 1143
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103311 (132/220) | Start: 2025-08-18 23:30:00 ---
+    RMSE omega (GP): 0.003854 | RMSE omega (Sim): 0.054645
+    Loss: 364.7314 | Epoch: 8836
+    Eq omega: 0.013781 + 0.01087theta + -0.02270omega + 0.00862theta^2 + -0.02130theta omega + 0.01398omega^2 + -0.00838theta^3 + 0.00625theta^2 omega + 0.01054theta omega^2 + 0.00281omega^3
+    Eq omega Phys: 0.045558*omega**3 + 0.005696*omega**2*theta + 0.053889*omega**2 + 0.000113*omega*theta**2 + 0.001202*omega*theta + 0.001847*omega - 5.0e-6*theta**3 - 0.000109*theta**2 - 0.000765*theta - 0.001732
+    Diffusion: theta=5.804884e-05, omega=7.922393e-06
+
+--- Chunk 103312 (133/220) | Start: 2025-08-18 23:35:00 ---
+    RMSE omega (GP): 0.004356 | RMSE omega (Sim): 0.067136
+    Loss: 225.3255 | Epoch: 9999
+    Eq omega: 0.032101 + -0.00017theta + -0.00517omega + -0.00519theta^2 + -0.01949theta omega + -0.00411omega^2 + -0.00408theta^3 + -0.00098theta^2 omega + 0.00805theta omega^2 + -0.00692omega^3
+    Eq omega Phys: -0.052752*omega**3 + 0.002046*omega**2*theta - 0.024712*omega**2 - 8.0e-6*omega*theta**2 - 0.000144*omega*theta + 0.002435*omega - 1.0e-6*theta**3 + 3.5e-5*theta**2 - 0.000359*theta + 0.001279
+    Diffusion: theta=3.538948e-04, omega=7.744123e-06
+
+--- Chunk 103313 (134/220) | Start: 2025-08-18 23:40:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 601.1924 | Epoch: 4074
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103314 (135/220) | Start: 2025-08-18 23:45:00 ---
+    RMSE omega (GP): 0.003126 | RMSE omega (Sim): 0.115116
+    Loss: 44.0964 | Epoch: 6913
+    Eq omega: 0.478061 + -0.20841theta + 0.03491omega + 0.12459theta^2 + -0.04546theta omega + 0.01942omega^2 + -0.03692theta^3 + -0.01786theta^2 omega + -0.00170theta omega^2 + 0.00201omega^3
+    Eq omega Phys: 0.006667*omega**3 - 0.000188*omega**2*theta + 0.0051*omega**2 - 6.6e-5*omega*theta**2 - 0.001454*omega*theta - 0.005905*omega - 5.0e-6*theta**3 - 5.2e-5*theta**2 - 0.000276*theta + 0.000618
+    Diffusion: theta=3.545254e-05, omega=8.051731e-06
+
+--- Chunk 103315 (136/220) | Start: 2025-08-18 23:50:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 1352.2834 | Epoch: 1170
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103316 (137/220) | Start: 2025-08-18 23:55:00 ---
+    RMSE omega (GP): 0.004038 | RMSE omega (Sim): 0.130682
+    Loss: 108.2153 | Epoch: 6030
+    Eq omega: 0.150871 + -0.36639theta + -0.04042omega + 0.12671theta^2 + -0.03267theta omega + 0.00160omega^2 + -0.02476theta^3 + -0.00198theta^2 omega + 0.00750theta omega^2 + -0.00084omega^3
+    Eq omega Phys: -0.003783*omega**3 + 0.001126*omega**2*theta + 0.013615*omega**2 - 1.0e-5*omega*theta**2 - 0.000651*omega*theta - 0.007537*omega - 4.0e-6*theta**3 - 8.8e-5*theta**2 - 0.000798*theta - 0.003349
+    Diffusion: theta=1.890620e-04, omega=9.374789e-06
+
+--- Chunk 103317 (138/220) | Start: 2025-08-19 00:00:00 ---
+    RMSE omega (GP): 0.004086 | RMSE omega (Sim): 0.062242
+    Loss: 81.6862 | Epoch: 9000
+    Eq omega: -0.172111 + 0.01155theta + 0.01267omega + -0.14299theta^2 + -0.03991theta omega + 0.26572omega^2 + -0.07592theta^3 + -0.00894theta^2 omega + 0.24231theta omega^2 + -0.20339omega^3
+    Eq omega Phys: -0.688626*omega**3 + 0.027347*omega**2*theta - 0.045499*omega**2 - 3.4e-5*omega*theta**2 - 0.000115*omega*theta + 0.001808*omega - 1.0e-5*theta**3 + 8.7e-5*theta**2 - 0.000155*theta - 0.000789
+    Diffusion: theta=6.028511e-05, omega=1.061382e-05
+
+--- Chunk 103318 (139/220) | Start: 2025-08-19 00:05:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 181319.3125 | Epoch: 1197
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103319 (140/220) | Start: 2025-08-19 00:10:00 ---
+    RMSE omega (GP): 0.004675 | RMSE omega (Sim): 0.063398
+    Loss: 236.9722 | Epoch: 9999
+    Eq omega: 0.016461 + -0.00360theta + -0.02317omega + 0.00584theta^2 + -0.00019theta omega + 0.01916omega^2 + -0.00010theta^3 + -0.00071theta^2 omega + 0.00082theta omega^2 + -0.01997omega^3
+    Eq omega Phys: -0.140627*omega**3 + 0.000192*omega**2*theta + 0.012353*omega**2 - 6.0e-6*omega*theta**2 - 0.00018*omega*theta - 0.002235*omega + 2.0e-6*theta**2 + 7.6e-5*theta + 0.000668
+    Diffusion: theta=3.012269e-04, omega=6.689696e-06
+
+--- Chunk 103320 (141/220) | Start: 2025-08-19 00:15:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 289.4828 | Epoch: 2899
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103321 (142/220) | Start: 2025-08-19 00:20:00 ---
+    RMSE omega (GP): 0.003415 | RMSE omega (Sim): 0.127491
+    Loss: 83.3082 | Epoch: 6808
+    Eq omega: -0.020461 + -0.49003theta + -0.00434omega + -0.02356theta^2 + -0.03534theta omega + -0.02448omega^2 + -0.00110theta^3 + 0.06473theta^2 omega + -0.02493theta omega^2 + -0.07709omega^3
+    Eq omega Phys: -0.37509*omega**3 - 0.004043*omega**2*theta - 0.006716*omega**2 + 0.00035*omega*theta**2 - 0.001018*omega*theta + 0.000435*omega - 1.0e-5*theta**2 - 0.000528*theta + 0.00036
+    Diffusion: theta=9.897615e-05, omega=1.029276e-05
+
+--- Chunk 103322 (143/220) | Start: 2025-08-19 00:25:00 ---
+    RMSE omega (GP): 0.003547 | RMSE omega (Sim): 0.093675
+    Loss: 439.3139 | Epoch: 5942
+    Eq omega: -0.074211 + -0.63784theta + 0.02212omega + 0.10588theta^2 + -0.06725theta omega + -0.03454omega^2 + -0.01469theta^3 + 0.03962theta^2 omega + 0.01320theta omega^2 + -0.00318omega^3
+    Eq omega Phys: -0.073044*omega**3 + 0.010107*omega**2*theta - 0.052525*omega**2 + 0.001011*omega*theta**2 - 0.006424*omega*theta + 0.009989*omega - 1.2e-5*theta**3 + 0.000186*theta**2 - 0.001346*theta + 0.002105
+    Diffusion: theta=7.277376e-05, omega=6.537468e-06
+
+--- Chunk 103323 (144/220) | Start: 2025-08-19 00:30:00 ---
+    RMSE omega (GP): 0.003944 | RMSE omega (Sim): 0.069544
+    Loss: 190.0137 | Epoch: 9927
+    Eq omega: 0.015701 + -0.01867theta + -0.03343omega + 0.00574theta^2 + -0.01934theta omega + -0.03596omega^2 + 0.00002theta^3 + 0.00249theta^2 omega + -0.01804theta omega^2 + -0.05866omega^3
+    Eq omega Phys: -0.48*omega**3 - 0.004921*omega**2*theta + 0.038613*omega**2 + 2.3e-5*omega*theta**2 - 0.000865*omega*theta + 0.005893*omega + 3.0e-6*theta**2 - 9.6e-5*theta + 0.000719
+    Diffusion: theta=7.480427e-05, omega=8.067922e-06
+
+--- Chunk 103324 (145/220) | Start: 2025-08-19 00:35:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 30885.6895 | Epoch: 1036
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103325 (146/220) | Start: 2025-08-19 00:40:00 ---
+    RMSE omega (GP): 0.003808 | RMSE omega (Sim): 0.076572
+    Loss: 145.4301 | Epoch: 4815
+    Eq omega: 0.175871 + -1.91744theta + -0.31565omega + -0.86354theta^2 + 0.23827theta omega + 0.12962omega^2 + -0.03734theta^3 + -0.03090theta^2 omega + -0.01374theta omega^2 + -0.04011omega^3
+    Eq omega Phys: -0.268486*omega**3 - 0.003066*omega**2*theta + 0.077973*omega**2 - 0.00023*omega*theta**2 + 0.006262*omega*theta - 0.03787*omega - 9.0e-6*theta**3 - 0.000302*theta**2 + 0.001992*theta + 3.8e-5
+    Diffusion: theta=5.904696e-05, omega=1.056392e-05
+
+--- Chunk 103326 (147/220) | Start: 2025-08-19 00:45:00 ---
+    RMSE omega (GP): 0.004365 | RMSE omega (Sim): 0.084633
+    Loss: 266.0246 | Epoch: 9999
+    Eq omega: 0.061851 + -0.00181theta + -0.02230omega + 0.02073theta^2 + -0.00056theta omega + -0.00563omega^2 + -0.00202theta^3 + -0.00054theta^2 omega + -0.00150theta omega^2 + -0.00077omega^3
+    Eq omega Phys: -0.006897*omega**3 - 0.000448*omega**2*theta + 0.002727*omega**2 - 5.0e-6*omega*theta**2 + 0.000129*omega*theta - 0.001513*omega - 0.e-6*theta**3 + 3.9e-5*theta**2 - 0.000666*theta + 0.003723
+    Diffusion: theta=2.613055e-04, omega=7.566706e-06
+
+--- Chunk 103327 (148/220) | Start: 2025-08-19 00:50:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 406508.7500 | Epoch: 5
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103328 (149/220) | Start: 2025-08-19 00:55:00 ---
+    RMSE omega (GP): 0.003829 | RMSE omega (Sim): 0.064056
+    Loss: 157.9613 | Epoch: 7346
+    Eq omega: 0.006071 + -0.03943theta + -0.01203omega + 0.00197theta^2 + 0.05852theta omega + -0.00091omega^2 + -0.00032theta^3 + -0.00114theta^2 omega + -0.00705theta omega^2 + -0.00560omega^3
+    Eq omega Phys: -0.0409*omega**3 - 0.001716*omega**2*theta - 0.003044*omega**2 - 9.0e-6*omega*theta**2 + 0.000934*omega*theta + 0.001033*omega + 1.0e-6*theta**2 - 4.1e-5*theta - 5.0e-5
+    Diffusion: theta=9.847952e-05, omega=5.482737e-06
+
+--- Chunk 103329 (150/220) | Start: 2025-08-19 01:00:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 9509.8193 | Epoch: 935
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+  [Progress 150/220] Mean RMSE omega (GP): 0.004710 | (Sim): 0.122120 | Mean loss: -25325278.1822 | Valid GP: 120/150 | Valid Sim: 101/150 | Elapsed: 438.7min | ETA: 204.7min
+
+--- Chunk 103330 (151/220) | Start: 2025-08-19 01:05:00 ---
+    RMSE omega (GP): 0.003403 | RMSE omega (Sim): nan
+    Loss: 73.8553 | Epoch: 9134
+    Eq omega: -0.121861 + -0.64348theta + 0.16337omega + 0.02342theta^2 + 0.00157theta omega + 0.05761omega^2 + 0.00054theta^3 + 0.01154theta^2 omega + 0.01047theta omega^2 + 0.19647omega^3
+    Eq omega Phys: 0.869744*omega**3 + 0.001545*omega**2*theta + 0.02241*omega**2 + 5.7e-5*omega*theta**2 + 4.1e-5*omega*theta + 0.005451*omega + 1.0e-5*theta**2 - 0.000711*theta - 0.000482
+    Diffusion: theta=5.559189e-05, omega=7.866126e-06
+
+--- Chunk 103331 (152/220) | Start: 2025-08-19 01:10:00 ---
+    RMSE omega (GP): 0.003070 | RMSE omega (Sim): 0.087108
+    Loss: 106.2762 | Epoch: 5466
+    Eq omega: -0.024031 + -0.09722theta + 0.01927omega + -0.04524theta^2 + -0.03589theta omega + -0.09268omega^2 + -0.25894theta^3 + -0.01462theta^2 omega + 0.15078theta omega^2 + -0.03091omega^3
+    Eq omega Phys: -0.233296*omega**3 + 0.037934*omega**2*theta - 0.173145*omega**2 - 0.000123*omega*theta**2 + 0.000219*omega*theta + 0.001279*omega - 7.2e-5*theta**3 + 0.0007*theta**2 - 0.002361*theta + 0.002721
+    Diffusion: theta=3.252385e-05, omega=1.073176e-05
+
+--- Chunk 103332 (153/220) | Start: 2025-08-19 01:15:00 ---
+    RMSE omega (GP): 0.003789 | RMSE omega (Sim): 0.049003
+    Loss: 137.3410 | Epoch: 6616
+    Eq omega: 0.005661 + -0.05466theta + -0.00293omega + -0.04015theta^2 + 0.01418theta omega + -0.37462omega^2 + -0.00558theta^3 + 0.02266theta^2 omega + -0.26059theta omega^2 + 0.02756omega^3
+    Eq omega Phys: 0.176009*omega**3 - 0.055474*omega**2*theta - 0.015273*omega**2 + 0.000161*omega*theta**2 - 0.000695*omega*theta + 0.00058*omega - 1.0e-6*theta**3 - 9.0e-6*theta**2 + 2.4e-5*theta + 5.0e-5
+    Diffusion: theta=1.436350e-04, omega=1.082141e-05
+
+--- Chunk 103333 (154/220) | Start: 2025-08-19 01:20:00 ---
+    RMSE omega (GP): 0.003927 | RMSE omega (Sim): 0.041570
+    Loss: 357.1123 | Epoch: 9999
+    Eq omega: 0.014261 + -0.00585theta + -0.03086omega + -0.00018theta^2 + 0.00345theta omega + 0.01752omega^2 + -0.00011theta^3 + 0.00010theta^2 omega + -0.00227theta omega^2 + -0.00747omega^3
+    Eq omega Phys: -0.11412*omega**3 - 0.001156*omega**2*theta - 0.004616*omega**2 + 2.0e-6*omega*theta**2 + 0.000132*omega*theta + 0.000559*omega - 3.0e-6*theta**2 - 5.2e-5*theta - 0.000307
+    Diffusion: theta=8.407344e-05, omega=6.594145e-06
+
+--- Chunk 103334 (155/220) | Start: 2025-08-19 01:25:00 ---
+    RMSE omega (GP): 0.003864 | RMSE omega (Sim): 0.317741
+    Loss: 133.5939 | Epoch: 7246
+    Eq omega: -0.013871 + -0.10916theta + 0.12994omega + 0.00357theta^2 + 0.06080theta omega + 0.00221omega^2 + -0.03138theta^3 + 0.00474theta^2 omega + 0.02351theta omega^2 + 0.00120omega^3
+    Eq omega Phys: 0.007079*omega**3 + 0.004623*omega**2*theta + 0.041524*omega**2 + 3.1e-5*omega*theta**2 + 0.001444*omega*theta + 0.014603*omega - 7.0e-6*theta**3 - 0.000179*theta**2 - 0.001673*theta - 0.005588
+    Diffusion: theta=1.708234e-04, omega=1.418251e-05
+
+--- Chunk 103335 (156/220) | Start: 2025-08-19 01:30:00 ---
+    RMSE omega (GP): 0.003345 | RMSE omega (Sim): 0.060376
+    Loss: 156.6934 | Epoch: 7311
+    Eq omega: 0.013231 + -0.02333theta + -0.32312omega + -0.00667theta^2 + -0.13379theta omega + 0.01267omega^2 + -0.03194theta^3 + 0.00091theta^2 omega + -0.01242theta omega^2 + -0.04255omega^3
+    Eq omega Phys: -0.393328*omega**3 - 0.003827*omega**2*theta + 0.0275*omega**2 + 9.0e-6*omega*theta**2 - 0.002576*omega*theta + 0.002736*omega - 1.1e-5*theta**3 + 0.000171*theta**2 - 0.00092*theta + 0.00172
+    Diffusion: theta=6.450943e-05, omega=8.729698e-06
+
+--- Chunk 103336 (157/220) | Start: 2025-08-19 01:35:00 ---
+    RMSE omega (GP): 0.003761 | RMSE omega (Sim): 0.064816
+    Loss: 110.9276 | Epoch: 7775
+    Eq omega: 0.002571 + -0.12134theta + -0.18322omega + -0.01612theta^2 + -0.19233theta omega + 0.17417omega^2 + -0.05117theta^3 + 0.00512theta^2 omega + 0.08938theta omega^2 + -0.11367omega^3
+    Eq omega Phys: -0.606381*omega**3 + 0.015893*omega**2*theta - 0.053766*omega**2 + 3.0e-5*omega*theta**2 - 0.003189*omega*theta + 0.017475*omega - 1.0e-5*theta**3 + 0.000235*theta**2 - 0.001957*theta + 0.005786
+    Diffusion: theta=2.217428e-05, omega=1.135695e-05
+
+--- Chunk 103337 (158/220) | Start: 2025-08-19 01:40:00 ---
+    RMSE omega (GP): 0.003039 | RMSE omega (Sim): 0.083238
+    Loss: 63.9816 | Epoch: 9730
+    Eq omega: 0.105651 + -0.39616theta + -0.00687omega + 0.07209theta^2 + 0.01781theta omega + 0.09433omega^2 + -0.00498theta^3 + -0.01296theta^2 omega + 0.00071theta omega^2 + -0.00299omega^3
+    Eq omega Phys: -0.014212*omega**3 + 0.000112*omega**2*theta + 0.038475*omega**2 - 6.8e-5*omega*theta**2 - 0.000892*omega*theta - 0.002933*omega - 0.e-6*theta**3 + 1.0e-5*theta**2 - 9.3e-5*theta - 0.001658
+    Diffusion: theta=4.120362e-05, omega=9.676933e-06
+
+--- Chunk 103338 (159/220) | Start: 2025-08-19 01:45:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 1047.1876 | Epoch: 3333
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103339 (160/220) | Start: 2025-08-19 01:50:00 ---
+    RMSE omega (GP): 0.003797 | RMSE omega (Sim): 0.059647
+    Loss: 298.6329 | Epoch: 9999
+    Eq omega: -0.019181 + 0.00366theta + -0.11185omega + 0.01025theta^2 + 0.00127theta omega + -0.06296omega^2 + -0.00287theta^3 + 0.00148theta^2 omega + 0.01347theta omega^2 + -0.07349omega^3
+    Eq omega Phys: -0.998628*omega**3 + 0.006101*omega**2*theta - 0.112458*omega**2 + 2.2e-5*omega*theta**2 - 0.000485*omega*theta - 0.001107*omega - 1.0e-6*theta**3 + 5.7e-5*theta**2 - 0.000744*theta + 0.003122
+    Diffusion: theta=1.388793e-04, omega=8.830492e-06
+
+--- Chunk 103340 (161/220) | Start: 2025-08-19 01:55:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 16155.9111 | Epoch: 1059
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103341 (162/220) | Start: 2025-08-19 02:00:00 ---
+    RMSE omega (GP): 0.004492 | RMSE omega (Sim): 0.045043
+    Loss: 229.0230 | Epoch: 9999
+    Eq omega: -0.003761 + -0.00155theta + -0.04895omega + 0.00969theta^2 + -0.00531theta omega + -0.07364omega^2 + -0.00116theta^3 + 0.00169theta^2 omega + -0.00093theta omega^2 + -0.00738omega^3
+    Eq omega Phys: -0.05371*omega**3 - 0.000226*omega**2*theta - 0.032279*omega**2 + 1.4e-5*omega*theta**2 - 0.000571*omega*theta + 0.004187*omega + 2.2e-5*theta**2 - 0.000483*theta + 0.003412
+    Diffusion: theta=3.003706e-04, omega=8.548178e-06
+
+--- Chunk 103342 (163/220) | Start: 2025-08-19 02:05:00 ---
+    RMSE omega (GP): 0.004403 | RMSE omega (Sim): 0.040693
+    Loss: 786.7862 | Epoch: 9999
+    Eq omega: -0.007331 + -0.00094theta + 0.00156omega + 0.00030theta^2 + -0.00016theta omega + -0.00662omega^2 + -0.00001theta^3 + -0.00003theta^2 omega + -0.00014theta omega^2 + -0.00083omega^3
+    Eq omega Phys: -0.021846*omega**3 - 0.000123*omega**2*theta - 0.004258*omega**2 - 0.e-6*omega*theta**2 + 2.3e-5*omega*theta - 8.8e-5*omega + 1.0e-6*theta**2 - 1.8e-5*theta + 0.000125
+    Diffusion: theta=1.672581e-04, omega=4.737974e-06
+
+--- Chunk 103343 (164/220) | Start: 2025-08-19 02:10:00 ---
+    RMSE omega (GP): 0.004412 | RMSE omega (Sim): nan
+    Loss: 351.2373 | Epoch: 9999
+    Eq omega: 0.150551 + -0.00391theta + 0.07932omega + -0.00087theta^2 + -0.00555theta omega + 0.02025omega^2 + -0.00016theta^3 + 0.00012theta^2 omega + -0.00067theta omega^2 + 0.00420omega^3
+    Eq omega Phys: 0.049687*omega**3 - 0.000264*omega**2*theta + 0.016096*omega**2 + 2.0e-6*omega*theta**2 - 0.000157*omega*theta + 0.004388*omega + 2.0e-6*theta**2 - 2.3e-5*theta + 0.000369
+    Diffusion: theta=1.779478e-04, omega=7.596032e-06
+
+--- Chunk 103344 (165/220) | Start: 2025-08-19 02:15:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 18274.4805 | Epoch: 941
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103345 (166/220) | Start: 2025-08-19 02:20:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 28501.1543 | Epoch: 1008
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103346 (167/220) | Start: 2025-08-19 02:25:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 23165.5879 | Epoch: 1087
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103347 (168/220) | Start: 2025-08-19 02:30:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 63756.9062 | Epoch: 1504
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103348 (169/220) | Start: 2025-08-19 02:35:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 179856.8125 | Epoch: 1247
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103349 (170/220) | Start: 2025-08-19 02:40:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 7871.4648 | Epoch: 933
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103350 (171/220) | Start: 2025-08-19 02:45:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 331661.5312 | Epoch: 846
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103351 (172/220) | Start: 2025-08-19 02:50:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 32156.0977 | Epoch: 1226
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103352 (173/220) | Start: 2025-08-19 02:55:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 190014.1250 | Epoch: 1432
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103353 (174/220) | Start: 2025-08-19 03:00:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 68499.2812 | Epoch: 1457
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103354 (175/220) | Start: 2025-08-19 03:05:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 27478.6250 | Epoch: 1069
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103355 (176/220) | Start: 2025-08-19 03:10:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 1667101.8750 | Epoch: 894
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103356 (177/220) | Start: 2025-08-19 03:15:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 8494.3154 | Epoch: 1589
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103357 (178/220) | Start: 2025-08-19 03:20:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 92032.8203 | Epoch: 1242
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103358 (179/220) | Start: 2025-08-19 03:25:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 112745.6094 | Epoch: 1470
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103359 (180/220) | Start: 2025-08-19 03:30:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 42004.6406 | Epoch: 703
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103360 (181/220) | Start: 2025-08-19 03:35:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 44175.8984 | Epoch: 862
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103361 (182/220) | Start: 2025-08-19 03:40:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 39051.9688 | Epoch: 1106
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103362 (183/220) | Start: 2025-08-19 03:45:00 ---
+    RMSE omega (GP): 0.003131 | RMSE omega (Sim): nan
+    Loss: 276.7830 | Epoch: 9662
+    Eq omega: 0.157171 + -0.02018theta + 0.01090omega + -0.00699theta^2 + -0.01484theta omega + 0.02436omega^2 + -0.00119theta^3 + -0.00368theta^2 omega + -0.00371theta omega^2 + 0.02301omega^3
+    Eq omega Phys: 0.42803*omega**3 - 0.0023*omega**2*theta + 0.05431*omega**2 - 7.6e-5*omega*theta**2 + 0.001933*omega*theta - 0.011424*omega - 0.e-6*theta**3 + 3.1e-5*theta**2 - 0.000409*theta + 0.002057
+    Diffusion: theta=7.972493e-05, omega=5.785201e-06
+
+--- Chunk 103363 (184/220) | Start: 2025-08-19 03:50:00 ---
+    RMSE omega (GP): 0.003681 | RMSE omega (Sim): 0.063117
+    Loss: 181.4492 | Epoch: 9999
+    Eq omega: 0.009191 + -0.02280theta + 0.00427omega + -0.00028theta^2 + 0.01139theta omega + -0.00659omega^2 + -0.00017theta^3 + -0.00075theta^2 omega + -0.00819theta omega^2 + 0.00562omega^3
+    Eq omega Phys: 0.048751*omega**3 - 0.002368*omega**2*theta - 0.027233*omega**2 - 7.0e-6*omega*theta**2 + 6.0e-5*omega*theta + 0.001461*omega - 2.0e-6*theta**2 - 4.5e-5*theta - 0.000306
+    Diffusion: theta=2.087761e-04, omega=7.957576e-06
+
+--- Chunk 103364 (185/220) | Start: 2025-08-19 03:55:00 ---
+    RMSE omega (GP): 0.003702 | RMSE omega (Sim): 0.093508
+    Loss: 202.0833 | Epoch: 6057
+    Eq omega: -0.014791 + -0.07304theta + 0.03166omega + -0.08023theta^2 + -0.00799theta omega + -0.01487omega^2 + -0.68327theta^3 + -0.01709theta^2 omega + 0.17338theta omega^2 + -0.00243omega^3
+    Eq omega Phys: -0.024006*omega**3 + 0.057094*omega**2*theta + 0.087153*omega**2 - 0.000188*omega*theta**2 - 0.000782*omega*theta + 0.000272*omega - 0.00025*theta**3 - 0.001308*theta**2 - 0.002359*theta - 0.001485
+    Diffusion: theta=7.991176e-05, omega=5.049099e-06
+
+--- Chunk 103365 (186/220) | Start: 2025-08-19 04:00:00 ---
+    RMSE omega (GP): 0.007229 | RMSE omega (Sim): 0.046560
+    Loss: 1264.3663 | Epoch: 9999
+    Eq omega: -0.009321 + -0.00325theta + 0.01123omega + -0.00027theta^2 + 0.00033theta omega + 0.00054omega^2 + -0.00001theta^3 + 0.00004theta^2 omega + -0.00020theta omega^2 + 0.00003omega^3
+    Eq omega Phys: 0.000465*omega**3 - 0.000103*omega**2*theta - 0.001599*omega**2 + 1.0e-6*omega*theta**2 + 3.4e-5*omega*theta + 0.000781*omega - 0.e-6*theta**2 - 1.8e-5*theta - 0.000205
+    Diffusion: theta=2.599551e-04, omega=3.288638e-06
+
+--- Chunk 103366 (187/220) | Start: 2025-08-19 04:05:00 ---
+    RMSE omega (GP): 0.003567 | RMSE omega (Sim): 1.959720
+    Loss: 77.0565 | Epoch: 7388
+    Eq omega: -0.015881 + -0.10930theta + 0.04910omega + -0.00447theta^2 + -0.12671theta omega + 0.05408omega^2 + -0.00330theta^3 + 0.00414theta^2 omega + -0.00078theta omega^2 + -0.00196omega^3
+    Eq omega Phys: -0.008237*omega**3 - 0.000109*omega**2*theta + 0.019324*omega**2 + 1.9e-5*omega*theta**2 - 0.001257*omega*theta - 0.010261*omega - 0.e-6*theta**3 - 1.5e-5*theta**2 - 0.000261*theta - 0.001499
+    Diffusion: theta=9.258186e-05, omega=1.124008e-05
+
+--- Chunk 103367 (188/220) | Start: 2025-08-19 04:10:00 ---
+    RMSE omega (GP): 0.004277 | RMSE omega (Sim): 0.065778
+    Loss: 218.3113 | Epoch: 9390
+    Eq omega: 0.030861 + -0.00517theta + -0.01644omega + 0.01446theta^2 + -0.04719theta omega + 0.03807omega^2 + -0.01122theta^3 + 0.00960theta^2 omega + -0.08961theta omega^2 + 0.01676omega^3
+    Eq omega Phys: 0.133844*omega**3 - 0.023854*omega**2*theta - 0.138872*omega**2 + 8.5e-5*omega*theta**2 + 0.000321*omega*theta - 0.00218*omega - 3.0e-6*theta**3 - 5.8e-5*theta**2 - 0.000335*theta - 0.000579
+    Diffusion: theta=1.355482e-04, omega=7.367597e-06
+
+--- Chunk 103368 (189/220) | Start: 2025-08-19 04:15:00 ---
+    RMSE omega (GP): 0.003769 | RMSE omega (Sim): 0.064915
+    Loss: 166.4838 | Epoch: 5454
+    Eq omega: 0.008731 + 0.00442theta + -0.06386omega + -0.03835theta^2 + 0.08387theta omega + -0.06920omega^2 + -0.01220theta^3 + -0.01739theta^2 omega + 0.14405theta omega^2 + -0.06481omega^3
+    Eq omega Phys: -0.509888*omega**3 + 0.037777*omega**2*theta - 0.26921*omega**2 - 0.000152*omega*theta**2 + 0.003313*omega*theta - 0.01681*omega - 4.0e-6*theta**3 + 4.4e-5*theta**2 - 0.000133*theta - 5.0e-6
+    Diffusion: theta=1.482651e-04, omega=8.478620e-06
+
+--- Chunk 103369 (190/220) | Start: 2025-08-19 04:20:00 ---
+    RMSE omega (GP): 0.003412 | RMSE omega (Sim): 0.127478
+    Loss: 189.6051 | Epoch: 6359
+    Eq omega: -0.112501 + -0.04834theta + 0.07469omega + 0.53305theta^2 + 0.12426theta omega + -0.19172omega^2 + -0.32221theta^3 + 0.06033theta^2 omega + 0.09593theta omega^2 + -0.05115omega^3
+    Eq omega Phys: -0.557736*omega**3 + 0.034867*omega**2*theta - 0.230573*omega**2 + 0.000731*omega*theta**2 - 0.002324*omega*theta + 0.002204*omega - 0.00013*theta**3 + 0.001644*theta**2 - 0.006655*theta + 0.008521
+    Diffusion: theta=5.252576e-05, omega=6.568532e-06
+
+--- Chunk 103370 (191/220) | Start: 2025-08-19 04:25:00 ---
+    RMSE omega (GP): 0.003465 | RMSE omega (Sim): 0.060137
+    Loss: 92.3074 | Epoch: 9019
+    Eq omega: -0.120521 + -0.06420theta + -0.04086omega + -0.18239theta^2 + -0.35526theta omega + -0.06737omega^2 + -0.02464theta^3 + -0.00269theta^2 omega + 0.00621theta omega^2 + -0.02091omega^3
+    Eq omega Phys: -0.10938*omega**3 + 0.001083*omega**2*theta - 0.036006*omega**2 - 1.6e-5*omega*theta**2 - 0.004718*omega*theta + 0.03377*omega - 5.0e-6*theta**3 + 2.0e-5*theta**2 + 0.000402*theta - 0.002441
+    Diffusion: theta=1.313695e-04, omega=7.800249e-06
+
+--- Chunk 103371 (192/220) | Start: 2025-08-19 04:30:00 ---
+    RMSE omega (GP): 0.004102 | RMSE omega (Sim): 0.039485
+    Loss: 77.4678 | Epoch: 8644
+    Eq omega: -0.027471 + -0.18995theta + -0.14059omega + 0.07715theta^2 + 0.06000theta omega + 0.00577omega^2 + -0.01531theta^3 + -0.03245theta^2 omega + 0.00320theta omega^2 + -0.00869omega^3
+    Eq omega Phys: -0.028024*omega**3 + 0.000344*omega**2*theta + 0.00546*omega**2 - 0.000116*omega*theta**2 - 0.001757*omega*theta - 0.010397*omega - 2.0e-6*theta**3 - 2.9e-5*theta**2 - 0.000218*theta - 0.001299
+    Diffusion: theta=1.641433e-04, omega=8.260190e-06
+
+--- Chunk 103372 (193/220) | Start: 2025-08-19 04:35:00 ---
+    RMSE omega (GP): 0.004233 | RMSE omega (Sim): nan
+    Loss: 175.9579 | Epoch: 9308
+    Eq omega: 0.000361 + -0.00315theta + -0.00461omega + -0.04835theta^2 + 0.07512theta omega + 0.03252omega^2 + -0.02654theta^3 + -0.00214theta^2 omega + -0.00757theta omega^2 + 0.04164omega^3
+    Eq omega Phys: 0.272406*omega**3 - 0.001651*omega**2*theta + 0.032001*omega**2 - 1.6e-5*omega*theta**2 + 0.001486*omega*theta - 0.013678*omega - 6.0e-6*theta**3 + 0.000171*theta**2 - 0.001494*theta + 0.00423
+    Diffusion: theta=1.162418e-04, omega=9.824152e-06
+
+--- Chunk 103373 (194/220) | Start: 2025-08-19 04:40:00 ---
+    RMSE omega (GP): 0.004196 | RMSE omega (Sim): 0.060577
+    Loss: 282.7884 | Epoch: 9999
+    Eq omega: -0.012441 + -0.00616theta + 0.08527omega + 0.00067theta^2 + -0.00256theta omega + 0.02147omega^2 + -0.00098theta^3 + -0.00006theta^2 omega + -0.00003theta omega^2 + 0.00420omega^3
+    Eq omega Phys: 0.044338*omega**3 - 1.1e-5*omega**2*theta + 0.01287*omega**2 - 0.e-6*omega*theta**2 - 3.3e-5*omega*theta + 0.003372*omega + 1.5e-5*theta**2 - 0.000204*theta + 0.000924
+    Diffusion: theta=1.634806e-04, omega=7.154276e-06
+
+--- Chunk 103374 (195/220) | Start: 2025-08-19 04:45:00 ---
+    RMSE omega (GP): 0.003356 | RMSE omega (Sim): 0.046493
+    Loss: 199.3331 | Epoch: 9999
+    Eq omega: -0.011461 + -0.12330theta + -0.08359omega + -0.03521theta^2 + -0.04809theta omega + -0.06826omega^2 + -0.00022theta^3 + -0.00677theta^2 omega + -0.00912theta omega^2 + -0.02410omega^3
+    Eq omega Phys: -0.283708*omega**3 - 0.003579*omega**2*theta - 0.006159*omega**2 - 8.9e-5*omega*theta**2 + 0.000807*omega*theta - 0.001779*omega - 2.2e-5*theta**2 + 0.000334*theta - 0.00108
+    Diffusion: theta=5.544466e-05, omega=5.799948e-06
+
+--- Chunk 103375 (196/220) | Start: 2025-08-19 04:50:00 ---
+    RMSE omega (GP): 0.003530 | RMSE omega (Sim): 0.047024
+    Loss: 133.6766 | Epoch: 7279
+    Eq omega: 0.124861 + -0.20277theta + -0.20134omega + 0.05044theta^2 + 0.18571theta omega + 0.20408omega^2 + -0.25020theta^3 + 0.04023theta^2 omega + 0.00439theta omega^2 + -0.08726omega^3
+    Eq omega Phys: -0.627911*omega**3 + 0.001053*omega**2*theta + 0.098549*omega**2 + 0.000322*omega*theta**2 + 0.002176*omega*theta - 0.010175*omega - 6.7e-5*theta**3 + 0.000294*theta**2 - 0.000652*theta + 0.000789
+    Diffusion: theta=3.871139e-05, omega=7.984342e-06
+
+--- Chunk 103376 (197/220) | Start: 2025-08-19 04:55:00 ---
+    RMSE omega (GP): 0.003486 | RMSE omega (Sim): 0.075140
+    Loss: 191.7746 | Epoch: 6328
+    Eq omega: -0.014851 + -1.38153theta + 0.07305omega + 0.37330theta^2 + 0.40689theta omega + 0.14491omega^2 + 0.00695theta^3 + -0.00664theta^2 omega + -0.14752theta omega^2 + -0.00198omega^3
+    Eq omega Phys: -0.020777*omega**3 - 0.0516*omega**2*theta + 0.099043*omega**2 - 7.7e-5*omega*theta**2 + 0.008062*omega*theta + 0.000356*omega + 3.0e-6*theta**3 + 0.000243*theta**2 - 0.001661*theta + 0.000385
+    Diffusion: theta=4.305660e-05, omega=8.364657e-06
+
+--- Chunk 103377 (198/220) | Start: 2025-08-19 05:00:00 ---
+    RMSE omega (GP): 0.003440 | RMSE omega (Sim): 0.174251
+    Loss: 91.3870 | Epoch: 9999
+    Eq omega: 0.002341 + -0.01308theta + -0.02039omega + -0.02392theta^2 + -0.00568theta omega + -0.01373omega^2 + -0.01240theta^3 + 0.03527theta^2 omega + -0.01023theta omega^2 + -0.00236omega^3
+    Eq omega Phys: -0.011959*omega**3 - 0.001728*omega**2*theta + 0.012983*omega**2 + 0.000199*omega*theta**2 - 0.004359*omega*theta + 0.023233*omega - 2.0e-6*theta**3 + 6.4e-5*theta**2 - 0.00059*theta + 0.001808
+    Diffusion: theta=3.884760e-04, omega=6.810167e-06
+
+--- Chunk 103378 (199/220) | Start: 2025-08-19 05:05:00 ---
+    RMSE omega (GP): 0.004039 | RMSE omega (Sim): 0.031621
+    Loss: 209.5738 | Epoch: 9999
+    Eq omega: 0.067371 + -0.02559theta + -0.01580omega + 0.00125theta^2 + 0.00670theta omega + 0.00139omega^2 + -0.00351theta^3 + 0.00057theta^2 omega + 0.00297theta omega^2 + -0.00032omega^3
+    Eq omega Phys: -0.002677*omega**3 + 0.000828*omega**2*theta + 0.011316*omega**2 + 5.0e-6*omega*theta**2 + 0.000253*omega*theta + 0.001845*omega - 1.0e-6*theta**3 - 4.1e-5*theta**2 - 0.000542*theta - 0.002369
+    Diffusion: theta=2.060621e-04, omega=6.656215e-06
+
+--- Chunk 103379 (200/220) | Start: 2025-08-19 05:10:00 ---
+    RMSE omega (GP): 0.006390 | RMSE omega (Sim): 0.042121
+    Loss: 870.8842 | Epoch: 9999
+    Eq omega: 0.004751 + -0.02133theta + -0.02609omega + 0.00123theta^2 + -0.00930theta omega + -0.00461omega^2 + -0.00019theta^3 + 0.00010theta^2 omega + -0.00189theta omega^2 + -0.00038omega^3
+    Eq omega Phys: -0.005097*omega**3 - 0.000845*omega**2*theta + 0.011305*omega**2 + 1.0e-6*omega*theta**2 - 0.000258*omega*theta + 0.003091*omega + 6.0e-6*theta**2 - 0.000137*theta + 0.001142
+    Diffusion: theta=3.780762e-04, omega=5.189167e-06
+
+  [Progress 200/220] Mean RMSE omega (GP): 0.004557 | (Sim): 0.127412 | Mean loss: -18978949.8715 | Valid GP: 150/200 | Valid Sim: 127/200 | Elapsed: 564.7min | ETA: 56.5min
+
+--- Chunk 103380 (201/220) | Start: 2025-08-19 05:15:00 ---
+    RMSE omega (GP): 0.003104 | RMSE omega (Sim): 0.039821
+    Loss: 154.3490 | Epoch: 9999
+    Eq omega: 0.592681 + 0.02248theta + -0.00313omega + -0.01724theta^2 + 0.02171theta omega + -0.11618omega^2 + -0.02968theta^3 + -0.00057theta^2 omega + 0.02128theta omega^2 + -0.26272omega^3
+    Eq omega Phys: -2.829429*omega**3 + 0.007639*omega**2*theta - 0.153856*omega**2 - 7.0e-6*omega*theta**2 + 0.000584*omega*theta - 0.005715*omega - 1.2e-5*theta**3 + 0.00038*theta**2 - 0.004041*theta + 0.015305
+    Diffusion: theta=9.363859e-05, omega=5.562167e-06
+
+--- Chunk 103381 (202/220) | Start: 2025-08-19 05:20:00 ---
+    RMSE omega (GP): 0.003204 | RMSE omega (Sim): 0.056872
+    Loss: 84.9175 | Epoch: 7124
+    Eq omega: -0.039631 + -0.15232theta + 0.01179omega + 0.00577theta^2 + -0.09654theta omega + 0.02979omega^2 + -0.03029theta^3 + 0.03316theta^2 omega + -0.00984theta omega^2 + -0.02422omega^3
+    Eq omega Phys: -0.138847*omega**3 - 0.00188*omega**2*theta + 0.001116*omega**2 + 0.000211*omega*theta**2 + 0.001268*omega*theta - 4.6e-5*omega - 6.0e-6*theta**3 - 0.000119*theta**2 - 0.000907*theta - 0.002693
+    Diffusion: theta=1.412131e-05, omega=7.280521e-06
+
+--- Chunk 103382 (203/220) | Start: 2025-08-19 05:25:00 ---
+    RMSE omega (GP): 0.003068 | RMSE omega (Sim): 0.074270
+    Loss: 176.4015 | Epoch: 9999
+    Eq omega: 0.009081 + -0.02050theta + -0.00507omega + 0.03025theta^2 + -0.00757theta omega + -0.00218omega^2 + -0.00009theta^3 + 0.00335theta^2 omega + -0.06343theta omega^2 + -0.00395omega^3
+    Eq omega Phys: -0.048038*omega**3 - 0.025713*omega**2*theta + 0.17992*omega**2 + 4.5e-5*omega*theta**2 - 0.000799*omega*theta + 0.003214*omega + 2.2e-5*theta**2 - 0.000331*theta + 0.001255
+    Diffusion: theta=1.046773e-04, omega=6.615046e-06
+
+--- Chunk 103383 (204/220) | Start: 2025-08-19 05:30:00 ---
+    RMSE omega (GP): 0.003268 | RMSE omega (Sim): 0.049357
+    Loss: 118.9775 | Epoch: 9999
+    Eq omega: -0.076361 + -0.02706theta + -0.00042omega + -0.00826theta^2 + 0.00086theta omega + -0.00501omega^2 + -0.00021theta^3 + 0.00036theta^2 omega + -0.00400theta omega^2 + 0.00944omega^3
+    Eq omega Phys: 0.070153*omega**3 - 0.000991*omega**2*theta + 0.014198*omega**2 + 3.0e-6*omega*theta**2 - 8.6e-5*omega*theta + 0.000589*omega - 2.0e-6*theta**2 + 7.5e-5*theta - 0.000684
+    Diffusion: theta=1.327788e-04, omega=7.126834e-06
+
+--- Chunk 103384 (205/220) | Start: 2025-08-19 05:35:00 ---
+    RMSE omega (GP): 0.003346 | RMSE omega (Sim): 0.162276
+    Loss: 150.5022 | Epoch: 5723
+    Eq omega: 0.033211 + -0.56644theta + -0.01351omega + 0.85608theta^2 + -0.03422theta omega + 0.05032omega^2 + -0.73833theta^3 + 0.41144theta^2 omega + -0.24437theta omega^2 + -0.03693omega^3
+    Eq omega Phys: -0.339027*omega**3 - 0.074779*omega**2*theta - 0.189315*omega**2 + 0.004197*omega*theta**2 + 0.023743*omega*theta + 0.033107*omega - 0.000251*theta**3 - 0.001661*theta**2 - 0.003924*theta - 0.003471
+    Diffusion: theta=6.646153e-05, omega=4.029615e-06
+
+--- Chunk 103385 (206/220) | Start: 2025-08-19 05:40:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 9390.5947 | Epoch: 901
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103386 (207/220) | Start: 2025-08-19 05:45:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 73029.4219 | Epoch: 1326
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103387 (208/220) | Start: 2025-08-19 05:50:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 9387.5498 | Epoch: 2019
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103388 (209/220) | Start: 2025-08-19 05:55:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 19563.4004 | Epoch: 1458
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103389 (210/220) | Start: 2025-08-19 06:00:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 4443921.5000 | Epoch: 940
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103390 (211/220) | Start: 2025-08-19 06:05:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 12024452.0000 | Epoch: 779
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103391 (212/220) | Start: 2025-08-19 06:10:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 877.0509 | Epoch: 2412
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103392 (213/220) | Start: 2025-08-19 06:15:00 ---
+    RMSE omega (GP): 0.003312 | RMSE omega (Sim): 0.062185
+    Loss: 142.5331 | Epoch: 8576
+    Eq omega: 0.004001 + 0.02154theta + -0.00720omega + -0.00057theta^2 + 0.01064theta omega + -0.02869omega^2 + 0.00047theta^3 + 0.00010theta^2 omega + 0.00415theta omega^2 + -0.00737omega^3
+    Eq omega Phys: -0.065308*omega**3 + 0.001226*omega**2*theta - 0.022917*omega**2 + 1.0e-6*omega*theta**2 + 0.000181*omega*theta - 0.001357*omega - 3.0e-6*theta**2 + 4.5e-5*theta - 0.00018
+    Diffusion: theta=8.587404e-05, omega=6.302345e-06
+
+--- Chunk 103393 (214/220) | Start: 2025-08-19 06:20:00 ---
+    RMSE omega (GP): 0.003522 | RMSE omega (Sim): 0.494126
+    Loss: 125.1348 | Epoch: 8302
+    Eq omega: 0.189851 + -0.61450theta + 0.09355omega + -0.54141theta^2 + 0.54661theta omega + 0.67399omega^2 + -0.07688theta^3 + 0.01300theta^2 omega + 0.02257theta omega^2 + -0.03650omega^3
+    Eq omega Phys: -0.24782*omega**3 + 0.005108*omega**2*theta + 0.281966*omega**2 + 9.8e-5*omega*theta**2 + 0.007183*omega*theta - 0.056883*omega - 1.9e-5*theta**3 + 0.000153*theta**2 + 0.000326*theta - 0.002401
+    Diffusion: theta=6.585822e-05, omega=6.788823e-06
+
+--- Chunk 103394 (215/220) | Start: 2025-08-19 06:25:00 ---
+    RMSE omega (GP): 0.003137 | RMSE omega (Sim): 0.062787
+    Loss: 169.0990 | Epoch: 9999
+    Eq omega: 0.029251 + -0.01147theta + 0.01003omega + 0.00115theta^2 + -0.00741theta omega + -0.01164omega^2 + -0.00024theta^3 + 0.00024theta^2 omega + -0.00084theta omega^2 + -0.01884omega^3
+    Eq omega Phys: -0.214206*omega**3 - 0.000318*omega**2*theta - 0.003588*omega**2 + 3.0e-6*omega*theta**2 - 0.00022*omega*theta + 0.002426*omega + 4.0e-6*theta**2 - 6.9e-5*theta + 0.000439
+    Diffusion: theta=9.398589e-05, omega=6.060810e-06
+
+--- Chunk 103395 (216/220) | Start: 2025-08-19 06:30:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 18245.7500 | Epoch: 1432
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103396 (217/220) | Start: 2025-08-19 06:35:00 ---
+    RMSE omega (GP): nan | RMSE omega (Sim): nan
+    Loss: 24683.7852 | Epoch: 902
+    Eq omega: nan1 + nantheta + nanomega + nantheta^2 + nantheta omega + nanomega^2 + nantheta^3 + nantheta^2 omega + nantheta omega^2 + nanomega^3
+    Eq omega Phys: N/A
+    Diffusion: theta=nan, omega=nan
+
+--- Chunk 103397 (218/220) | Start: 2025-08-19 06:40:00 ---
+    RMSE omega (GP): 0.003363 | RMSE omega (Sim): 0.043765
+    Loss: 222.7677 | Epoch: 8380
+    Eq omega: 0.040881 + -0.14704theta + -0.16481omega + 0.04856theta^2 + 0.03146theta omega + -0.01599omega^2 + -0.02239theta^3 + 0.00116theta^2 omega + 0.01784theta omega^2 + -0.00751omega^3
+    Eq omega Phys: -0.098382*omega**3 + 0.00779*omega**2*theta + 0.037238*omega**2 + 1.7e-5*omega*theta**2 + 0.0009*omega*theta - 0.000605*omega - 1.1e-5*theta**3 - 0.000164*theta**2 - 0.000953*theta - 0.002102
+    Diffusion: theta=9.104091e-05, omega=5.548869e-06
+
+--- Chunk 103398 (219/220) | Start: 2025-08-19 06:45:00 ---
+    RMSE omega (GP): 0.002919 | RMSE omega (Sim): 0.037887
+    Loss: 245.4474 | Epoch: 9999
+    Eq omega: -0.733961 + 0.07895theta + -0.02471omega + -0.01012theta^2 + 0.01014theta omega + 0.40815omega^2 + -0.00995theta^3 + 0.04772theta^2 omega + -0.14211theta omega^2 + -0.29591omega^3
+    Eq omega Phys: -5.669918*omega**3 - 0.090765*omega**2*theta - 0.31588*omega**2 + 0.001016*omega*theta**2 + 0.014644*omega*theta + 0.051926*omega - 7.0e-6*theta**3 - 0.000159*theta**2 - 0.001099*theta - 0.003349
+    Diffusion: theta=6.126113e-05, omega=4.056234e-06
+
+--- Chunk 103399 (220/220) | Start: 2025-08-19 06:50:00 ---
+    RMSE omega (GP): 0.013174 | RMSE omega (Sim): 0.070457
+    Loss: 2669.0876 | Epoch: 1986
+    Eq omega: -0.037791 + -0.03752theta + 0.00821omega + -0.01171theta^2 + 0.00279theta omega + 0.00165omega^2 + -0.00090theta^3 + 0.00078theta^2 omega + -0.00016theta omega^2 + -0.00465omega^3
+    Eq omega Phys: -0.046591*omega**3 - 5.3e-5*omega**2*theta + 0.000413*omega**2 + 9.0e-6*omega*theta**2 + 0.00023*omega*theta + 0.001707*omega - 1.8e-5*theta**2 - 0.000297*theta - 0.001611
+    Diffusion: theta=nan, omega=nan
+
+  [Progress 220/220] Mean RMSE omega (GP): 0.004528 | (Sim): 0.125617 | Mean loss: -17178009.8365 | Valid GP: 161/220 | Valid Sim: 138/220 | Elapsed: 609.8min | ETA: 0.0min
+
+============================================================
+EVALUATION COMPLETE — Chunks [103180, 103399]
+============================================================
+Chunks processed: 220
+Chunks succeeded GP:  161 (73.2%)
+Chunks succeeded Sim: 138 (62.7%)
+Mean GP RMSE omega:   0.004528 ± 0.001799
+Mean SIM RMSE omega:  0.125617 ± 0.279187
+Mean Loss:            -17178009.8365 ± 255715391.8504
+Elapsed time:     609.8 minutes
+
+Per-chunk CSV: /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/results_5min_all_chunks/run_SLURM_3733210_combo5/chunks_103180_to_103399_20260323_142450.csv
+Summary JSON:  /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/results_5min_all_chunks/run_SLURM_3733210_combo5/summary_103180_to_103399_20260323_142450.json
+============================================================
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.6984388192907D+01   r2 =  0.4077517747472D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.6984388192907D+01   r2 =  0.4077517747472D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.6984388192907D+01   r2 =  0.4077517747472D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.6984388192907D+01   r2 =  0.3351174855739D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.6984388192907D+01   r2 =  0.3351174855739D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.6984388192907D+01   r2 =  0.3351174855739D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.6984388192907D+01   r2 =  0.2754218034228D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.6984388192907D+01   r2 =  0.2754218034228D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.6984388192907D+01   r2 =  0.2754218034228D-15
+ lsoda--  warning..internal t (=r1) and h (=r2) are  
+       such that in the machine, t + h = t on the next step  
+       (h = step size). solver will continue anyway  
+      in above,  r1 =  0.6984388192907D+01   r2 =  0.2263599276997D-15
+ lsoda--  above warning has been issued i1 times.    
+       it will not be issued again for this problem  
+      in above message,  i1 =        10
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n039
+Job ID: 3738739
+Array Job ID: 3733210_469
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 4
+CPU Utilized: 10:06:14
+CPU Efficiency: 24.84% of 1-16:40:52 core-walltime
+Job Wall-clock time: 10:10:13
+Memory Utilized: 2.50 GB
+Memory Efficiency: 20.81% of 12.00 GB (12.00 GB/node)

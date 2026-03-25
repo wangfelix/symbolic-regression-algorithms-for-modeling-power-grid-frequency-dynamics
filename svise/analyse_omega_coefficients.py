@@ -12,11 +12,14 @@ import numpy as np
 import re
 import os
 
-import sys
-RUN_NAME = sys.argv[1] if len(sys.argv) > 1 else "run_SLURM_3708675"
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("--run-name", type=str, default="run_SLURM_3708675")
+args, _ = parser.parse_known_args()
+RUN_NAME = args.run_name
 
 # --- Paths ---
-INPUT_CSV = os.path.join(os.path.dirname(__file__), "results_5min_all_chunks", RUN_NAME, "all_chunks_combined_physical.csv")
+INPUT_CSV = os.path.join(os.path.dirname(__file__), "results_5min_all_chunks", RUN_NAME, "all_chunks_combined.csv")
 OUTPUT_CSV = os.path.join(os.path.dirname(__file__), "results_5min_all_chunks", RUN_NAME, "omega_coefficient_stats.csv")
 
 # --- Term order (matches the equation string order) ---

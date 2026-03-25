@@ -352,6 +352,22 @@ def train_single_chunk(chunk_df, hp=BEST_HYPERPARAMS):
         except Exception as e:
             equations = [f"Error: {e}"] * d
 
+        # Extract diffusion (process noise diagonal)
+        diffusion_theta_phys = np.nan
+        diffusion_omega_phys = np.nan
+        try:
+            with torch.no_grad():
+                pn = model.diffusion_prior.process_noise
+                if pn.dim() == 3:
+                    pn = pn.mean(0)  # average over reparam samples
+                q_diag_scaled = pn.diag().cpu().numpy()
+                std_x_np = std_x.numpy() if isinstance(std_x, torch.Tensor) else np.array(std_x)
+                q_diag_phys = q_diag_scaled * (std_x_np ** 2) / t_scale
+                diffusion_theta_phys = float(q_diag_phys[0])
+                diffusion_omega_phys = float(q_diag_phys[1])
+        except Exception as e:
+            print(f"    Diffusion extraction failed: {e}")
+
         # Calculate RMSE
         with torch.no_grad():
             x_pred_scaled = model.marginal_sde.mean(train_t_scaled)
@@ -378,6 +394,8 @@ def train_single_chunk(chunk_df, hp=BEST_HYPERPARAMS):
                 "t_scale": float(t_scale),
             },
             "train_x": train_x.numpy() if hasattr(train_x, "numpy") else train_x,
+            "diffusion_theta_phys": diffusion_theta_phys,
+            "diffusion_omega_phys": diffusion_omega_phys,
         }
 
     except Exception as e:
@@ -391,6 +409,8 @@ def train_single_chunk(chunk_df, hp=BEST_HYPERPARAMS):
             "nan_recoveries": -1,
             "equations": [f"FAILED: {e}"],
             "scaling_params": None,
+            "diffusion_theta_phys": float('nan'),
+            "diffusion_omega_phys": float('nan'),
         }
 
 
@@ -467,7 +487,8 @@ def main():
             "Orig_RMSE_Omega", "Orig_RMSE_Theta", "Orig_RMSE_Total",
             "Sim_RMSE_Omega", "Sim_RMSE_Theta", "Sim_RMSE_Total",
             "Final_Loss", "Stopped_Epoch", "NaN_Recoveries",
-            "Eq_Theta", "Eq_Omega", "Eq_Omega_Physical"
+            "Eq_Theta", "Eq_Omega", "Eq_Omega_Physical",
+            "Diffusion_Theta", "Diffusion_Omega"
         ])
 
     # Process chunks
@@ -508,8 +529,12 @@ def main():
 
         print(f"    RMSE omega (GP): {result['rmse_omega']:.6f} | RMSE omega (Sim): {sim_om:.6f}")
         print(f"    Loss: {result['final_loss']:.4f} | Epoch: {result['stopped_epoch']}")
+        diff_theta = result.get("diffusion_theta_phys", np.nan)
+        diff_omega = result.get("diffusion_omega_phys", np.nan)
+
         print(f"    Eq omega: {eq_omega}")
         print(f"    Eq omega Phys: {eq_omega_phys}")
+        print(f"    Diffusion: theta={diff_theta:.6e}, omega={diff_omega:.6e}")
 
         # Append to CSV immediately (crash-safe)
         with open(csv_path, 'a', newline='') as f:
@@ -527,7 +552,9 @@ def main():
                 result['nan_recoveries'],
                 eq_theta,
                 eq_omega,
-                eq_omega_phys
+                eq_omega_phys,
+                f"{diff_theta:.6e}" if not np.isnan(diff_theta) else "nan",
+                f"{diff_omega:.6e}" if not np.isnan(diff_omega) else "nan"
             ])
 
         # Print running stats every 50 chunks

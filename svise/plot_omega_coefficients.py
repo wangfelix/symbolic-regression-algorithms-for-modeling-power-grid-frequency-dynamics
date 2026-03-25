@@ -24,8 +24,11 @@ matplotlib.rcParams.update({
     "figure.dpi": 150,
 })
 
-import sys
-RUN_NAME = sys.argv[1] if len(sys.argv) > 1 else "run_SLURM_3708675"
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("--run-name", type=str, default="run_SLURM_3708675")
+args, _ = parser.parse_known_args()
+RUN_NAME = args.run_name
 
 # --- Paths ---
 SCRIPT_DIR = os.path.dirname(__file__)

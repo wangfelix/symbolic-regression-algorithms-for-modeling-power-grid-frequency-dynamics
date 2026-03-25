@@ -5,8 +5,10 @@ Estimates parameters (c_1, c_2_decay, Delta_P, epsilon) from real South Korean
 power grid frequency data, then generates 30 days of noiseless synthetic data.
 
 Usage:
-    python generate_synthetic_data.py
-    python generate_synthetic_data.py --with-noise   # Also generate noisy variant
+    python generate_synthetic_data.py                    # Default sigma=60 (Wen's original)
+    python generate_synthetic_data.py --sigma 15         # sigma=15 (PySR comparison)
+    python generate_synthetic_data.py --sigma 0          # No de-trending
+    python generate_synthetic_data.py --with-noise       # Also generate noisy variant
 """
 import os
 import sys
@@ -80,6 +82,8 @@ def main():
                         help="Also generate a noisy variant")
     parser.add_argument("--data-path", type=str, default=None,
                         help="Path to SK frequency data pickle")
+    parser.add_argument("--sigma", type=int, default=60,
+                        help="Gaussian smoothing sigma for de-trending before KM estimation (default: 60). Use 0 for no de-trending.")
     args = parser.parse_args()
 
     # Resolve data path
@@ -98,7 +102,16 @@ def main():
             print(f"Error: Data file not found. Tried:\n  {parquet_path}\n  {pickle_path}")
             sys.exit(1)
 
-    output_dir = os.path.dirname(os.path.abspath(__file__))
+    # Output directory: use sigma suffix for non-default values
+    script_dir_base = os.path.dirname(os.path.abspath(__file__))
+    if args.sigma == 60:
+        output_dir = script_dir_base  # backward compatible
+    else:
+        output_dir = os.path.join(script_dir_base, f"sigma_{args.sigma}")
+        os.makedirs(output_dir, exist_ok=True)
+
+    print(f"Sigma for de-trending: {args.sigma}")
+    print(f"Output directory: {output_dir}")
 
     # ---- Step 1: Load and clean data ----
     freq = load_sk_data(data_path)
@@ -120,8 +133,13 @@ def main():
     print(f"{'=' * 60}")
 
     # De-trend for KM analysis
-    omega_filtered = data_filter(omega, sigma=60)
-    omega_detrended = omega - TREND * omega_filtered
+    if args.sigma > 0:
+        omega_filtered = data_filter(omega, sigma=args.sigma)
+        omega_detrended = omega - TREND * omega_filtered
+        print(f"  De-trending with sigma={args.sigma}")
+    else:
+        omega_detrended = omega.copy()
+        print(f"  No de-trending (sigma=0)")
 
     # c_1: drift coefficient (primary control)
     print("\nEstimating c_1 (drift/damping)...")
@@ -134,7 +152,9 @@ def main():
     # c_2_decay: secondary control (exponential decay rate)
     print("\nEstimating c_2_decay (secondary control)...")
     c_2_decay = exp_decay(omega, time_res=1, size=899)
-    c_2_decay = TREND * c_2_decay
+    # If sigma=0 (no de-trending), disable secondary control coupling
+    effective_trend = TREND if args.sigma > 0 else 0
+    c_2_decay = effective_trend * c_2_decay
     c_2 = c_2_decay * c_1_scalar
     print(f"  c_2_decay = {c_2_decay:.8f}")
     print(f"  c_2 = c_2_decay * c_1 = {c_2:.8f}")
@@ -212,6 +232,7 @@ def main():
         "c_2": c_2,
         "Delta_P": float(Delta_P),
         "epsilon": float(epsilon),
+        "detrend_sigma": args.sigma,
         "dispatch": DISPATCH,
         "delta_t": DELTA_T,
         "t_final": T_FINAL,
