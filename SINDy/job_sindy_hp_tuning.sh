@@ -2,7 +2,7 @@
 #SBATCH --job-name=sindy_hp
 #SBATCH --time=48:00:00
 #SBATCH --partition=cpu
-#SBATCH --output=./slurm-logs-sindy-hp-tuning/%x-%A_%a.out
+#SBATCH --output=./slurm-logs/%x-%A_%a.out
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=bj2362@partner.kit.edu
 #SBATCH -c 4
@@ -13,7 +13,7 @@
 source /home/ka/ka_iai/ka_bj2362/dsr/.venv_svise/bin/activate
 
 # Change to the project directory
-cd /home/ka/ka_iai/ka_bj2362/dsr/svise
+cd /home/ka/ka_iai/ka_bj2362/dsr/SINDy
 
 # Use the base slurm job ID to force all jobs into the same directory
 if [ -z "$SLURM_ARRAY_JOB_ID" ]; then

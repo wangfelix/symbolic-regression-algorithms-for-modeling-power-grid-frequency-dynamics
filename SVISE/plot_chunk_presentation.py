@@ -398,7 +398,7 @@ def main():
     t, theta_emp, omega_smooth, omega_raw = prepare_data(chunk_df)
 
     # Output directory
-    output_dir = args.output_dir or os.path.join(os.path.dirname(__file__), "plots_presentation")
+    output_dir = args.output_dir or os.path.join(os.path.dirname(__file__), "plots_final_presentation")
     os.makedirs(output_dir, exist_ok=True)
 
     # Simulate model (if equations are valid)
