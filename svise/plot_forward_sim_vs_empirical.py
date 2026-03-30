@@ -159,13 +159,22 @@ def simulate_ode(t, theta0, omega0, coeffs_omega, mean_x, std_x, t_scale=T_SCALE
 # ── Plotting ─────────────────────────────────────────────────────────────────
 
 def plot_chunk(chunk_idx, chunk_start_time, t, omega_raw, omega_sim, eq_omega_str,
-               eq_phys_str, rmse_gp, rmse_sim, output_dir):
+               eq_phys_str, rmse_gp, rmse_sim, output_dir, diff_omega=np.nan):
     """Plot forward-simulated omega vs empirical omega for a single chunk.
-    Creates two separate plots: one with raw data, one with sigma=15 smoothed data."""
+    Creates two separate plots: one with raw data, one with sigma=15 smoothed data.
+    If diff_omega is finite, draws a ±2σ diffusion tube around the ODE path."""
+
+    # Diffusion tube: std(t) = sqrt(q_phys * t), ±2σ band
+    has_tube = np.isfinite(diff_omega) and diff_omega > 0
+    if has_tube:
+        std_tube = 2.0 * np.sqrt(diff_omega * t)
 
     # Plot 1: raw empirical vs forward sim
     fig, ax = plt.subplots(figsize=(3.5, 2.5))
     ax.plot(t, omega_raw, color='#2196F3', linewidth=0.6, alpha=0.9, label='Empirical (raw)')
+    if has_tube:
+        ax.fill_between(t, omega_sim - std_tube, omega_sim + std_tube,
+                         color='#F44336', alpha=0.12, label='Diffusion $\\pm 2\\sigma$')
     ax.plot(t, omega_sim, color='#F44336', linewidth=1.0, alpha=0.9, linestyle='--',
             label='Forward sim')
     ax.set_xlabel('Time (s)', fontsize=7)
@@ -187,6 +196,9 @@ def plot_chunk(chunk_idx, chunk_start_time, t, omega_raw, omega_sim, eq_omega_st
             label='Empirical (raw)')
     ax.plot(t, omega_smooth15, color='#4CAF50', linewidth=1.0, alpha=0.9,
             label='Empirical ($\\sigma$=15)')
+    if has_tube:
+        ax.fill_between(t, omega_sim - std_tube, omega_sim + std_tube,
+                         color='#F44336', alpha=0.12, label='Diffusion $\\pm 2\\sigma$')
     ax.plot(t, omega_sim, color='#F44336', linewidth=1.0, alpha=0.9, linestyle='--',
             label='Forward sim')
     ax.set_xlabel('Time (s)', fontsize=7)
@@ -285,6 +297,7 @@ def main():
         eq_phys_str = str(row.get("Eq_Omega_Physical", "N/A"))
         rmse_gp = float(row.get("Orig_RMSE_Omega", np.nan))
         rmse_sim_csv = float(row.get("Sim_RMSE_Omega", np.nan))
+        diff_omega = float(row.get("Diffusion_Omega", np.nan))
 
         if not eq_omega_str or eq_omega_str == "nan" or "FAILED" in eq_omega_str:
             print(f"  Chunk {chunk_idx}: no valid equation, skipping")
@@ -321,7 +334,7 @@ def main():
         plot_chunk(chunk_idx, chunk_start_time, t,
                    omega_raw if args.sigma == 0 else omega_emp,
                    omega_sim, eq_omega_str, eq_phys_str,
-                   rmse_gp, rmse_sim, plots_dir)
+                   rmse_gp, rmse_sim, plots_dir, diff_omega=diff_omega)
 
     print(f"\nAll plots saved to: {plots_dir}")
 

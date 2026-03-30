@@ -1,0 +1,60 @@
+Loading data from /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/../dataset/South_Korea_2024-08-15_2025-08-31_1s.parquet...
+Filtering for valid 5-minute chunks in the 9:00-10:00 window...
+Found 4453 total valid 9:00-10:00 chunks.
+Randomly sampled 300 chunks using seed 42.
+
+============================================================
+SINDy HYPERPARAMETER TUNING — EXHAUSTIVE GRID SEARCH
+============================================================
+Search space: 60 combinations
+  sigma:     [0, 5, 10, 15]
+  degree:    [1, 2, 3]
+  threshold: [1e-10, 1e-05, 0.001, 0.01, 0.1]
+Chunks per combination: 300
+Evaluating combo index: 31
+============================================================
+
+
+============================================================
+Combo 31/60: sigma=10, degree=1, threshold=1.0e-05
+============================================================
+    Chunk 50/300 | Running mean RMSE omega: 0.079881 | Valid: 50/50
+    Chunk 100/300 | Running mean RMSE omega: 0.072413 | Valid: 100/100
+    Chunk 150/300 | Running mean RMSE omega: 0.070361 | Valid: 149/150
+    Chunk 200/300 | Running mean RMSE omega: 0.068120 | Valid: 199/200
+    Chunk 250/300 | Running mean RMSE omega: 0.068207 | Valid: 249/250
+    Chunk 300/300 | Running mean RMSE omega: 0.066734 | Valid: 299/300
+  => Mean RMSE omega: 0.066734 +/- 0.057108
+     Median RMSE omega: 0.050780
+     Success: 299/300
+
+Combo JSON saved to: /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/results_sindy_hp_tuning/run_SLURM_3754208/combo_031.json
+
+============================================================
+SINDy HP TUNING COMPLETE
+============================================================
+Results saved to: /pfs/data6/home/ka/ka_iai/ka_bj2362/dsr/svise/results_sindy_hp_tuning/run_SLURM_3754208/hp_tuning_combo_031.csv
+Elapsed: 0.3 minutes
+
+Best combination (combo #31):
+  sigma: 10
+  degree: 1
+  threshold: 1e-05
+  Mean RMSE omega: 0.066734
+============================================================
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n021
+Job ID: 3769839
+Array Job ID: 3754208_31
+Cluster: uc3
+User/Group: ka_bj2362/ka_iai
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 4
+CPU Utilized: 00:00:21
+CPU Efficiency: 13.82% of 00:02:32 core-walltime
+Job Wall-clock time: 00:00:38
+Memory Utilized: 1.82 GB
+Memory Efficiency: 15.16% of 12.00 GB (12.00 GB/node)
