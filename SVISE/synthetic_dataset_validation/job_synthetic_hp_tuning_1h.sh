@@ -14,7 +14,7 @@
 source /home/ka/ka_iai/ka_bj2362/dsr/.venv_svise/bin/activate
 
 # Change to the synthetic validation directory
-cd /home/ka/ka_iai/ka_bj2362/dsr/svise/synthetic_dataset_validation
+cd /home/ka/ka_iai/ka_bj2362/dsr/SVISE/synthetic_dataset_validation
 
 # Create log directory if needed
 mkdir -p ./slurm-logs-synthetic-hp-tuning-1h

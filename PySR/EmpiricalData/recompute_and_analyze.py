@@ -1,25 +1,43 @@
 """
-1. Liest results_all_combined.csv
-2. Multipliziert jede equation mit sympy.expand() neu aus
-3. Extrahiert Koeffizienten robust via sp.Poly
-   → NaN wenn der Term NICHT in der Gleichung vorkommt (nicht 0.0!)
-4. Berechnet RMSE- und Koeffizienten-Statistiken
+1. Reads results_all_combined.csv
+2. Expands each equation via sympy.expand()
+3. Extracts coefficients robustly via sp.Poly
+   → NaN when the term does NOT appear in the equation (not 0.0!)
+4. Re-simulates each chunk and applies divergence filter (|omega_sim| > 0.4)
+5. Computes RMSE and coefficient statistics for stable chunks only
 """
 
+import os
+import math
 import pandas as pd
 import numpy as np
 import sympy as sp
+from scipy.ndimage import gaussian_filter1d
+from scipy.integrate import odeint
 
-# ── Konfiguration ─────────────────────────────────────────────────────────────
-INPUT_CSV      = "/home/ka/ka_iai/ka_hr7224/PySRCurrent/results_all_combined.csv"
-OUTPUT_CSV     = "/home/ka/ka_iai/ka_hr7224/PySRCurrent/results_recomputed_coefs.csv"
-RMSE_OMEGA_MAX = 1.0
-RMSE_THETA_MAX = 10.0
+# ── Configuration ─────────────────────────────────────────────────────────────
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+INPUT_CSV  = os.path.join(SCRIPT_DIR, "results_all_combined.csv")
+OUTPUT_CSV = os.path.join(SCRIPT_DIR, "results_recomputed_coefs.csv")
+
+# Data file
+_DATA_BASE = os.path.join(SCRIPT_DIR, "..", "..", "dataset")
+_PARQUET   = os.path.join(_DATA_BASE, "South_Korea_2024-08-15_2025-08-31_1s.parquet")
+DATA_PATH  = _PARQUET
+
+SIGMA      = 15
+F_REF      = 60.0
+DT         = 1.0
+CHUNK_SIZE = 300
+
+# Divergence threshold: if any |omega_sim| exceeds this, the chunk
+# is considered divergent/unstable and excluded from RMSE statistics.
+OMEGA_DIVERGENCE_THRESHOLD = 0.4
 # ─────────────────────────────────────────────────────────────────────────────
 
-# Symbole
+# Symbols
 x0, x1       = sp.symbols("x0 x1")
-theta, omega = sp.symbols("theta omega")
+theta_sym, omega_sym = sp.symbols("theta omega")
 
 COEF_MAP = {
     "const":             (0, 0),
@@ -38,13 +56,61 @@ COEF_KEYS   = list(COEF_MAP.keys())
 COEF_LABELS = ["1", "θ", "ω", "θω", "θ²", "ω²", "θ³", "θ²ω", "θω²", "ω³"]
 
 
+# ── Data loading ──────────────────────────────────────────────────────────────
+
+def load_data(data_path, limit_interpolation=10):
+    print(f"Loading data from {data_path} ...")
+    if data_path.endswith('.parquet'):
+        data = pd.read_parquet(data_path)
+    else:
+        data = pd.read_pickle(data_path)
+
+    if 'QI' in data.columns:
+        data.loc[:, 'freq'] = data.loc[:, 'freq'].interpolate(
+            method='time', limit=limit_interpolation)
+        data.loc[data['freq'].isna(), 'QI'] = 2
+        data.loc[~data['freq'].isna(), 'QI'] = 0
+    else:
+        data['freq'] = data['freq'].interpolate(
+            method='time', limit=limit_interpolation)
+    return data
+
+
+def get_valid_chunks(data):
+    print("Extracting valid 5-min chunks ...")
+    if 'QI' in data.columns:
+        data_filtered = data[(data['QI'] == 0) & data['freq'].notna()].dropna(subset=['freq'])
+    else:
+        data_filtered = data[data['freq'].notna()].dropna(subset=['freq'])
+
+    chunk_groups = data_filtered.groupby(data_filtered.index.floor('5min'))
+    valid_chunks = []
+    for chunk_start, group in chunk_groups:
+        if len(group) == CHUNK_SIZE:
+            valid_chunks.append((chunk_start, group))
+
+    print(f"Found {len(valid_chunks)} valid chunks.")
+    return valid_chunks
+
+
+def prepare_chunk(chunk_df, sigma=SIGMA):
+    freq_values = chunk_df['freq'].values
+    omega_raw = (freq_values - F_REF) * 2 * np.pi
+    omega = gaussian_filter1d(omega_raw.astype(float), sigma=sigma) if sigma > 0 else omega_raw.astype(float)
+    theta = np.cumsum(omega) * DT
+    t = np.arange(len(omega)) * DT
+    return t, theta, omega
+
+
+# ── Equation parsing ──────────────────────────────────────────────────────────
+
 def parse_equation(eq_str):
     """Parse PySR equation string, substitute x0->theta, x1->omega, expand."""
     if not isinstance(eq_str, str) or not eq_str.strip():
         return None
     try:
         expr = sp.sympify(eq_str)
-        expr = expr.subs({x0: theta, x1: omega})
+        expr = expr.subs({x0: theta_sym, x1: omega_sym})
         expr = sp.expand(expr)
         return expr
     except Exception:
@@ -54,28 +120,68 @@ def parse_equation(eq_str):
 def extract_coefficients(expr):
     """
     Extract polynomial coefficients.
-    Setzt NaN wenn der Term nicht in der Gleichung vorkommt.
-    sp.Poly.monoms() gibt nur die Terme zurück die wirklich vorkommen —
-    damit unterscheiden wir "Term fehlt" (NaN) von "Koeffizient ist 0".
+    Sets NaN when the term does not appear in the equation.
+    sp.Poly.monoms() returns only the terms that are actually present —
+    this distinguishes "term missing" (NaN) from "coefficient is 0".
     """
     result = {k: np.nan for k in COEF_KEYS}
     if expr is None:
         return result
     try:
-        poly = sp.Poly(expr, theta, omega)
-        # Nur die Monome die wirklich in der Gleichung stehen
+        poly = sp.Poly(expr, theta_sym, omega_sym)
         present_monoms = set(poly.monoms())
 
         for name, (pt, po) in COEF_MAP.items():
             if (pt, po) in present_monoms:
-                val = float(poly.coeff_monomial(theta**pt * omega**po))
-                result[name] = val  # auch 0.0 eintragen falls explizit vorhanden
-            # sonst bleibt NaN
-
+                val = float(poly.coeff_monomial(theta_sym**pt * omega_sym**po))
+                result[name] = val
     except Exception:
         pass
     return result
 
+
+# ── ODE simulation ────────────────────────────────────────────────────────────
+
+def make_full_poly_rhs(coeffs_dict):
+    """Build RHS from coefficient dict (NaN treated as 0)."""
+    c = {k: (v if np.isfinite(v) else 0.0) for k, v in coeffs_dict.items()}
+    def rhs(t, y):
+        th, om = y
+        dw = (c["const"]
+              + c["theta_coef"] * th
+              + c["omega_coef"] * om
+              + c["omega_theta_coef"] * om * th
+              + c["theta2_coef"] * th**2
+              + c["omega2_coef"] * om**2
+              + c["theta3_coef"] * th**3
+              + c["theta2_omega_coef"] * th**2 * om
+              + c["theta_omega2_coef"] * th * om**2
+              + c["omega3_coef"] * om**3)
+        return [om, dw if math.isfinite(dw) else 0.0]
+    return rhs
+
+
+def simulate_chunk(t_arr, theta0, omega0, rhs_func):
+    """Forward-simulate the ODE using odeint."""
+    def rhs_odeint(y, t):
+        return rhs_func(t, y)
+    try:
+        sol = odeint(rhs_odeint, [theta0, omega0], t_arr, full_output=False)
+        if sol.shape[0] == len(t_arr):
+            return sol[:, 0], sol[:, 1]
+    except Exception:
+        pass
+    return np.full_like(t_arr, np.nan), np.full_like(t_arr, np.nan)
+
+
+def compute_rmse(pred, true):
+    mask = np.isfinite(pred) & np.isfinite(true)
+    if mask.sum() == 0:
+        return float("nan")
+    return float(np.sqrt(np.mean((pred[mask] - true[mask]) ** 2)))
+
+
+# ── Formatting ────────────────────────────────────────────────────────────────
 
 def fmt(val):
     if pd.isna(val):
@@ -85,21 +191,23 @@ def fmt(val):
     return f"{val:>14.6f}"
 
 
+# ── Main ──────────────────────────────────────────────────────────────────────
+
 def main():
     df = pd.read_csv(INPUT_CSV)
-    print(f"Geladen: {len(df):,} Zeilen")
+    print(f"Loaded: {len(df):,} rows")
 
-    # ── Deduplizierung ────────────────────────────────────────────────────────
+    # ── Deduplication ─────────────────────────────────────────────────────────
     df = df.sort_values("loss").drop_duplicates(subset="chunk_id", keep="first")
-    print(f"Nach Deduplizierung: {len(df):,} Zeilen\n")
+    print(f"After deduplication: {len(df):,} rows\n")
 
-    # ── Koeffizienten neu berechnen ───────────────────────────────────────────
-    print("Berechne Koeffizienten via sympy.expand()...")
+    # ── Recompute coefficients ────────────────────────────────────────────────
+    print("Computing coefficients via sympy.expand()...")
     coef_rows = []
     errors = 0
     for i, eq in enumerate(df["equation"]):
         if i % 10000 == 0:
-            print(f"  {i:,} / {len(df):,} verarbeitet...")
+            print(f"  {i:,} / {len(df):,} processed...")
         expr = parse_equation(eq)
         coef_rows.append(extract_coefficients(expr))
         if expr is None:
@@ -107,57 +215,115 @@ def main():
 
     coef_df = pd.DataFrame(coef_rows)
 
-    # Alte Koeffizienten-Spalten überschreiben
+    # Overwrite old coefficient columns
     for col in COEF_KEYS:
         df[col] = coef_df[col].values
 
     df.to_csv(OUTPUT_CSV, index=False, na_rep="")
-    print(f"\n✓ Gespeichert: {OUTPUT_CSV}")
-    print(f"  Fehler beim Parsen: {errors:,}\n")
+    print(f"\n✓ Saved: {OUTPUT_CSV}")
+    print(f"  Parse errors: {errors:,}\n")
 
-    # Plausibilitätsprüfung
-    print("Plausibilitätsprüfung — Chunks pro Term:")
+    # Plausibility check
+    print("Plausibility check — chunks per term:")
     for key, label in zip(COEF_KEYS, COEF_LABELS):
         n = df[key].notna().sum()
         print(f"  {label:<8} : {n:>8,}  ({100*n/len(df):.1f}%)")
 
-    # ── sim_ok Filter ─────────────────────────────────────────────────────────
+    # ── Load empirical data ───────────────────────────────────────────────────
+    data = load_data(DATA_PATH)
+    all_chunks = get_valid_chunks(data)
+    chunk_lookup = {idx: (cs, cdf) for idx, (cs, cdf) in enumerate(all_chunks)}
+    tstart_to_idx = {str(cs): idx for idx, (cs, _) in enumerate(all_chunks)}
+
+    # ── Forward simulate with divergence filter ───────────────────────────────
+    print(f"\nForward-simulating all chunks (divergence threshold: "
+          f"|omega_sim| > {OMEGA_DIVERGENCE_THRESHOLD}) ...")
+
     df["sim_ok"] = df["sim_ok"].astype(str).str.strip().str.lower() == "true"
-    df["rmse_exploded"] = (
-        (df["rmse_omega"] > RMSE_OMEGA_MAX) |
-        (df["rmse_theta"] > RMSE_THETA_MAX) |
-        df["rmse_omega"].isna() | df["rmse_theta"].isna()
-    )
-    df["successful"] = df["sim_ok"] & ~df["rmse_exploded"]
-    ok = df[df["successful"]].copy()
+    ok_df = df[df["sim_ok"]].copy()
 
-    total = len(df); n_ok = len(ok); n_fail = total - n_ok
-    print(f"\nChunk Status:")
-    print(f"  Total      : {total:,}")
-    print(f"  Successful : {n_ok:,}  ({100*n_ok/total:.1f}%)")
-    print(f"  Failed     : {n_fail:,}  ({100*n_fail/total:.1f}%)")
-    print(f"    davon ODE divergiert  : {(~df['sim_ok']).sum():,}")
-    print(f"    davon RMSE explodiert : {(df['sim_ok'] & df['rmse_exploded']).sum():,}")
+    rmse_values = []
+    n_stable    = 0
+    n_divergent = 0
+    n_sim_fail  = 0
 
-    # ── RMSE Tabelle ──────────────────────────────────────────────────────────
+    for row_i, row in ok_df.iterrows():
+        chunk_id = int(row["chunk_id"])
+        t_start  = str(row["t_start"])
+
+        if chunk_id not in chunk_lookup:
+            if t_start in tstart_to_idx:
+                chunk_id = tstart_to_idx[t_start]
+            else:
+                n_sim_fail += 1
+                continue
+
+        chunk_start, chunk_df = chunk_lookup[chunk_id]
+        t_arr, theta, omega = prepare_chunk(chunk_df, sigma=SIGMA)
+
+        # Build coefficients dict from this row
+        coeffs_dict = {k: float(row[k]) if pd.notna(row[k]) else 0.0 for k in COEF_KEYS}
+
+        rhs_func = make_full_poly_rhs(coeffs_dict)
+        theta_sim, omega_sim = simulate_chunk(t_arr, theta[0], omega[0], rhs_func)
+
+        # Solver failure
+        if np.all(np.isnan(omega_sim)):
+            n_sim_fail += 1
+            continue
+
+        # Divergence check
+        max_abs_omega = np.nanmax(np.abs(omega_sim))
+        if max_abs_omega > OMEGA_DIVERGENCE_THRESHOLD:
+            n_divergent += 1
+            continue
+
+        # Stable
+        rmse_omega = compute_rmse(omega_sim, omega)
+        rmse_values.append(rmse_omega)
+        n_stable += 1
+
+        n_processed = n_stable + n_divergent + n_sim_fail
+        if n_processed % 500 == 0:
+            print(f"  Processed {n_processed} chunks "
+                  f"({n_stable} stable, {n_divergent} divergent, "
+                  f"{n_sim_fail} sim-fail) ...")
+
+    n_ode_fail = (~df["sim_ok"]).sum()
+    n_processed = n_stable + n_divergent + n_sim_fail
+    rmse_arr = np.array(rmse_values)
+
+    # ── Results ───────────────────────────────────────────────────────────────
     print(f"\n{'─'*75}")
-    print(f"RMSE Statistiken (nur successful chunks, n={n_ok:,})")
+    print(f"Chunk Status (divergence-filtered):")
     print(f"{'─'*75}")
-    hdr = f"{'Metric':<18} {'Mean':>14} {'Std':>14} {'Median':>14} {'Min':>14} {'Max':>14}"
-    print(hdr); print("─" * len(hdr))
+    print(f"  Total chunks:                        {len(df):,}")
+    print(f"  ODE solver failed (sim_ok=False):     {n_ode_fail:,}")
+    print(f"  Evaluated (sim_ok=True):              {len(ok_df):,}")
+    print(f"    Stable (|ω_sim| ≤ {OMEGA_DIVERGENCE_THRESHOLD}):            {n_stable:,}")
+    print(f"    Divergent (|ω_sim| > {OMEGA_DIVERGENCE_THRESHOLD}):          {n_divergent:,}")
+    print(f"    Sim-fail (re-sim):                  {n_sim_fail:,}")
 
-    for label, col in [("RMSE omega", "rmse_omega"), ("RMSE theta", "rmse_theta")]:
-        vals = ok[col].replace([np.inf, -np.inf], np.nan).dropna()
-        print(f"{label:<18} {fmt(vals.mean())} {fmt(vals.std())} {fmt(vals.median())} {fmt(vals.min())} {fmt(vals.max())}")
+    # ── RMSE Table ────────────────────────────────────────────────────────────
+    if len(rmse_arr) > 0:
+        print(f"\n{'─'*75}")
+        print(f"Forward-Simulated RMSE (omega) — stable chunks only (n={n_stable:,})")
+        print(f"{'─'*75}")
+        print(f"  Mean:   {np.mean(rmse_arr):.6e}")
+        print(f"  Std:    {np.std(rmse_arr):.6e}")
+        print(f"  Median: {np.median(rmse_arr):.6e}")
+        print(f"  Min:    {np.min(rmse_arr):.6e}")
+        print(f"  Max:    {np.max(rmse_arr):.6e}")
+        print(f"  25th %: {np.percentile(rmse_arr, 25):.6e}")
+        print(f"  75th %: {np.percentile(rmse_arr, 75):.6e}")
+    else:
+        print("\n  No stable chunks found!")
 
-    rmse_total = np.sqrt((ok["rmse_omega"]**2 + ok["rmse_theta"]**2) / 2).replace([np.inf, -np.inf], np.nan).dropna()
-    print(f"{'RMSE Total':<18} {fmt(rmse_total.mean())} {fmt(rmse_total.std())} {fmt(rmse_total.median())} {fmt(rmse_total.min())} {fmt(rmse_total.max())}")
-
-    # ── Koeffizienten Tabelle ─────────────────────────────────────────────────
+    # ── Coefficient Table ─────────────────────────────────────────────────────
     print(f"\n{'─'*75}")
-    print(f"Koeffizienten Statistiken (nur Chunks wo Term wirklich vorkommt)")
+    print(f"Coefficient Statistics (chunks where term is present)")
     print(f"{'─'*75}")
-    hdr2 = f"{'Term':<20} {'|Mean|':>14} {'Std':>14} {'n (nicht-NaN)':>16}"
+    hdr2 = f"{'Term':<20} {'|Mean|':>14} {'Std':>14} {'n (non-NaN)':>16}"
     print(hdr2); print("─" * len(hdr2))
 
     for key, label in zip(COEF_KEYS, COEF_LABELS):
@@ -170,3 +336,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

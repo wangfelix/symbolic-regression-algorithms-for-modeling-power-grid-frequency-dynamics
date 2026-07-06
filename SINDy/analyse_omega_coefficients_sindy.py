@@ -27,12 +27,16 @@ OUTPUT_CSV = os.path.join(os.path.dirname(__file__),
 
 # Column name -> display name mapping
 COEFF_COLUMNS = [
-    ("Coeff_Const",      "const"),
-    ("Coeff_Theta",      "theta"),
-    ("Coeff_Omega",      "omega"),
-    ("Coeff_Theta2",     "theta^2"),
-    ("Coeff_ThetaOmega", "theta_omega"),
-    ("Coeff_Omega2",     "omega^2"),
+    ("Coeff_Const",       "const"),
+    ("Coeff_Theta",       "theta"),
+    ("Coeff_Omega",       "omega"),
+    ("Coeff_Theta2",      "theta^2"),
+    ("Coeff_ThetaOmega",  "theta_omega"),
+    ("Coeff_Omega2",      "omega^2"),
+    ("Coeff_Theta3",      "theta^3"),
+    ("Coeff_Theta2Omega", "theta^2_omega"),
+    ("Coeff_ThetaOmega2", "theta_omega^2"),
+    ("Coeff_Omega3",      "omega^3"),
 ]
 
 

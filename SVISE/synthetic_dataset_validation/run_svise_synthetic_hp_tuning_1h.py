@@ -58,7 +58,7 @@ CHUNK_SIZE = 3600        # 1 hour at 1s resolution
 T_SCALE = 360.0          # Time scaling: 3600/360 = 10
 
 # Filter threshold: skip chunks where omega has near-zero dynamics
-MIN_OMEGA_STD = 1e-4
+MIN_OMEGA_STD = 0.0
 
 # Early stopping config
 MAX_EPOCHS = 10000
@@ -72,9 +72,16 @@ PATIENCE = 300
 def load_synthetic_data(data_path):
     """Load synthetic data and chunk into 1-hour windows."""
     print(f"Loading synthetic data from {data_path}...")
-    df = pd.read_pickle(data_path)
-    omega = df['omega'].values
-    theta = df['theta'].values
+    
+    if data_path.endswith('.npz'):
+        with np.load(data_path) as data:
+            omega = data['omega']
+            theta = data['theta']
+    else:
+        df = pd.read_pickle(data_path)
+        omega = df['omega'].values
+        theta = df['theta'].values
+        
     print(f"  Total samples: {len(omega)}")
 
     n_chunks = len(omega) // CHUNK_SIZE
@@ -90,8 +97,13 @@ def load_synthetic_data(data_path):
     print(f"  Total 1-hour chunks: {len(chunks)}")
 
     # Filter out dead chunks (omega ~ 0 everywhere)
-    active_chunks = [c for c in chunks if np.std(c['omega']) >= MIN_OMEGA_STD]
-    print(f"  Active chunks (omega std >= {MIN_OMEGA_STD}): {len(active_chunks)}/{len(chunks)}")
+    if MIN_OMEGA_STD > 0:
+        active_chunks = [c for c in chunks if np.std(c['omega']) >= MIN_OMEGA_STD]
+        print(f"  Active chunks (omega std >= {MIN_OMEGA_STD}): {len(active_chunks)}/{len(chunks)}")
+    else:
+        active_chunks = chunks
+        print(f"  Keeping all {len(chunks)} chunks without filtering.")
+        
     return active_chunks
 
 
@@ -442,10 +454,9 @@ def main():
 
     # Load synthetic data
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(script_dir, "synthetic_data_noiseless.pkl")
+    data_path = os.path.join(script_dir, "synthetic_with_wiener.npz")
     if not os.path.exists(data_path):
         print(f"Error: Synthetic data not found at {data_path}")
-        print("Run generate_synthetic_data.py first.")
         sys.exit(1)
 
     all_chunks = load_synthetic_data(data_path)

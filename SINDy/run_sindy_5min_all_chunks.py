@@ -1,7 +1,7 @@
 """
 SINDy Analysis: All Valid 5-Minute Chunks
 
-Fits a PySINDy model (PolynomialLibrary degree=2, STLSQ threshold=1e-10)
+Fits a PySINDy model (PolynomialLibrary degree=3, STLSQ threshold=1e-10)
 on each valid 5-min chunk with Gaussian smoothing sigma=15.
 Designed to run as part of a SLURM array job.
 
@@ -24,8 +24,8 @@ import datetime
 # Configuration
 # =============================================================================
 SIGMA = 15
-DEGREE = 2
-STLSQ_THRESHOLD = 1e-10
+DEGREE = 3
+STLSQ_THRESHOLD = 1e-06
 
 # =============================================================================
 # Data Loading (same as SVISE scripts)
@@ -122,9 +122,10 @@ def fit_single_chunk(chunk_df):
         eq_omega_str = eqs[1] if len(eqs) > 1 else "N/A"
 
         # Extract coefficients for omega equation
-        # Library terms for degree=2, 2 features: [1, theta, omega, theta^2, theta*omega, omega^2]
+        # Library terms for degree=3, 2 features:
+        # [1, theta, omega, theta^2, theta*omega, omega^2, theta^3, theta^2*omega, theta*omega^2, omega^3]
         coeffs = model.coefficients()
-        omega_coeffs = coeffs[1, :].tolist() if coeffs.shape[0] > 1 else [0.0] * 6
+        omega_coeffs = coeffs[1, :].tolist() if coeffs.shape[0] > 1 else [0.0] * 10
 
         # Forward simulate
         sim_rmse_omega = np.nan
@@ -164,7 +165,7 @@ def _failure_result(reason):
         "sim_rmse_total": np.nan,
         "eq_theta": f"FAILED: {reason}",
         "eq_omega": f"FAILED: {reason}",
-        "omega_coeffs": [np.nan] * 6,
+        "omega_coeffs": [np.nan] * 10,
         "failed": True,
     }
 
@@ -230,7 +231,8 @@ def main():
     csv_path = os.path.join(results_dir, csv_filename)
 
     coeff_names = ["Coeff_Const", "Coeff_Theta", "Coeff_Omega",
-                   "Coeff_Theta2", "Coeff_ThetaOmega", "Coeff_Omega2"]
+                   "Coeff_Theta2", "Coeff_ThetaOmega", "Coeff_Omega2",
+                   "Coeff_Theta3", "Coeff_Theta2Omega", "Coeff_ThetaOmega2", "Coeff_Omega3"]
 
     with open(csv_path, 'w', newline='') as f:
         writer = csv.writer(f)

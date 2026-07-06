@@ -18,7 +18,7 @@ matplotlib.rcParams.update({
     "ytick.labelsize": 17,
     "legend.fontsize": 17,
     "figure.dpi": 150,
-    "axes.linewidth": 1.75,
+    "axes.linewidth": 2.0,
 })
 
 # ---------------------------------------------------------------------------
@@ -73,12 +73,37 @@ MODELS = [
         "std":  [0.004482, 7.880e-04, 0.047122, 2.706e-04, 0.006726, 0.429718,
                  1.261e-04, 0.001828, 0.135353 , 2.161165],
     },
+    # Degree 2
+    # {
+    #     "label": "SINDy",
+    #     "mean": [0.004710 , 0.000527, 0.046212, 0.000043, 0.002573, 0.175667, 0,
+    #              0, 0, 0],
+    #     "std":  [0.008832, 0.000617, 0.075763, 0.000100, 0.003356, 0.208575,
+    #              0, 0, 0, 0],
+    # },
+    # Degree 3 1e-10
+    # {
+    #     "label": "SINDy3 1e-10",
+    #     "mean": [0.034262 , 0.003277, 0.475457, 0.000398, 0.029278, 2.592003,
+    #               0.000041, 0.001905, 0.118211, 6.301274],
+    #     "std":  [0.118844, 0.005267, 1.522359, 0.000798, 0.046682, 7.487256,
+    #              0.000211, 0.004696, 0.187180, 14.463704],
+    # },
+    # Degree 3 1e-2
+    # {
+    #     "label": "SINDy3 1e-2",
+    #     "mean": [0.000000 , 0.000000, 0.000152, 0.000000, 0.000016, 0.001667,
+    #               0.000000, 0.000006, 0.002845, 0.000034],
+    #     "std":  [0.000000, 0.000000, 0.001728, 0.000000, 0.000626, 0.019714,
+    #              0.000000, 0.000378, 0.014513, 0.003116],
+    # },
+    # Degree 3 1e-6
     {
         "label": "SINDy",
-        "mean": [0.004710 , 0.000527, 0.046212, 0.000043, 0.002573, 0.175667, 0,
-                 0, 0, 0],
-        "std":  [0.008832, 0.000617, 0.075763, 0.000100, 0.003356, 0.208575,
-                 0, 0, 0, 0],
+        "mean": [0.029695 , 0.002891, 0.426487, 0.000373, 0.026507, 2.384362,
+                  0.000040, 0.001797, 0.110119, 5.881682],
+        "std":  [0.097853, 0.004485, 1.348791, 0.000792, 0.041416, 6.820175,
+                 0.000209, 0.004574, 0.177727, 13.073993],
     },
 ]
 
@@ -100,7 +125,7 @@ _MARKERS = ["D", "o", "s", "^", "v", "P"]
 # ---------------------------------------------------------------------------
 import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-OUTPUT_PNG = os.path.join(SCRIPT_DIR, "omega_coefficients_comparison.png")
+OUTPUT_PNG = os.path.join(SCRIPT_DIR, "omega_coefficients_comparison.pdf")
 
 
 def plot_comparison(models, term_labels, output_path):
@@ -109,7 +134,7 @@ def plot_comparison(models, term_labels, output_path):
     n_models = len(models)
     x = np.arange(n_terms)
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(12, 7.25))
 
     width = 0.20
     offsets = np.linspace(-(n_models - 1) * width / 2,
@@ -163,12 +188,12 @@ def plot_comparison(models, term_labels, output_path):
     ax.set_xticklabels(term_labels)
     ax.set_xlabel("Feature Candidates")
     ax.set_ylabel("Coefficient Value")
-    ax.set_title("Equation Coefficients – Model Comparison", pad=16)
-    ax.legend(loc="upper center", ncol=n_models, frameon=True)
+    ax.set_title("Equation Coefficients – Model Comparison", pad=60)
+    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.02), ncol=n_models, frameon=True)
     ax.grid(True, which="major", axis="y", linestyle="--", alpha=0.4)
     ax.grid(True, which="minor", axis="y", linestyle=":", alpha=0.2)
 
-    plt.tight_layout()
+    plt.tight_layout(rect=[0, 0, 1, 0.90])
     plt.savefig(output_path, dpi=200, bbox_inches="tight")
     plt.close()
     print(f"Plot saved to: {output_path}")

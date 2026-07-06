@@ -1,0 +1,45 @@
+{
+    "config": {
+        "sigma": 60,
+        "degree": 1,
+        "stlsq_threshold": 1e-06,
+        "n_samples": 3600,
+        "n_days": 0.041666666666666664,
+        "dt": 1.0,
+        "dataset": "synthetic_with_wiener"
+    },
+    "equations": {
+        "d_theta_dt": "0.001 1 + 0.999 omega",
+        "d_omega_dt": "0.002 1 + -0.003 omega"
+    },
+    "coefficients": {
+        "Coeff_Const": 0.0015788137778497727,
+        "Coeff_Theta": -4.213337677249713e-06,
+        "Coeff_Omega": -0.0027998865539387422
+    },
+    "forward_simulation": {
+        "status": "stable",
+        "rmse_omega": 0.06539555637416432,
+        "rmse_theta": 22.038337025219082,
+        "max_abs_omega_sim": 0.37160072419952145
+    },
+    "ground_truth_comparison": {
+        "Coeff_Omega": {
+            "sindy_value": -0.0027998865539387422,
+            "ground_truth": -0.009057647473133581,
+            "label": "c_1 (damping)"
+        },
+        "Coeff_Theta": {
+            "sindy_value": -4.213337677249713e-06,
+            "ground_truth": -1.5317625512028024e-05,
+            "label": "c_2 (coupling)"
+        },
+        "Coeff_Const": {
+            "sindy_value": 0.0015788137778497727,
+            "ground_truth": 0.00554890484189234,
+            "label": "Delta_P (forcing)"
+        }
+    },
+    "elapsed_seconds": 0.9493021965026855,
+    "timestamp": "20260507_223615"
+}

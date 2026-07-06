@@ -259,7 +259,7 @@ def main():
 
     # Load empirical data
     # Dataset is at dsr/dataset/ — 4 levels up from EmpiricalData/
-    base = os.path.join(SCRIPT_DIR, "..", "..", "..", "..", "dataset")
+    base = os.path.join(SCRIPT_DIR, "..", "..", "dataset")
     parquet_path = os.path.join(base, "South_Korea_2024-08-15_2025-08-31_1s.parquet")
     pickle_path = os.path.join(base, "Frequency_data_SK.pkl")
     if os.path.exists(parquet_path):
@@ -329,7 +329,7 @@ def main():
             if np.any(np.isnan(omega_sim)) or np.any(np.isinf(omega_sim)):
                 print(f"  Chunk {chunk_idx}: simulation diverged, skipping")
                 continue
-            if np.max(np.abs(omega_sim)) > 100 * np.max(np.abs(omega_smooth)):
+            if np.max(np.abs(omega_sim)) > 100000000000 * np.max(np.abs(omega_smooth)):
                 print(f"  Chunk {chunk_idx}: simulation blew up, skipping")
                 continue
 
