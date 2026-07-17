@@ -25,7 +25,7 @@ DT = 1.0
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PARQUET_PATH = os.path.join(SCRIPT_DIR, "../dataset/South_Korea_2024-08-15_2025-08-31_1s.parquet")
 SVISE_CSV = os.path.join(SCRIPT_DIR, "results_5min_all_chunks/run_SLURM_3733210_combo5/all_chunks_combined.csv")
-SINDY_CSV = os.path.join(SCRIPT_DIR, "results_sindy_5min_all_chunks/run_SLURM_3753891_sindy/all_chunks_combined.csv")
+SINDY_CSV = os.path.join(SCRIPT_DIR, "../SINDy/results_sindy_5min_all_chunks/run_SLURM_3753891_sindy/all_chunks_combined.csv")
 OUTPUT_DIR = os.path.join(SCRIPT_DIR, "figures")
 
 
@@ -264,6 +264,8 @@ def main():
     # --- Figure ---
     print("Creating figure...")
     matplotlib.rcParams.update({
+        "pdf.fonttype": 42,
+        "ps.fonttype": 42,
         "font.family": "sans-serif",
         "font.size": 9,
         "axes.titlesize": 9,

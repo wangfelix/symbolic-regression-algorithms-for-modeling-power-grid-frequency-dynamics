@@ -10,6 +10,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 matplotlib.rcParams.update({
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
     "font.size": 18,
     "font.family": "sans-serif",
     "axes.labelsize": 20,
